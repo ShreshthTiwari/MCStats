@@ -1,0 +1,583 @@
+const chalk = require("chalk");
+
+let defaultLogo = "https://i.ibb.co/NY6KH17/default-icon.png";
+
+const javaFetcher = require("../fetcher/javaFetcher.js");
+const queryFetcher = require("../fetcher/queryFetcher.js");
+const bedrockFetcher = require("../fetcher/bedrockFetcher.js");
+
+const emojis = require("../config/emojis.json");
+
+let time;
+let guildsMap;
+let guildsCount;
+let database;
+let count = 1;
+let interval = 0.5;
+
+let guildsList = [];
+let databasesList = [];
+let IPsList = [];
+let javaPortsList = [];
+let bedrockPortsList = [];
+let serverStatusChannelsList = [];
+let hiddenPortsList = [];
+
+let errors = 0;
+let success = 0;
+
+module.exports = {
+  name: 'ready',
+  once: true,
+  async execute(client, embed, MessageEmbed, config, embedConfig, databaseBuilder, Permissions, messageEmojisReplacer, errorLogger, logger) {
+    let statusEmbed = new MessageEmbed()
+      .setColor(embedConfig.defaultColor);
+
+    time = new Date();
+
+    guildsMap = await client.guilds.cache
+      .sort((guild1, guild2) => guild1.position - guild2.position)
+      .map(guild => guild.id);
+
+    guildsCount = guildsMap.length;
+    guilds = guildsMap.length;
+    interval = Math.round(Math.round(guildsCount/35) + 0.5);
+
+    try{
+      await client.user.setActivity(`For /help in ${guildsCount} ${guildsCount > 1 ? "servers" : "server"}`, {type: "WATCHING"});
+    }catch(error){
+      await errorLogger(client, null, error, "src/commands/ready.js : 39");
+    }
+
+    const grass = emojis.grass;
+    const wifi = emojis.wifi;
+    const settings = emojis.settings;
+    const users = emojis.users;
+    const pen = emojis.pen;
+    const signal = emojis.signal;
+    
+    embed = new MessageEmbed()
+      .setColor(embedConfig.defaultColor);
+    
+    let cross = "❌";
+      
+    console.log(`-------------------------------------\n` + chalk.green(`${client.user.tag} is online!\n`) + `-------------------------------------`);
+
+    async function mcStatsUpdater(guild, database, serverStatusChannel, IP, javaPort, bedrockPort, hiddenPorts){
+      embed = new MessageEmbed()
+        .setColor(embedConfig.defaultColor);
+
+      async function postStatus (){
+          try{
+            let messages = await serverStatusChannel.messages.fetch({limit: 5});
+  
+            if(messages){
+              let statusMessage = await messages.filter(m => m.author.id === client.user.id).last();
+  
+              if(statusMessage){
+                try{
+                  statusMessage.edit({embeds: [statusEmbed]}).catch(error => {});
+                }catch{}
+              }else{
+                try{
+                  serverStatusChannel.send({embeds: [statusEmbed]}).catch(error => {});
+                }catch{}
+              }
+            }else{
+              try{
+                serverStatusChannel.send({embeds: [statusEmbed]}).catch(error => {});
+              }catch{}
+            }
+          }catch{
+            console.log(`${count++}. ` + chalk.red(`Error Updating Server Status Of- ${guild.name} | ${guild.id} `) + chalk.magenta(`(${((new Date()) - time)/1000} seconds)`));
+
+            errors++;
+
+            return;
+          }
+        
+          console.log(`${count}. ` + chalk.green(`Updating Server Status Of- ${guild.name} | ${guild.id} `) + chalk.magenta(`(${((new Date()) - time)/1000} seconds)`));     
+
+          success++;   
+
+        count++;
+      }
+
+      if(javaPort){
+        if(javaPort < '1'){
+          javaPort = null;
+
+          await database.set("java_port", javaPort);
+
+          console.log(`${count++}. ` + chalk.yellow(`Ignoring ${guild.name} | ${guild.id} | Invalid Java Port `) + chalk.magenta(`(${(new Date() - time)/1000} seconds)`));
+
+          return;
+        }
+
+        javaPort *= 1;
+
+        try{
+          let rawData = await javaFetcher(client, guild.id, IP, javaPort);
+              
+          if(rawData){
+            if(rawData[0] === "ONLINE"){
+              let motd = rawData[1];
+              let version = rawData[2];
+              let online = rawData[3];
+              let max = rawData[4];
+    
+              let sampleList = rawData[5];
+              
+              let favicon = rawData[6];
+              let roundTripLatency = rawData[7];
+    
+              let playersList;
+    
+              let queryPort = await database.get("query_port");
+
+              if(queryPort < '1'){
+                queryPort = null;
+                await database.set("query_port", queryPort);
+              }
+    
+              if(queryPort){
+                queryPort *= 1;
+                let rawData2 = ["OFFLINE"];
+
+                try{
+                  rawData2 = await queryFetcher(client, IP, queryPort);
+    
+                  if(rawData2[0] === "ONLINE"){
+                    playersList = rawData2[1];
+                  }
+                }catch{}
+              }
+  
+              if(bedrockPort){
+                let rawData3 = ["OFFLINE"];
+
+                try{
+                  rawData3 = await bedrockFetcher(client, IP, bedrockPort);
+      
+                  if(rawData3[0] === "ONLINE"){
+                    javaPort = `JAVA- ${javaPort}\nBEDROCK/PE- ${bedrockPort}`;
+                  }
+                }catch{}
+              }
+        
+              statusEmbed = new MessageEmbed()
+                .addFields({
+                  name: `${grass} SERVER EDITION`,
+                  value: `\`\`\`fix\nJAVA\n\`\`\``
+                },
+                {
+                  name: `${wifi} SERVER IP`,
+                  value: `\`\`\`fix\n${IP}\n\`\`\``
+                });
+              
+              if(hiddenPorts.toLowerCase() == "false"){
+                statusEmbed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${javaPort}\n\`\`\``);
+              }
+              
+              statusEmbed.addFields(
+                {
+                  name: `${settings} SERVER VERSION`,
+                  value: `\`\`\`fix\n${version}\n\`\`\``
+                },
+                {
+                  name: `${users} PLAYING`,
+                  value: `\`\`\`fix\n${online}/${max}\n\`\`\``
+                },
+                {
+                  name: `${pen} MOTD`,
+                  value: `\`\`\`fix\n${motd}\n\`\`\``
+                },
+                {
+                  name: `${signal} LATENCY`,
+                  value: `\`\`\`fix\n${roundTripLatency}ms\n\`\`\``
+                })
+                .setColor(embedConfig.successColor)
+                .setTimestamp()
+                .setThumbnail(favicon)
+                .setFooter({text: `Updating Stats every ${interval} mins.`});
+    
+              if(playersList && playersList.length > 0){
+                await statusEmbed.addField(`${users} PLAYERS`, `\`\`\`fix\n${playersList}\n\`\`\``);
+              }else if(sampleList && sampleList.length > 0){
+                await statusEmbed.addField(`${users} PLAYERS`, `\`\`\`fix\n${sampleList}\n\`\`\``);
+              }
+              
+              await postStatus();
+            }else if(rawData[0] === "OFFLINE"){
+              if(bedrockPort){
+                javaPort = `JAVA- ${javaPort}\nBEDROCK- ${bedrockPort}`;
+              }
+
+              statusEmbed = new MessageEmbed()
+                .setTitle("OFFLINE")
+                .addFields({
+                  name: `${grass} SERVER EDITION`,
+                  value: `\`\`\`fix\nJAVA\n\`\`\``
+                },
+                {
+                  name: `${wifi} SERVER IP`,
+                  value: `\`\`\`fix\n${IP}\n\`\`\``
+                })
+                .setColor(embedConfig.errorColor)
+                .setTimestamp()
+                .setThumbnail(defaultLogo)
+                .setFooter({text: `Updating Stats every ${interval} mins.`});
+              
+              if(hiddenPorts.toLowerCase() == "false"){
+                statusEmbed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${javaPort}\n\`\`\``);
+              }
+              
+              await postStatus();
+            }else{
+              statusEmbed = new MessageEmbed()
+                .setDescription(`${cross} Error showing server stats.`)
+                .addFields({
+                  name: `${grass} SERVER EDITION`,
+                  value: `\`\`\`fix\nJAVA\n\`\`\``
+                },
+                {
+                  name: `${wifi} SERVER IP`,
+                  value: `\`\`\`fix\n${IP}\n\`\`\``
+                })
+                .setColor(embedConfig.errorColor)
+                .setTimestamp()
+                .setThumbnail(defaultLogo)
+                .setFooter({text: `Updating Stats every ${interval} mins.`});
+              
+              if(hiddenPorts.toLowerCase() == "false"){
+                statusEmbed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${javaPort}\n\`\`\``);
+              }
+              
+              await postStatus();
+            }
+          }else{
+            statusEmbed = new MessageEmbed()
+              .setDescription(`${cross} Unable to fetch the data. Please check if the **\`IP\`** and **\`PORT\`** are correct.\nAlso check if the server is online.`)
+              .addFields({
+                name: `${grass} SERVER EDITION`,
+                value: `\`\`\`fix\nJAVA\n\`\`\``
+              },
+              {
+                name: `${wifi} SERVER IP`,
+                value: `\`\`\`fix\n${IP}\n\`\`\``
+              })
+              .setColor(embedConfig.errorColor)
+              .setTimestamp()
+              .setThumbnail(defaultLogo)
+              .setFooter({text: `Updating Stats every ${interval} mins.`});
+              
+            if(hiddenPorts.toLowerCase() == "false"){
+              statusEmbed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${javaPort}\n\`\`\``);
+            }
+              
+            serverStatusChannel = `ERROR`;
+            await postStatus();
+          }
+        }catch (error){
+          statusEmbed = new MessageEmbed()
+            .setDescription(`${cross} **Error Fetching server stats**-\n\`\`\`${error}\`\`\``)
+            .setColor(embedConfig.errorColor)
+            .setTimestamp()
+            .setThumbnail(defaultLogo)
+            .setFooter({text: `Updating Stats every ${interval} mins.`});
+              
+          serverStatusChannel = `ERROR`;
+          await postStatus();
+        }
+      }else if(bedrockPort){
+        if(bedrockPort < '1'){
+          bedrockPort = null;
+
+          await database.set("bedrock_port", bedrockPort);
+
+          console.log(`${count++}. ` + chalk.yellow(`Ignoring ${guild.name} | ${guild.id} | Invalid Bedrock Port `) + chalk.magenta(`(${(new Date() - time)/1000} seconds)`));
+
+          return;
+        }
+  
+        bedrockPort *= 1;
+
+        try{
+          let rawData = await bedrockFetcher(client, IP, bedrockPort);
+              
+          if(rawData){
+            if(rawData[0] === "ONLINE"){
+              let edition = rawData[1];
+              let motd = rawData[2];
+              let version = rawData[3];
+              let online = rawData[4];
+              let max = rawData[5];
+              let portIPv4 = rawData[6];
+              let portIPv6 = rawData[7];
+
+              if(portIPv4 !== "NULL"){
+                bedrockPort = `DEFAULT- ${bedrockPort}\nIPv4- ${portIPv4}`;
+  
+                if(portIPv6 !== "NULL"){
+                  bedrockPort = bedrockPort + `\nIPv6- ${portIPv6}`
+                }
+              }else{
+                if(portIPv6 !== "NULL"){
+                  bedrockPort = `DEFAULT- ${bedrockPort}\nIPv6- ${portIPv6}`
+                }
+              }
+        
+              statusEmbed = new MessageEmbed()
+                .addFields({
+                  name: `${grass} SERVER EDITION`,
+                  value: `\`\`\`fix\n${edition}\n\`\`\``
+                },
+                {
+                  name: `${wifi} SERVER IP`,
+                  value: `\`\`\`fix\n${IP}\n\`\`\``
+                });
+
+              if(hiddenPorts.toLowerCase() == "false"){
+                statusEmbed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${bedrockPort}\n\`\`\``);
+              }
+                
+              statusEmbed.addFields(
+                {
+                  name: `${settings} SERVER VERSION`,
+                  value: `\`\`\`fix\n${version}\n\`\`\``
+                },
+                {
+                  name: `${users} PLAYING`,
+                  value: `\`\`\`fix\n${online}/${max}\n\`\`\``
+                },
+                {
+                  name: `${pen} MOTD`,
+                  value: `\`\`\`fix\n${motd}\n\`\`\``
+                })
+                .setColor(embedConfig.successColor)
+                .setTimestamp()
+                .setThumbnail(defaultLogo)
+                .setFooter({text: `Updating Stats every ${interval} mins.`});
+              
+              await postStatus();
+            }else if(rawData[0] === "OFFLINE"){
+              statusEmbed.setTitle("OFFLINE")
+                .addFields({
+                  name: `${grass} SERVER EDITION`,
+                  value: `\`\`\`fix\nBEDROCK\n\`\`\``
+                },
+                {
+                  name: `${wifi} SERVER IP`,
+                  value: `\`\`\`fix\n${IP}\n\`\`\``
+                })
+                .setColor(embedConfig.errorColor)
+                .setTimestamp()
+                .setThumbnail(defaultLogo)
+                .setFooter({text: `Updating Stats every ${interval} mins.`});
+
+              if(hiddenPorts.toLowerCase() == "false"){
+                statusEmbed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${bedrockPort}\n\`\`\``);
+              }
+              
+              await postStatus();
+            }else{
+              statusEmbed = new MessageEmbed()
+                .setDescription(`${cross} Error showing server stats.`)
+                .addFields({
+                  name: `${grass} SERVER EDITION`,
+                  value: `\`\`\`fix\nBEDROCK\n\`\`\``
+                },
+                {
+                  name: `${wifi} SERVER IP`,
+                  value: `\`\`\`fix\n${IP}\n\`\`\``
+                })
+                .setColor(embedConfig.errorColor)
+                .setTimestamp()
+                .setThumbnail(defaultLogo)
+                .setFooter({text: `Updating Stats every ${interval} mins.`});
+
+              if(hiddenPorts.toLowerCase() == "false"){
+                statusEmbed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${bedrockPort}\n\`\`\``);
+              }
+              
+              await postStatus();
+            }
+          }else{
+            statusEmbed = new MessageEmbed()
+              .setDescription(`${cross} Unable to fetch the data. Please check if the **\`IP\`** and **\`PORT\`** are correct.\nAlso check if the server is online.`)
+              .addFields({
+                name: `${grass} SERVER EDITION`,
+                value: `\`\`\`fix\nBEDROCK\n\`\`\``
+              },
+              {
+                name: `${wifi} SERVER IP`,
+                value: `\`\`\`fix\n${IP}\n\`\`\``
+              })
+              .setColor(embedConfig.errorColor)
+              .setTimestamp()
+              .setThumbnail(defaultLogo)
+              .setFooter({text: `Updating Stats every ${interval} mins.`});
+
+            if(hiddenPorts.toLowerCase() == "false"){
+              statusEmbed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${bedrockPort}\n\`\`\``);
+            }
+              
+            await postStatus();
+          }
+        }catch (error){
+          statusEmbed = new MessageEmbed()
+            .setDescription(`${cross} **Error Fetching server stats**-\n\`\`\`${error}\`\`\``)
+            .setColor(embedConfig.errorColor)
+            .setTimestamp()
+            .setThumbnail(defaultLogo)
+            .setFooter({text: `Updating Stats every ${interval} mins.`});
+              
+          await postStatus();
+        }
+      }else{
+        statusEmbed = new MessageEmbed()
+          .setDescription(`${cross} **Error Fetching server stats**.`)
+          .setColor(embedConfig.errorColor)
+          .setTimestamp()
+          .setThumbnail(defaultLogo)
+          .setFooter({text: `Updating Stats every ${interval} mins.`});
+            
+        await postStatus();
+      }
+    }
+
+    async function updateGuildsList(){
+      let added = 0;
+      let ignored = 0;
+
+      guildsMap = await client.guilds.cache
+        .sort((guild1, guild2) => guild1.position - guild2.position)
+        .map(guild => guild.id);
+        
+      guildsCount = guildsMap.length;
+      interval = Math.round(Math.round(guildsCount/35) + 0.5);
+
+      let index = 0;
+
+      for(let i=0; i<=guildsCount-1; i++){
+        time = new Date();
+        
+        let guild = await client.guilds.cache.get(guildsMap[i]);
+
+        if(guild){
+          database = await databaseBuilder(client, guild);
+
+          if(database){
+            let serverStatusChannelID = await database.get("server_status_channel");
+            
+            if(serverStatusChannelID){
+              let serverStatusChannel = await guild.channels.cache.get(serverStatusChannelID);
+
+              if(serverStatusChannel){
+                let IP = await database.get("ip");
+                let javaPort = await database.get("java_port");
+                let bedrockPort = await database.get("bedrock_port");
+                let hiddenPorts = await database.get("hidden_ports") || "false";
+
+                if(IP && (javaPort || bedrockPort)){
+                  guildsList[index] = guild;
+                  databasesList[index] = database;
+                  IPsList[index] = IP;
+                  javaPortsList[index] = javaPort;
+                  bedrockPortsList[index] = bedrockPort;
+                  serverStatusChannelsList[index] = serverStatusChannel;
+                  hiddenPortsList[index] = hiddenPorts;
+
+                  index++;
+
+                  console.log(`${count++}. ` + chalk.green(`Added ${guild.name} | ${guild.id} | Channel, IP and port found`) + chalk.magenta(`(${((new Date()) - time)/1000} seconds)`));
+
+                  added++;
+                }else{
+                  console.log(`${count++}. ` + chalk.yellow(`Ignoring ${guild.name} | ${guild.id} | No IP or PORT `) + chalk.magenta(`(${((new Date()) - time)/1000} seconds)`));
+
+                  ignored++;
+                }
+              }else{
+                console.log(`${count++}. ` + chalk.yellow(`Ignoring ${guild.name} | ${guild.id} | Channel not found `) + chalk.magenta(`(${((new Date()) - time)/1000} seconds)`));
+
+                ignored++;
+              }
+            }else{
+              console.log(`${count++}. ` + chalk.yellow(`Ignoring ${guild.name} | ${guild.id} | Channel not set `) + chalk.magenta(`(${(new Date() - time)/1000} seconds)`));
+
+              ignored++;
+            }
+          }
+        }
+      }
+
+      console.log("----------------------------------------------------------------------");
+      console.log(chalk.magenta(`Total- ${added + ignored}`));
+      console.log(chalk.green(`Added- ${added}`));
+      console.log(chalk.yellow(`Ignored- ${ignored}`));
+      console.log("----------------------------------------------------------------------");
+    }
+
+    async function updater(){
+      count = 1;
+
+      await updateGuildsList();
+
+      count = 1;
+
+      embed = new MessageEmbed()
+        .setColor(embedConfig.defaultColor);
+
+      success = errors = 0;
+           
+      for(let i=0; i<=guildsList.length-1; i++){
+        embed = new MessageEmbed()
+          .setColor(embedConfig.defaultColor);
+        
+        database = databasesList[i];
+        let serverStatusChannel = serverStatusChannelsList[i];
+        let IP = IPsList[i];
+        let javaPort = javaPortsList[i];
+        let bedrockPort = bedrockPortsList[i];
+        let hiddenPorts = hiddenPortsList[i];
+
+        time = new Date();
+
+        await mcStatsUpdater(guildsList[i], database, serverStatusChannel, IP, javaPort, bedrockPort, hiddenPorts);
+      }
+
+      console.log("----------------------------------------------------------------------");
+      console.log(chalk.magenta(`Total- ${success + errors}`));
+      console.log(chalk.green(`Success- ${success}`));
+      console.log(chalk.red(`Error- ${errors}`));
+      console.log("----------------------------------------------------------------------");
+    }
+
+    let gDB = await databaseBuilder(client, "global");
+    await gDB.set("interval", interval);
+
+    let t = new Date();
+    count = 1;
+
+    await updater();
+
+    console.log(chalk.magenta(`Total Time- ${(Date.now() - t)/1000} seconds.`));
+    console.log(chalk.magenta(`Updating stats every ${interval} minutes.`));
+    console.log("----------------------------------------------------------------------");
+
+    setInterval(async () => {
+      t = new Date();
+
+      count = 1;
+
+      await updater();
+
+      console.log(chalk.magenta(`Total Time- ${(Date.now() - t)/1000} seconds.`));
+      console.log(chalk.magenta(`Updating stats every ${interval} minutes.`));
+      console.log("----------------------------------------------------------------------");
+
+      time = new Date();
+    }, interval * 60 * 1000);
+  },
+};
