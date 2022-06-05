@@ -68,37 +68,79 @@ module.exports = {
         .setColor(embedConfig.defaultColor);
 
       async function postStatus (){
-          try{
-            let messages = await serverStatusChannel.messages.fetch({limit: 5});
+        async function showError(){
+          let botUpdatesChannelID = await database.get("bot_updates_channel");
+
+          if(botUpdatesChannelID){
+            let botUpdatesChannel = await database.get(botUpdatesChannelID);
+
+            if(botUpdatesChannel){
+              embed = new MessageEmbed()
+                .setDescription(`**UNABLE TO POST SERVER STATUS IN ${serverStatusChannel}.\n
+                Please provide me the following permissions in ${serverStatusChannel}-
+                1. \`SEND_MESSAGES\`
+                2. \`READ_MESSAGE_HISTORY\`
+                3. \`MANAGE_MESSAGES\`\n
+                ---------------------------\n
+                If you have already set the permissions and the bot is still not posting the server status.
+                Join the support server and report the issue-
+                [JOIN SUPPORT SERVER](${config.supportLink})`)
+                .setColor(embedConfig.errorColor);
+    
+              await botUpdatesChannel.send({embeds: [embed]}).then(async msg => {
+                setTimeout(async () => {
+                  await msg.delete().catch(error => {});
+                }, 2*60*1000);
+              });
+            }
+          }
+        }
+
+        try{
+          let messages = await serverStatusChannel.messages.fetch({limit: 5});
   
-            if(messages){
-              let statusMessage = await messages.filter(m => m.author.id === client.user.id).last();
+          if(messages){
+            let statusMessage = await messages.filter(m => m.author.id === client.user.id).last();
   
-              if(statusMessage){
-                try{
-                  statusMessage.edit({embeds: [statusEmbed]}).catch(error => {});
-                }catch{}
-              }else{
-                try{
-                  serverStatusChannel.send({embeds: [statusEmbed]}).catch(error => {});
-                }catch{}
+            if(statusMessage){
+              try{
+                statusMessage.edit({embeds: [statusEmbed]}).catch(error => {});
+              }catch{
+                await showError();
+
+                return;
               }
             }else{
               try{
                 serverStatusChannel.send({embeds: [statusEmbed]}).catch(error => {});
-              }catch{}
+              }catch{
+                await showError();
+
+                return;
+              }
             }
-          }catch{
-            console.log(`${count++}. ` + chalk.red(`Error Updating Server Status Of- ${guild.name} | ${guild.id} `) + chalk.magenta(`(${((new Date()) - time)/1000} seconds)`));
+          }else{
+            try{
+              serverStatusChannel.send({embeds: [statusEmbed]}).catch(error => {});
+            }catch{
+              await showError();
 
-            errors++;
-
-            return;
+              return;
+            }
           }
-        
-          console.log(`${count}. ` + chalk.green(`Updating Server Status Of- ${guild.name} | ${guild.id} `) + chalk.magenta(`(${((new Date()) - time)/1000} seconds)`));     
+        }catch{
+          await showError();
+          
+          console.log(`${count++}. ` + chalk.red(`Error Updating Server Status Of- ${guild.name} | ${guild.id} `) + chalk.magenta(`(${((new Date()) - time)/1000} seconds)`));
 
-          success++;   
+          errors++;
+
+          return;
+        }
+        
+        console.log(`${count}. ` + chalk.green(`Updating Server Status Of- ${guild.name} | ${guild.id} `) + chalk.magenta(`(${((new Date()) - time)/1000} seconds)`));     
+
+        success++;   
 
         count++;
       }
