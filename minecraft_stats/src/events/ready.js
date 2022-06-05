@@ -30,8 +30,8 @@ module.exports = {
     time = new Date();
 
     guildsMap = await client.guilds.cache
-      .sort((guild1, guild2) => guild1.position - guild2.position)
-      .map(guild => guild.id);
+      .sort((guild1, guild2) => guild2.memberCount - guild1.memberCount)
+      .map(guild => guild);
 
     guildsCount = guildsMap.length;
     guilds = guildsMap.length;
@@ -55,7 +55,7 @@ module.exports = {
     
     let cross = "❌";
       
-    console.log(`-------------------------------------\n` + chalk.green(`${client.user.tag} is online!\n`) + `-------------------------------------`);
+    console.log(`-------------------------------------\n` + chalk.green(`${client.user.tag} is online\n`) + chalk.magenta('Made By- ShreshthTiwari\n') + chalk.blue("Discord- ShreshthTiwari#6014\n") + chalk.yellow("Support Server- https://dsc.gg/b0t-support\n") + chalk.red("GitHub- https://github.com/ShreshthTiwari/MCStats\n") + `-------------------------------------`);
 
     async function mcStatsUpdater(guild, database, IP, javaPort, bedrockPort, hiddenPorts, serverStatusChannel){
       embed = new MessageEmbed()
@@ -490,7 +490,7 @@ module.exports = {
 
       guildsMap = await client.guilds.cache
         .sort((guild1, guild2) => guild1.position - guild2.position)
-        .map(guild => guild.id);
+        .map(guild => guild);
         
       guildsCount = guildsMap.length;
       interval = Math.round(Math.round(guildsCount/35) + 0.5);
@@ -500,7 +500,7 @@ module.exports = {
       for(let i=0; i<=guildsCount-1; i++){
         time = new Date();
         
-        let guild = await client.guilds.cache.get(guildsMap[i]);
+        let guild = guildsMap[i];
 
         if(guild){
           database = await databaseBuilder(client, guild);

@@ -3,6 +3,7 @@ const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
 const path = require('path');
 const fs = require('fs');
+const chalk = require("chalk");
 
 const config = require('./config/config.json');
 const embedConfig = require('./config/embedConfig.json');
@@ -58,7 +59,7 @@ const rest = new REST({ version: '9' }).setToken(token);
   .catch(console.error);*/
 
 rest.put(Routes.applicationCommands(clientID), { body: commands })
-  .then(() => console.log('Successfully registered application commands.'))
+  .then(async () => console.log(`-------------------------------------\n` + chalk.green('All application commands registered.\n') + `-------------------------------------`))
   .catch(console.error);
 
 client.login(token);
