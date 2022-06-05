@@ -27,6 +27,8 @@ module.exports = {
     let statusEmbed = new MessageEmbed()
       .setColor(embedConfig.defaultColor);
 
+    const line = "-----------------------------------------------------------------------------------------------------------------------";
+
     time = new Date();
 
     guildsMap = await client.guilds.cache
@@ -55,7 +57,7 @@ module.exports = {
     
     let cross = "❌";
       
-    console.log(`-------------------------------------\n` + chalk.green(`${client.user.tag} is online\n`) + chalk.magenta('Made By- ShreshthTiwari\n') + chalk.blue("Discord- ShreshthTiwari#6014\n") + chalk.yellow("Support Server- https://dsc.gg/b0t-support\n") + chalk.red("GitHub- https://github.com/ShreshthTiwari/MCStats\n") + `-------------------------------------`);
+    console.log(`${line}\n` + chalk.green(`${client.user.tag} is online\n`) + chalk.magenta('Made By- ShreshthTiwari\n') + chalk.blue("Discord- ShreshthTiwari#6014\n") + chalk.yellow("Support Server- https://dsc.gg/b0t-support\n") + chalk.red("GitHub- https://github.com/ShreshthTiwari/MCStats\n") + line);
 
     async function mcStatsUpdater(guild, database, IP, javaPort, bedrockPort, hiddenPorts, serverStatusChannel){
       embed = new MessageEmbed()
@@ -552,11 +554,11 @@ module.exports = {
         }
       }
 
-      console.log("----------------------------------------------------------------------");
+      console.log(line);
       console.log(chalk.magenta(`Total- ${added + ignored}`));
       console.log(chalk.green(`Added- ${added}`));
       console.log(chalk.yellow(`Ignored- ${ignored}`));
-      console.log("----------------------------------------------------------------------");
+      console.log(line);
     }
 
     async function updater(){
@@ -588,11 +590,11 @@ module.exports = {
         await mcStatsUpdater(guild, database, IP, javaPort, bedrockPort, hiddenPorts, serverStatusChannel);
       } 
 
-      console.log("----------------------------------------------------------------------");
+      console.log(line);
       console.log(chalk.magenta(`Total- ${success + errors}`));
       console.log(chalk.green(`Success- ${success}`));
       console.log(chalk.red(`Error- ${errors}`));
-      console.log("----------------------------------------------------------------------");
+      console.log(line);
     }
 
     let gDB = await databaseBuilder(client, "global");
@@ -603,9 +605,10 @@ module.exports = {
 
     await updater();
 
+    console.log(line);
     console.log(chalk.magenta(`Total Time- ${(Date.now() - t)/1000} seconds.`));
     console.log(chalk.magenta(`Updating stats every ${interval} minutes.`));
-    console.log("----------------------------------------------------------------------");
+    console.log(line);
 
     setInterval(async () => {
       t = new Date();
@@ -614,9 +617,10 @@ module.exports = {
 
       await updater();
 
+      console.log(line);
       console.log(chalk.magenta(`Total Time- ${(Date.now() - t)/1000} seconds.`));
       console.log(chalk.magenta(`Updating stats every ${interval} minutes.`));
-      console.log("----------------------------------------------------------------------");
+      console.log(line);
 
       time = new Date();
     }, interval * 60 * 1000);

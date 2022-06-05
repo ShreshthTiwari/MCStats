@@ -58,8 +58,10 @@ const rest = new REST({ version: '9' }).setToken(token);
   .then(() => console.log('Successfully registered application commands.'))
   .catch(console.error);*/
 
+  const line = "-----------------------------------------------------------------------------------------------------------------------";
+
 rest.put(Routes.applicationCommands(clientID), { body: commands })
-  .then(async () => console.log(`-------------------------------------\n` + chalk.green('All application commands registered.\n') + `-------------------------------------`))
+  .then(async () => console.log(`${line}\n` + chalk.green('All application commands registered.\n') + line))
   .catch(console.error);
 
 client.login(token);
