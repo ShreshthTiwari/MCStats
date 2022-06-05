@@ -4,7 +4,7 @@ const { MessageButton, MessageActionRow } = require("discord.js");
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('help')
-	.setDescription('Show help message.'),
+  	.setDescription('Show help message.'),
   
   async execute(client, MessageEmbed, embed, config, embedConfig, database, Permissions, interaction, messageEmojisReplacer, tick, cross, errorLogger, logger){
     embed = new MessageEmbed()

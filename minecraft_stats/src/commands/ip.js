@@ -5,7 +5,7 @@ const emojis = require("../config/emojis.json");
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('ip')
-	.setDescription('Show ip and port of the minecraft server.'),
+  	.setDescription('Show ip and port of the minecraft server.'),
   
   async execute(client, MessageEmbed, embed, config, embedConfig, database, Permissions, interaction, messageEmojisReplacer, tick, cross, errorLogger, logger){
     const grass = emojis.grass;
