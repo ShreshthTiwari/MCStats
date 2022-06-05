@@ -606,8 +606,8 @@ module.exports = {
     await updater();
 
     console.log(line);
-    console.log(chalk.magenta(`Total Time- ${(Date.now() - t)/1000} seconds.`));
-    console.log(chalk.magenta(`Updating stats every ${interval} minutes.`));
+    console.log(chalk.magenta(`Total Time- `) + chalk.blue(`${(Date.now() - t)/1000} seconds`) + chalk.magenta('.'));
+    console.log(chalk.magenta(`Updating stats every `) + chalk.blue(`${interval} minutes`) + chalk.magenta('.'));
     console.log(line);
 
     setInterval(async () => {
@@ -618,8 +618,8 @@ module.exports = {
       await updater();
 
       console.log(line);
-      console.log(chalk.magenta(`Total Time- ${(Date.now() - t)/1000} seconds.`));
-      console.log(chalk.magenta(`Updating stats every ${interval} minutes.`));
+      console.log(chalk.magenta(`Total Time- `) + chalk.blue(`${(Date.now() - t)/1000} seconds`) + chalk.magenta('.'));
+      console.log(chalk.magenta(`Updating stats every `) + chalk.blue(`${interval} minutes`) + chalk.magenta('.'));
       console.log(line);
 
       time = new Date();
