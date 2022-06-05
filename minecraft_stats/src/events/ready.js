@@ -15,13 +15,7 @@ let database;
 let count = 1;
 let interval = 0.5;
 
-let guildsList = [];
-let databasesList = [];
-let IPsList = [];
-let javaPortsList = [];
-let bedrockPortsList = [];
-let serverStatusChannelsList = [];
-let hiddenPortsList = [];
+let serversData = {};
 
 let errors = 0;
 let success = 0;
@@ -63,7 +57,7 @@ module.exports = {
       
     console.log(`-------------------------------------\n` + chalk.green(`${client.user.tag} is online!\n`) + `-------------------------------------`);
 
-    async function mcStatsUpdater(guild, database, serverStatusChannel, IP, javaPort, bedrockPort, hiddenPorts){
+    async function mcStatsUpdater(guild, database, IP, javaPort, bedrockPort, hiddenPorts, serverStatusChannel){
       embed = new MessageEmbed()
         .setColor(embedConfig.defaultColor);
 
@@ -130,7 +124,7 @@ module.exports = {
           }
         }catch{
           await showError();
-          
+
           console.log(`${count++}. ` + chalk.red(`Error Updating Server Status Of- ${guild.name} | ${guild.id} `) + chalk.magenta(`(${((new Date()) - time)/1000} seconds)`));
 
           errors++;
@@ -489,6 +483,8 @@ module.exports = {
     }
 
     async function updateGuildsList(){
+      serversData = {};
+
       let added = 0;
       let ignored = 0;
 
@@ -522,13 +518,15 @@ module.exports = {
                 let hiddenPorts = await database.get("hidden_ports") || "false";
 
                 if(IP && (javaPort || bedrockPort)){
-                  guildsList[index] = guild;
-                  databasesList[index] = database;
-                  IPsList[index] = IP;
-                  javaPortsList[index] = javaPort;
-                  bedrockPortsList[index] = bedrockPort;
-                  serverStatusChannelsList[index] = serverStatusChannel;
-                  hiddenPortsList[index] = hiddenPorts;
+                  serversData[index] = {
+                    guild: guild,
+                    database: database,
+                    IP: IP,
+                    javaPort: javaPort,
+                    bedrockPort: bedrockPort,
+                    hiddenPorts: hiddenPorts,
+                    serverStatusChannel: serverStatusChannel
+                  }
 
                   index++;
 
@@ -572,22 +570,23 @@ module.exports = {
         .setColor(embedConfig.defaultColor);
 
       success = errors = 0;
-           
-      for(let i=0; i<=guildsList.length-1; i++){
+
+      for(let i=0; i<=Object.keys(serversData).length-1; i++){
         embed = new MessageEmbed()
           .setColor(embedConfig.defaultColor);
         
-        database = databasesList[i];
-        let serverStatusChannel = serverStatusChannelsList[i];
-        let IP = IPsList[i];
-        let javaPort = javaPortsList[i];
-        let bedrockPort = bedrockPortsList[i];
-        let hiddenPorts = hiddenPortsList[i];
+        let guild = serversData[i].guild;
+        database = serversData[i].database;
+        let IP = serversData[i].IP;
+        let javaPort = serversData[i].javaPort;
+        let bedrockPort = serversData[i].bedrockPort;
+        let hiddenPorts = serversData[i].hiddenPorts;
+        let serverStatusChannel = serversData[i].serverStatusChannel;
 
         time = new Date();
 
-        await mcStatsUpdater(guildsList[i], database, serverStatusChannel, IP, javaPort, bedrockPort, hiddenPorts);
-      }
+        await mcStatsUpdater(guild, database, IP, javaPort, bedrockPort, hiddenPorts, serverStatusChannel);
+      } 
 
       console.log("----------------------------------------------------------------------");
       console.log(chalk.magenta(`Total- ${success + errors}`));
