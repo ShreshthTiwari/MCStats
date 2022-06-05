@@ -12,11 +12,14 @@ module.exports = {
     embed = new MessageEmbed()
       .setColor(embedConfig.defaultColor);
     
+    let guildOwner = await guild.fetchOwner();
+
     const logTitle = `[+] Server (${client.guilds.cache.size})`;  
-    
-    const logText = `**GUILD**
-    **NAME**- \`\`\`${guild.name}\`\`\`
-    **ID**- \`\`\`${guild.id}\`\`\``;
+      
+    const logText = `**NAME**- \`\`\`${guild.name}\`\`\`
+    **ID**- \`\`\`${guild.id}\`\`\`
+    **MEMBERS**- \`\`\`${guild.memberCount}\`\`\`
+    **OWNER**- \`\`\`${guildOwner.displayName}\`\`\``;
       
     const logColor = embedConfig.successColor;
 

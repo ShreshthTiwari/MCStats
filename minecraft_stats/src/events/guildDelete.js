@@ -13,9 +13,8 @@ module.exports = {
       .setColor(embedConfig.defaultColor);
     
     const logTitle = `[-] Server (${client.guilds.cache.size})`;
-      
-    const logText = `**GUILD**
-    **NAME**- \`\`\`${guild.name}\`\`\`
+       
+    const logText = `**NAME**- \`\`\`${guild.name}\`\`\`
     **ID**- \`\`\`${guild.id}\`\`\``;
       
     const logColor = embedConfig.errorColor;
