@@ -161,7 +161,7 @@ module.exports = {
           pno++;
         }
       
-        await button.reply({content: '*', ephemeral: true}).then(async () => {
+        await button.reply({content: '*'}).then(async () => {
           await button.deleteReply();
         });
     
