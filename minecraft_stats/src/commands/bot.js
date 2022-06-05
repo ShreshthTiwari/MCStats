@@ -20,16 +20,16 @@ module.exports = {
       subcommand.setName('help').setDescription("This help message.")
     )
     .addSubcommand(subcommand =>
+      subcommand.setName('msg_owners').setDescription("Send message to owner of each guild .")
+        .addStringOption(option => option.setName("message").setDescription("Provide the message.").setRequired(true))
+    )
+    .addSubcommand(subcommand =>
       subcommand.setName('rename').setDescription("Rename the bot.")
         .addStringOption(option => option.setName("name").setDescription("Name.").setRequired(true))
     )
     .addSubcommand(subcommand => subcommand.setName('ping').setDescription("Check the bot's ping."))
     .addSubcommand(subcommand =>
       subcommand.setName('updates').setDescription("Send bot updates.")
-        .addStringOption(option => option.setName("message").setDescription("Provide the message.").setRequired(true))
-    )
-    .addSubcommand(subcommand =>
-      subcommand.setName('msg_owners').setDescription("Send message to owner of each guild .")
         .addStringOption(option => option.setName("message").setDescription("Provide the message.").setRequired(true))
     ),
   

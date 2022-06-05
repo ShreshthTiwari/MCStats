@@ -7,30 +7,7 @@ module.exports = {
     .setName('set')
 	  .setDescription('Set variables for the bot.')
     .addSubcommand(subcommand =>
-      subcommand.setName('help').setDescription("Help for /set command.")
-    )
-    .addSubcommand(subcommand =>
-      subcommand.setName('server_status_channel').setDescription("Set channel where it will show auto updating server status.")
-        .addChannelOption(option => option.setName("channel").setDescription("Select a channel."))
-    )
-    .addSubcommand(subcommand =>
-      subcommand.setName('ip').setDescription("Set ip of the minecraft server.")
-        .addStringOption(option => option.setName("ip").setDescription("Provide the server IP.").setRequired(true))
-    )
-    .addSubcommand(subcommand =>
-      subcommand.setName('numeric_ip').setDescription("Set numeric IP of the minecraft server.")
-        .addStringOption(option => option.setName("ip").setDescription("Provide the numeric server IP.").setRequired(true))
-    )
-    .addSubcommand(subcommand =>
-      subcommand.setName('java_port').setDescription("Set port of the minecraft java server.")
-        .addIntegerOption(option => option.setName("port").setDescription("Provide the server port.").setRequired(true))
-    )
-    .addSubcommand(subcommand =>
       subcommand.setName('bedrock_port').setDescription("Set port of the minecraft bedrock server.")
-        .addIntegerOption(option => option.setName("port").setDescription("Provide the server port.").setRequired(true))
-    )
-    .addSubcommand(subcommand =>
-      subcommand.setName('query_port').setDescription("Set query port of the minecraft java server.")
         .addIntegerOption(option => option.setName("port").setDescription("Provide the server port.").setRequired(true))
     )
     .addSubcommand(subcommand =>
@@ -38,8 +15,31 @@ module.exports = {
         .addChannelOption(option => option.setName("channel").setDescription("Select a channel."))
     )
     .addSubcommand(subcommand =>
+      subcommand.setName('help').setDescription("Help for /set command.")
+    )
+    .addSubcommand(subcommand =>
       subcommand.setName('hidden_ports').setDescription("Hide or show the server port in server status.")
         .addBooleanOption(option => option.setName("option").setDescription("Set TRUE or FALSE.").setRequired(true))
+    )
+    .addSubcommand(subcommand =>
+      subcommand.setName('ip').setDescription("Set ip of the minecraft server.")
+        .addStringOption(option => option.setName("ip").setDescription("Provide the server IP.").setRequired(true))
+    )
+    .addSubcommand(subcommand =>
+      subcommand.setName('java_port').setDescription("Set port of the minecraft java server.")
+        .addIntegerOption(option => option.setName("port").setDescription("Provide the server port.").setRequired(true))
+    )
+    .addSubcommand(subcommand =>
+      subcommand.setName('numeric_ip').setDescription("Set numeric IP of the minecraft server.")
+        .addStringOption(option => option.setName("ip").setDescription("Provide the numeric server IP.").setRequired(true))
+    )
+    .addSubcommand(subcommand =>
+      subcommand.setName('query_port').setDescription("Set query port of the minecraft java server.")
+        .addIntegerOption(option => option.setName("port").setDescription("Provide the server port.").setRequired(true))
+    )
+    .addSubcommand(subcommand =>
+      subcommand.setName('server_status_channel').setDescription("Set channel where it will show auto updating server status.")
+        .addChannelOption(option => option.setName("channel").setDescription("Select a channel."))
     ),
   
   async execute(client, MessageEmbed, embed, config, embedConfig, database, Permissions, interaction, messageEmojisReplacer, tick, cross, errorLogger, logger) {
