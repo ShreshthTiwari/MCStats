@@ -278,24 +278,28 @@ module.exports = {
           database = await databaseBuilder(client, interaction);
 
           let botUpdatesChannelID = await database.get("bot_updates_channel");
+          let owner = await guild.fetchOwner();
          
           if(botUpdatesChannelID){
             let botUpdatesChannel = await guild.channels.cache.get(botUpdatesChannelID);
 
             if(botUpdatesChannel){
               await botUpdatesChannel.send({embeds: [updatesEmbed], components: [buttons]}).catch(error => {});
+              
+              if(owner){
+                if(!(sent.includes(owner.id))){
+                  sent[sent.length] = owner.id;
+                }
+              }
             }
           }else{
-            let owner = await guild.fetchOwner();
-
             if(owner){
               await updatesEmbed.setAuthor({name: guild.name, iconURL: guild.iconURL({ dynamic:true })})
                 .setDescription(input + `\n\n----------------------------------\n\`To disable bot updates in DM, please set a bot updates channel in your discord server\`.\nCommand- \`/set bot_updates_channel <channel>\`.\n:heart:`)
   
-              if(sent.includes(owner.id)){
-                continue;
-              }else{
+              if(!(sent.includes(owner.id))){
                 await owner.send({embeds: [updatesEmbed], components: [buttons]}).catch(error => {});
+                
                 sent[sent.length] = owner.id;
               }
             }
