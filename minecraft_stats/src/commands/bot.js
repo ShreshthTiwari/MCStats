@@ -153,7 +153,7 @@ module.exports = {
         .setDescription(config.votingLink)
         .setColor(embedConfig.defaultColor);
       
-        await button.reply({embeds: [voteEmbed]});
+        await button.reply({embeds: [voteEmbed], ephemeral: true});
       }else{
         if (button.customId === 'previous') {
           pno--;
@@ -161,7 +161,7 @@ module.exports = {
           pno++;
         }
       
-        await button.reply({content: '*'}).then(async () => {
+        await button.reply({content: '*', ephemeral: true}).then(async () => {
           await button.deleteReply();
         });
     
@@ -310,7 +310,7 @@ module.exports = {
       await embed.setDescription(`${tick} Bot updates sent.`)
         .setColor(embedConfig.successColor);
 
-      await interaction.editReply({embeds: [embed], ephemeral: true});
+      await interaction.editReply({embeds: [embed]});
     }else if(subCommand === 'msg_owners'){
       while(input.includes("<nl>")){
         input = await input.replace("<nl>", "\n");
@@ -356,7 +356,7 @@ module.exports = {
       await embed.setDescription(`${tick} Message sent.`)
         .setColor(embedConfig.successColor);
 
-      await interaction.editReply({embeds: [embed], ephemeral: true});
+      await interaction.editReply({embeds: [embed]});
     }
   },
 }
