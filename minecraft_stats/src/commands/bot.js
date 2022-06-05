@@ -74,7 +74,7 @@ module.exports = {
 
     const collector = await interaction.channel.createMessageComponentCollector();
     
-    let guildsListIDsMap;
+    let guildsMap;
     
     const fbButtons = new MessageActionRow()
       .addComponents(
@@ -89,7 +89,7 @@ module.exports = {
       );
 
     async function sendGuildsList(input){
-      const data = await pageBuilder(input, guildsListIDsMap);
+      const data = await pageBuilder(input, guildsMap);
   
       let start = data[0] || 0;
       let stop = data[1] || 9;
@@ -99,13 +99,13 @@ module.exports = {
       let guildsList = [];
 
       for(let i=start; i<=stop; i++){
-        const guild = await client.guilds.cache.get(guildsListIDsMap[i]);
+        const guild = guildsMap[i];
 
         if(guild){
           let invite;
           try{
             invite = await guild.channels.cache.first().createInvite({
-              maxAge: 86400,
+              maxAge: 30000,
               maxUses: 1
             });
           }catch{}
@@ -121,7 +121,7 @@ module.exports = {
       guildsList = await guildsList.join("\n");
       guildsList = guildsList + "\n==========";
         
-      await embed.setAuthor({name: `${guildsListIDsMap.length} Guilds`})
+      await embed.setAuthor({name: `${guildsMap.length} Guilds`})
         .setDescription(guildsList)
         .setFooter({text: `Page- ${page}/${pages}`});
     
@@ -241,9 +241,9 @@ module.exports = {
         await errorLogger(client, interaction, error, "src/commands/bot.js : 241");
       });
     }else if(subCommand === 'guildslist'){
-      guildsListIDsMap = await client.guilds.cache
-        .sort((a, b) => a.position - b.position)
-        .map(g => g.id);
+      guildsMap = await client.guilds.cache
+        .sort((a, b) => b.memberCount - a.memberCount)
+        .map(g => g);
 
       pno = 1;
 
@@ -265,14 +265,14 @@ module.exports = {
         .setColor(embedConfig.defaultColor)
         .setDescription(input);
 
-      let guildsListIDsMap = await client.guilds.cache
-        .sort((a, b) => a.position - b.position)
-        .map(g => g.id);
+      let guildsMap = await client.guilds.cache
+        .sort((a, b) => b.memberCount - a.memberCount)
+        .map(g => g);
       
       let sent = [];
 
-      for(let i=0; i<=guildsListIDsMap.length-1; i++){
-        let guild = await client.guilds.cache.get(guildsListIDsMap[i]);          
+      for(let i=0; i<=guildsMap.length-1; i++){
+        let guild = guildsMap[i];          
         
         if(guild){
           database = await databaseBuilder(client, interaction);
@@ -324,14 +324,14 @@ module.exports = {
         .setColor(embedConfig.defaultColor)
         .setDescription(input);
 
-      let guildsListIDsMap = await client.guilds.cache
-        .sort((a, b) => a.position - b.position)
-        .map(g => g.id);
+      let guildsMap = await client.guilds.cache
+        .sort((a, b) => b.memberCount - a.memberCount)
+        .map(g => g);
       
       let sent = [];
 
-      for(let i=0; i<=guildsListIDsMap.length-1; i++){
-        let guild = await client.guilds.cache.get(guildsListIDsMap[i]);          
+      for(let i=0; i<=guildsMap.length-1; i++){
+        let guild = guildsMap[i];          
         
         if(guild){
           let owner = await guild.fetchOwner();
