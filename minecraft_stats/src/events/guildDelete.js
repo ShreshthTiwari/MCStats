@@ -15,7 +15,8 @@ module.exports = {
     const logTitle = `[-] Server (${client.guilds.cache.size})`;
       
     const logText = `**GUILD**
-    \`${guild.name}\` **|** \`${guild.id}\``;
+    **NAME**- \`\`\`${guild.name}\`\`\`
+    **ID**- \`\`\`${guild.id}\`\`\``;
       
     const logColor = embedConfig.errorColor;
 
