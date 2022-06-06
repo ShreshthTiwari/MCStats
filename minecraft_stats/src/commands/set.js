@@ -1,5 +1,7 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 
+const { ChannelType } = require("discord-api-types/v9");
+
 const databaseBuilder = require("../builder/databaseBuilder.js");
 
 module.exports = {
@@ -12,7 +14,7 @@ module.exports = {
     )
     .addSubcommand(subcommand =>
       subcommand.setName('bot_updates_channel').setDescription("Set bot updates channel.")
-        .addChannelOption(option => option.setName("channel").setDescription("Select a channel."))
+        .addChannelOption(option => option.setName("channel").setDescription("Select a channel.").addChannelTypes([ChannelType.GuildText, ChannelType.GuildNews]))
     )
     .addSubcommand(subcommand =>
       subcommand.setName('help').setDescription("Help for /set command.")
@@ -39,7 +41,7 @@ module.exports = {
     )
     .addSubcommand(subcommand =>
       subcommand.setName('server_status_channel').setDescription("Set channel where it will show auto updating server status.")
-        .addChannelOption(option => option.setName("channel").setDescription("Select a channel."))
+        .addChannelOption(option => option.setName("channel").setDescription("Select a channel.").addChannelTypes([ChannelType.GuildText, ChannelType.GuildNews]))
     ),
   
   async execute(client, MessageEmbed, embed, config, embedConfig, database, Permissions, interaction, messageEmojisReplacer, tick, cross, errorLogger, logger) {
