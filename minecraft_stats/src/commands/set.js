@@ -80,17 +80,6 @@ module.exports = {
         await errorLogger(client, interaction, error, "src/commands/eembed.js : 73");
       });
     }else if(subCommand === "server_status_channel" || subCommand === "bot_updates_channel"){
-      if(channel.type !== "GUILD_TEXT" && channel.type !== "GUILD_NEWS"){
-        embed.setDescription(`${cross} Must be a text channel.`)
-          .setColor(embedConfig.errorColor);
-  
-        await interaction.editReply({embeds: [embed]}).catch(async error => {
-          await errorLogger(client, interaction, error, "src/commands/set.js : 82");
-        });
-  
-        return;
-      }
-  
       await database.set(subCommand, channel.id);
 
       let extraText = "";
