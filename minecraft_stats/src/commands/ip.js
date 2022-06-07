@@ -1,6 +1,6 @@
 let { SlashCommandBuilder } = require('@discordjs/builders');
 
-const emojis = require("../config/emojis.json");
+const emojisFetcher = require("../fetcher/emojisFetcher.js");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -8,7 +8,9 @@ module.exports = {
   	.setDescription('Show ip and port of the minecraft server.'),
   
   async execute(client, MessageEmbed, embed, config, embedConfig, database, Permissions, interaction, messageEmojisReplacer, tick, cross, errorLogger, logger){
-    const grass = emojis.grass;
+    const emojis = await emojisFetcher(client);
+
+    const grass = emojis.grass
     const wifi = emojis.wifi;
 
     embed = new MessageEmbed()

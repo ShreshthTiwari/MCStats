@@ -6,7 +6,7 @@ const javaFetcher = require("../fetcher/javaFetcher.js");
 const queryFetcher = require("../fetcher/queryFetcher.js");
 const bedrockFetcher = require("../fetcher/bedrockFetcher.js");
 
-const emojis = require("../config/emojis.json");
+const emojisFetcher = require("../fetcher/emojisFetcher.js");
 
 let time;
 let guildsMap;
@@ -44,6 +44,8 @@ module.exports = {
     }catch(error){
       await errorLogger(client, null, error, "src/commands/ready.js : 39");
     }
+
+    const emojis = await emojisFetcher(client);
 
     const grass = emojis.grass;
     const wifi = emojis.wifi;

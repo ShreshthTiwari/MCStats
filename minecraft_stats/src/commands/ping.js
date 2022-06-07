@@ -7,7 +7,7 @@ const javaFetcher = require("../fetcher/javaFetcher.js");
 const queryFetcher = require("../fetcher/queryFetcher.js");
 const bedrockFetcher = require("../fetcher/bedrockFetcher.js");
 
-const emojis = require("../config/emojis.json");
+const emojisFetcher = require("../fetcher/emojisFetcher.js");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -27,6 +27,8 @@ module.exports = {
     ),
   
   async execute(client, MessageEmbed, embed, config, embedConfig, database, Permissions, interaction, messageEmojisReplacer, tick, cross, errorLogger, logger){
+    const emojis = await emojisFetcher(client);
+    
     const grass = emojis.grass;
     const wifi = emojis.wifi;
     const settings = emojis.settings;
