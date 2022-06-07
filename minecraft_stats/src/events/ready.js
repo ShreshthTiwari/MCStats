@@ -215,7 +215,7 @@ module.exports = {
                   value: `\`\`\`fix\n${IP}\n\`\`\``
                 });
               
-              if(hiddenPorts.toLowerCase() == "false"){
+              if(hiddenPorts == "false"){
                 statusEmbed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${javaPort}\n\`\`\``);
               }
               
@@ -268,7 +268,7 @@ module.exports = {
                 .setThumbnail(defaultLogo)
                 .setFooter({text: `Updating Stats every ${interval} mins.`});
               
-              if(hiddenPorts.toLowerCase() == "false"){
+              if(hiddenPorts == "false"){
                 statusEmbed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${javaPort}\n\`\`\``);
               }
               
@@ -289,7 +289,7 @@ module.exports = {
                 .setThumbnail(defaultLogo)
                 .setFooter({text: `Updating Stats every ${interval} mins.`});
               
-              if(hiddenPorts.toLowerCase() == "false"){
+              if(hiddenPorts == "false"){
                 statusEmbed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${javaPort}\n\`\`\``);
               }
               
@@ -311,7 +311,7 @@ module.exports = {
               .setThumbnail(defaultLogo)
               .setFooter({text: `Updating Stats every ${interval} mins.`});
               
-            if(hiddenPorts.toLowerCase() == "false"){
+            if(hiddenPorts == "false"){
               statusEmbed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${javaPort}\n\`\`\``);
             }
               
@@ -377,7 +377,7 @@ module.exports = {
                   value: `\`\`\`fix\n${IP}\n\`\`\``
                 });
 
-              if(hiddenPorts.toLowerCase() == "false"){
+              if(hiddenPorts == "false"){
                 statusEmbed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${bedrockPort}\n\`\`\``);
               }
                 
@@ -415,7 +415,7 @@ module.exports = {
                 .setThumbnail(defaultLogo)
                 .setFooter({text: `Updating Stats every ${interval} mins.`});
 
-              if(hiddenPorts.toLowerCase() == "false"){
+              if(hiddenPorts == "false"){
                 statusEmbed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${bedrockPort}\n\`\`\``);
               }
               
@@ -436,7 +436,7 @@ module.exports = {
                 .setThumbnail(defaultLogo)
                 .setFooter({text: `Updating Stats every ${interval} mins.`});
 
-              if(hiddenPorts.toLowerCase() == "false"){
+              if(hiddenPorts == "false"){
                 statusEmbed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${bedrockPort}\n\`\`\``);
               }
               
@@ -458,7 +458,7 @@ module.exports = {
               .setThumbnail(defaultLogo)
               .setFooter({text: `Updating Stats every ${interval} mins.`});
 
-            if(hiddenPorts.toLowerCase() == "false"){
+            if(hiddenPorts == "false"){
               statusEmbed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${bedrockPort}\n\`\`\``);
             }
               
@@ -590,7 +590,7 @@ module.exports = {
         let IP = serversData[i].IP;
         let javaPort = serversData[i].javaPort;
         let bedrockPort = serversData[i].bedrockPort;
-        let hiddenPorts = serversData[i].hiddenPorts;
+        let hiddenPorts = serversData[i].hiddenPorts || "false";
         let serverStatusChannel = serversData[i].serverStatusChannel;
 
         time = new Date();

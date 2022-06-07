@@ -126,7 +126,7 @@ module.exports = {
                 value: `\`\`\`fix\n${IP}\n\`\`\``
               });
 
-            if(hiddenPorts.toLowerCase() == "false"){
+            if(hiddenPorts == "false"){
               embed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${javaPort}\n\`\`\``);
             }
 
@@ -172,7 +172,7 @@ module.exports = {
               .setColor(embedConfig.errorColor)
               .setThumbnail(defaultLogo);
 
-              if(hiddenPorts.toLowerCase() == "false"){
+              if(hiddenPorts == "false"){
                 embed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${javaPort}\n\`\`\``);
               }
           }else{
@@ -229,7 +229,7 @@ module.exports = {
                 value: `\`\`\`fix\n${IP}\n\`\`\``
               });
 
-            if(hiddenPorts.toLowerCase() == "false"){
+            if(hiddenPorts == "false"){
               embed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${bedrockPort}\n\`\`\``);
             }
               
@@ -260,7 +260,7 @@ module.exports = {
               .setColor(embedConfig.errorColor)
               .setThumbnail(defaultLogo);
 
-              if(hiddenPorts.toLowerCase() == "false"){
+              if(hiddenPorts == "false"){
                 embed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${bedrockPort}\n\`\`\``);
               }
           }else{

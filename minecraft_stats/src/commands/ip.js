@@ -76,7 +76,7 @@ module.exports = {
       })
       .setColor(embedConfig.defaultColor);
 
-    if(hiddenPorts.toLowerCase() == "false"){
+    if(hiddenPorts == "false"){
       embed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${port}\n\`\`\``);
     }
 

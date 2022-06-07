@@ -6,7 +6,7 @@ module.exports = async (client, IP, port) => {
   let rawData = ["OFFLINE"];
 
   try{
-    rawData = await util.statusBedrock(IP, port, { timeout: 1000 })
+    rawData = await util.statusBedrock(IP, port*1, { timeout: 1000 })
       .then((result) => {
         if(result.version.name){
           if(result.players.max == '0'){
