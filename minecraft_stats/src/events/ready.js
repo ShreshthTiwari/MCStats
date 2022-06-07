@@ -499,6 +499,8 @@ module.exports = {
 
       let index = 0;
 
+      console.log(line);
+
       for(let i=0; i<=guildsCount-1; i++){
         time = new Date();
         
@@ -555,6 +557,8 @@ module.exports = {
       }
 
       console.log(line);
+
+      console.log(line);
       console.log(chalk.magenta(`Total- ${added + ignored}`));
       console.log(chalk.green(`Added- ${added}`));
       console.log(chalk.yellow(`Ignored- ${ignored}`));
@@ -573,6 +577,8 @@ module.exports = {
 
       success = errors = 0;
 
+      console.log(line);
+
       for(let i=0; i<=Object.keys(serversData).length-1; i++){
         embed = new MessageEmbed()
           .setColor(embedConfig.defaultColor);
@@ -588,7 +594,9 @@ module.exports = {
         time = new Date();
 
         await mcStatsUpdater(guild, database, IP, javaPort, bedrockPort, hiddenPorts, serverStatusChannel);
-      } 
+      }
+
+      console.log(line);
 
       console.log(line);
       console.log(chalk.magenta(`Total- ${success + errors}`));

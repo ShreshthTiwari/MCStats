@@ -74,6 +74,8 @@ module.exports = async (client, ID, IP, port) => {
           }
 
           fs.unlink(`minecraft_stats/src/commands/${ID}.png`, (error) => {});
+
+          await msg.delete().catch(error => {});
         }
       }else{
         rawData[6] = defaultLogo;
