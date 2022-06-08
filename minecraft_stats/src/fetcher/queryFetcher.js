@@ -2,7 +2,7 @@ let util = require("minecraft-server-util");
 
 const messageCleaner = require("../editor/messageCleaner.js");
 
-module.exports = async (client, IP, port) => {
+module.exports = async (IP, port) => {
   let rawData = ["OFFLINE"];
 
   try{

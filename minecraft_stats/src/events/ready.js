@@ -185,7 +185,7 @@ module.exports = {
                 let rawData2 = ["OFFLINE"];
 
                 try{
-                  rawData2 = await queryFetcher(client, IP, queryPort);
+                  rawData2 = await queryFetcher(IP, queryPort);
     
                   if(rawData2[0] === "ONLINE"){
                     playersList = rawData2[1];
@@ -197,7 +197,7 @@ module.exports = {
                 let rawData3 = ["OFFLINE"];
 
                 try{
-                  rawData3 = await bedrockFetcher(client, IP, bedrockPort);
+                  rawData3 = await bedrockFetcher(IP, bedrockPort);
       
                   if(rawData3[0] === "ONLINE"){
                     javaPort = `JAVA- ${javaPort}\nBEDROCK/PE- ${bedrockPort}`;
@@ -343,7 +343,7 @@ module.exports = {
         bedrockPort *= 1;
 
         try{
-          let rawData = await bedrockFetcher(client, IP, bedrockPort);
+          let rawData = await bedrockFetcher(IP, bedrockPort);
               
           if(rawData){
             if(rawData[0] === "ONLINE"){
