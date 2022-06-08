@@ -17,3 +17,5 @@ No usage of data outside of the aformentioned cases will happen and the data is 
 <hr />
 
 No other information outside of the above mentioned one will be stored.
+
+<hr />
