@@ -1,6 +1,12 @@
+<hr />
+
 **MCStats Bot** may use stored data, as defined below for different features including but not limited to: commands handling and auto minecraft server status posting.<br />
 
+<hr />
+
 No usage of data outside of the aformentioned cases will happen and the data is not shared with any 3rd-party site or service.<br />
+
+<hr />
 
 # Stored Information-<br />
   The bot may store the following information automatically when being invited to a new Discord Server:
