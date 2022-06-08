@@ -33,3 +33,5 @@ He has faith in the end users being truthfull about their information and not mi
 
 We reserve the right to update these terms at our own discretion, giving you a 1-Week (7 days) period to opt out of these terms if you're not agreeing with the new changes.<br />
 You may opt out by Removing the bot from any Server you have the rights for.<br />
+
+<hr />
