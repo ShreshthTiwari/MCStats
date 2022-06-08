@@ -7,7 +7,5 @@ Stored Information-<br />
   <br />
     1. GUILD_ID with the Server's ID as value.<br />
     2. STATUS_CHANNEL with Status Channel's ID as value.<br />
-    3. IP with Minecraft Server IP as value.<br />
-    4. JAVA_PORT, BEDROCK_PORT, QUERY PORT with Minecraft Server Port as value.<br />
 
 No other information outside of the above mentioned one will be stored.
