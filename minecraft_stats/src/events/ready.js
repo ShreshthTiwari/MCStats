@@ -13,7 +13,7 @@ let guildsMap;
 let guildsCount;
 let database;
 let count = 1;
-let interval = 0.5;
+let interval = 5;
 
 let serversData = {};
 
@@ -37,7 +37,7 @@ module.exports = {
 
     guildsCount = guildsMap.length;
     guilds = guildsMap.length;
-    interval = Math.round(Math.round(guildsCount/35) + 0.5);
+    interval = Math.round(Math.round(guildsCount/50) + 0.4);
 
     try{
       await client.user.setActivity(`For /help in ${guildsCount} ${guildsCount > 1 ? "servers" : "server"}`, {type: "WATCHING"});
@@ -497,7 +497,7 @@ module.exports = {
         .map(guild => guild);
         
       guildsCount = guildsMap.length;
-      interval = Math.round(Math.round(guildsCount/35) + 0.5);
+      interval = Math.round(Math.round(guildsCount/35) + 0.4);
 
       let index = 0;
 
