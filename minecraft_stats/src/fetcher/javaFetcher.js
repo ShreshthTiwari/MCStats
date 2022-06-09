@@ -7,7 +7,6 @@ const messageCleaner = require("../editor/messageCleaner.js");
 let defaultLogo = "https://i.ibb.co/NY6KH17/default-icon.png";
 
 module.exports = async (client, ID, IP, port) => {
-
   let rawData = ["OFFLINE"];
 
   try{
