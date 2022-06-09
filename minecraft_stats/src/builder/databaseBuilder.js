@@ -28,7 +28,7 @@ module.exports = async (client, interaction) => {
   
 
   if(!Table){
-    errorLogger(client, interaction, "Table name is null", "src/builder/databaseBuilder.js : 30");
+    errorLogger(client, interaction, "Table name is null", "src/builder/databaseBuilder.js : 31");
     
     return;
   }
@@ -47,7 +47,7 @@ module.exports = async (client, interaction) => {
     database.on('error', async error =>{
       err = true;
   
-      errorLogger(client, interaction, error, "src/builder/databaseBuilder.js : 49");
+      errorLogger(client, interaction, error, "src/builder/databaseBuilder.js : 50");
     }); 
   }while(err === true);
   

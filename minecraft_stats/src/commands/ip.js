@@ -36,7 +36,7 @@ module.exports = {
         .setColor(embedConfig.errorColor);
       
       await interaction.editReply({embeds: [embed]}).catch(async error => {
-        await errorLogger(client, interaction, error, "src/commands/ip.js : 37");
+        await errorLogger(client, interaction, error, "src/commands/ip.js : 39");
       });
 
       return;
@@ -59,7 +59,7 @@ module.exports = {
         .setColor(embedConfig.errorColor);
        
       await interaction.editReply({embeds: [embed]}).catch(async error => {
-        await errorLogger(client, interaction, error, "src/commands/ip.js : 60");
+        await errorLogger(client, interaction, error, "src/commands/ip.js : 62");
       });
   
       return;
@@ -81,7 +81,7 @@ module.exports = {
     }
 
     await interaction.editReply({embeds: [embed]}).catch(async error => {
-      await errorLogger(client, interaction, error, "src/commands/status.js : 294");
+      await errorLogger(client, interaction, error, "src/commands/ip.js : 84");
     });
   },
 }

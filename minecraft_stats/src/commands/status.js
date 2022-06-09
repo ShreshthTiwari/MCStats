@@ -46,7 +46,7 @@ module.exports = {
         .setColor(embedConfig.errorColor);
       
       await interaction.editReply({embeds: [embed]}).catch(async error => {
-        await errorLogger(client, interaction, error, "src/commands/status.js : 47");
+        await errorLogger(client, interaction, error, "src/commands/status.js : 49");
       });
 
       return;
@@ -57,7 +57,7 @@ module.exports = {
         .setColor(embedConfig.errorColor);
       
       await interaction.editReply({embeds: [embed]}).catch(async error => {
-        await errorLogger(client, interaction, error, "src/commands/status.js : 58");
+        await errorLogger(client, interaction, error, "src/commands/status.js : 60");
       });
 
       return;
@@ -286,14 +286,14 @@ module.exports = {
         .setColor(embedConfig.errorColor);
       
       await interaction.editReply({embeds: [embed]}).catch(async error => {
-        await errorLogger(client, interaction, error, "src/commands/status.js : 287");
+        await errorLogger(client, interaction, error, "src/commands/status.js : 289");
       });
 
       return;
     }
 
     await interaction.editReply({embeds: [embed]}).catch(async error => {
-      await errorLogger(client, interaction, error, "src/commands/status.js : 294");
+      await errorLogger(client, interaction, error, "src/commands/status.js : 296");
     });
   },
 }

@@ -48,7 +48,7 @@ for (const file of eventFiles) {
       client.on(event.name, (...args) => event.execute(client, embed, MessageEmbed, config, embedConfig, databaseBuilder, Permissions, messageEmojisReplacer, errorLogger, logger, ...args));
     }
   }catch (error){
-    errorLogger(client, null, error, "src/index.js : 50");
+    errorLogger(client, null, error, "src/index.js : 51");
   }
 }
 

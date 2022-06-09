@@ -40,7 +40,7 @@ module.exports = {
       .setColor(embedConfig.defaultColor);
     
     await interaction.editReply({embeds: [embed], components: [buttons]}).catch(async error => {
-      await  errorLogger(client, interaction, error, "src/commands/invite.js : 16");
+      await  errorLogger(client, interaction, error, "src/commands/support.js : 43");
     });
   },
 }

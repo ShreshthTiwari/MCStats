@@ -4,7 +4,7 @@ const { MessageButton, MessageActionRow } = require("discord.js");
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('vote')
-  	.setDescription('Support me by upvoting.'),
+	  .setDescription('Support me by upvoting.'),
   
   async execute(client, MessageEmbed, embed, config, embedConfig, database, Permissions, interaction, messageEmojisReplacer, tick, cross, errorLogger, logger){
     embed = new MessageEmbed()
@@ -26,7 +26,7 @@ module.exports = {
       );
     
     await interaction.editReply({embeds: [embed], components: [buttons]}).catch(async error => {
-      await errorLogger(client, interaction, error, "src/commands/vote.js : 20");
+      await errorLogger(client, interaction, error, "src/commands/vote.js : 29");
     });
   },
 }
