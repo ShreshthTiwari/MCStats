@@ -40,6 +40,8 @@ module.exports = async (IP, port) => {
 
     return rawData;
   }catch{
+    rawData = ["OFFLINE"];
+    
     return rawData;
   }
 }

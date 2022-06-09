@@ -82,6 +82,8 @@ module.exports = async (client, ID, IP, port) => {
 
     return rawData;
   }catch{
+    rawData = ["OFFLINE"];
+    
     return rawData;
   }
 }
