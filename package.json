@@ -27,6 +27,7 @@
     "discord.js": "^13.6.0",
     "fs": "^0.0.1-security",
     "keyv": "^4.1.1",
+    "mcdata": "^1.0.9",
     "minecraft-server-util": "^5.2.9",
     "nodemon": "^2.0.15",
     "path": "^0.12.7",

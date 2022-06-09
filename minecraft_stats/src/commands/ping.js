@@ -1,4 +1,3 @@
-
 let { SlashCommandBuilder } = require('@discordjs/builders');
 
 let defaultLogo = "https://i.ibb.co/NY6KH17/default-icon.png";
@@ -38,10 +37,11 @@ module.exports = {
 
     embed = new MessageEmbed()
       .setColor(embedConfig.defaultColor);
-
+    
+    const subCommand = await interaction.options.getSubcommand();
     let IP = await interaction.options.getString("ip");
 
-    if(interaction.options.getSubcommand() === "java"){
+    if(subCommand === "java"){
       let javaPort = await interaction.options.getInteger("java_port") || 25565;
       let bedrockPort = await interaction.options.getInteger("bedrock_port") || null;
 
@@ -183,7 +183,7 @@ module.exports = {
           .setColor(embedConfig.errorColor)
           .setThumbnail(defaultLogo);
       }
-    }else if(interaction.options.getSubcommand() === "bedrock"){
+    }else if(getSubcommand === "bedrock"){
       let bedrockPort = await interaction.options.getInteger("bedrock_port") || 19132;
 
       if(bedrockPort < 1){
