@@ -12,7 +12,7 @@ module.exports = async (data) => {
         d = d.toLowerCase();
       }
 
-      if((rawData[i] === '§' || rawData[i] === '&') && ('0' <= d <= '9' || 'a' <= d <= 'z')){
+      if((rawData[i] === '§' || rawData[i] === '&') && ('0' <= d <= '9' || 'a' <= d <= 'z' || 'A' <= d < 'Z')){
         i++;
       }else{
         finalData[index] = rawData[i];
