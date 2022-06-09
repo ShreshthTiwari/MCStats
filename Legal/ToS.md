@@ -35,3 +35,10 @@ We reserve the right to update these terms at our own discretion, giving you a 1
 You may opt out by Removing the bot from any Server you have the rights for.<br />
 
 <hr />
+
+# Source<br />
+You are not allowed to clone the source code of the bot and create a public discord bot and claim it as your own bot.
+You can only use the codes to make a private bot for your discord server(s).
+Failure in following the above particulars may end up in I the original owner of the bot suing you to discord support and getting your bot application banned.
+
+<hr />
