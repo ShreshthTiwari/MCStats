@@ -78,6 +78,8 @@ module.exports = async (client, ID, IP, port) => {
       }else{
         rawData[6] = defaultLogo;
       }
+    }else{
+      rawData = ["OFFLINE"];
     }
 
     return rawData;

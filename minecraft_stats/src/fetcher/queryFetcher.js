@@ -30,6 +30,8 @@ module.exports = async (IP, port) => {
 
       playersList = await messageCleaner(playersList.join(", "));
       rawData[1] = playersList;
+    }else{
+      rawData = ["OFFLINE"];
     }
 
     return rawData;

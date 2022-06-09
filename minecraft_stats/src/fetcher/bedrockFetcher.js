@@ -36,6 +36,8 @@ module.exports = async (IP, port) => {
       if(rawData[7] == '-1'){
         rawData[7] = "NULL";
       }
+    }else{
+      rawData = ["OFFLINE"];
     }
 
     return rawData;
