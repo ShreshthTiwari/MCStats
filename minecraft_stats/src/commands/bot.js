@@ -9,7 +9,7 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName('bot')
 	  .setDescription('Bot commands help.')
-    .addSubcommand(subcommand =>
+    /*.addSubcommand(subcommand =>
       subcommand.setName('avatar').setDescription("Change avatar of the bot.")
         .addStringOption(option => option.setName("avatar_url").setDescription("avatar URL.").setRequired(true))
     )
@@ -26,12 +26,12 @@ module.exports = {
     .addSubcommand(subcommand =>
       subcommand.setName('rename').setDescription("Rename the bot.")
         .addStringOption(option => option.setName("name").setDescription("Name.").setRequired(true))
-    )
+    )*/
     .addSubcommand(subcommand => subcommand.setName('ping').setDescription("Check the bot's ping."))
-    .addSubcommand(subcommand =>
+    /*.addSubcommand(subcommand =>
       subcommand.setName('updates').setDescription("Send bot updates.")
         .addStringOption(option => option.setName("message").setDescription("Provide the message.").setRequired(true))
-    ),
+    )*/,
   
   async execute(client, MessageEmbed, embed, config, embedConfig, database, Permissions, interaction, messageEmojisReplacer, tick, cross, errorLogger, logger) {
     embed = new MessageEmbed()
@@ -45,7 +45,7 @@ module.exports = {
 
     let pno = 1;
 
-    if(subCommand !== "ping" && subCommand !== "help" && interaction.user.id !== authorID){
+    /*if(subCommand !== "ping" && subCommand !== "help" && interaction.user.id !== authorID){
       await embed.setDescription(`${cross} Developer only command.`)
         .setColor(embedConfig.errorColor);
 
@@ -54,7 +54,7 @@ module.exports = {
       });
 
       return;
-    }
+    }*/
    
     const buttons = new MessageActionRow()
       .addComponents(
@@ -196,7 +196,7 @@ module.exports = {
       await interaction.editReply({embeds: [embed], components: [buttons]}).catch(async error => {
         await errorLogger(client, interaction, error, "src/commands/bot.js : 197");
       });
-    }else if(subCommand === 'rename'){
+    }/*else if(subCommand === 'rename'){
       let newname = input;
       let name = client.user.username;
         
@@ -220,7 +220,7 @@ module.exports = {
       await interaction.editReply({embeds: [embed]}).catch(async error => {
         await errorLogger(client, interaction, error, "src/commands/bot.js : 221");
       });
-    }else if(subCommand === "ping"){
+    }*/else if(subCommand === "ping"){
       const yourPing = new Date().getTime() - interaction.createdTimestamp;
       const botPing = Math.round(client.ws.ping);
       const time = new Date().getTime();
@@ -248,7 +248,7 @@ module.exports = {
       pno = 1;
 
       await sendGuildsList(1);
-    }else if(subCommand === 'updates'){
+    }/*else if(subCommand === 'updates'){
       while(input.includes("<nl>")){
         input = await input.replace("<nl>", "\n");
       }
@@ -357,6 +357,6 @@ module.exports = {
         .setColor(embedConfig.successColor);
 
       await interaction.editReply({embeds: [embed]});
-    }
+    }*/
   },
 }

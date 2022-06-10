@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { MessageButton, MessageActionRow } = require("discord.js");
+const { MessageButton, MessageActionRow, Permissions } = require("discord.js");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -40,28 +40,45 @@ module.exports = {
       }
     });
 
-    await embed.setDescription(`
-    **~~------------------------------------------~~**
-    > **MCStats-B0T Help**
-    **~~------------------------------------------~~**
-    **ADMIN Commands**-
-    > __/set help__ **-** *Set bot variables*.
-    **~~------------------------------------------~~**
-    **MEMBER Commands**-
-    > __/help__ **-** *See this help message*.
-    > __/ip__ **-** *Check the IP of the minecrtaft server*.
-    > __/ping__ **-** *Check status of a minecraft server*.
-    > __/status__ **-** *Check status of the minecraft server*.
-    > __/player__ **-** *Check account details of a minecraft player*.
-    **~~------------------------------------------~~**
-    **MISC Commands**-
-    > __/bug__ \`<message>\` **-** *Send bug report to bot developer*. 
-    > __/invite__ **-** *Get the bot's invite link*.
-    > __/support__ **-** *Get the invite link of support server*.
-    **~~------------------------------------------~~**`);
+    await embed.setTitle(`${client.user.username} Help`)
+    
+    if(interaction.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR) || interaction.member.id === config.authorID){
+      await embed.addField("Admin", `
+      > \`/set\` **-** *Set bot variables*.
+      > **↳** \`/set help\`
+      > **↳** \`/set ip\`
+      > **↳** \`/set java_port\`
+      > **↳** \`/set query_port\`
+      > **↳** \`/set bedrock_port\`
+      > **↳** \`/set server_status_channel\`
+      > **↳** \`/set bot_updates_channel\`
+      > **↳** \`/set hidden_ports\``)
+    }
+
+    embed.addFields({
+      name: "Member",
+      value: `
+      > \`/help\` **-** *See this help message*.
+      > \`/ip\` **-** *Check the IP of the minecrtaft server*.
+      > \`/ping\` **-** *Check status of a minecraft server*.
+      > **↳** \`/ping java\`
+      > **↳** \`/ping bedrock\`
+      > \`/status\` **-** *Check status of the minecraft server*.
+      > \`/player\` **-** *Check account details of a minecraft player*.
+      > **↳** \`/player info_by_username\`
+      > **↳** \`/player info_by_uuid\``
+    },
+    {
+      name: "Miscellaneous",
+      value: `
+      > \`/bot ping\` **-** *Check bot's ping*.
+      > \`/bug\` **-** *Send bug report to bot developer*. 
+      > \`/invite\` **-** *Get the bot's invite link*.
+      > \`/support\` **-** *Get the invite link of the support server*.`
+    });
 
     await interaction.editReply({embeds: [embed], components: [buttons]}).catch(async error => {
-      await errorLogger(client, interaction, error, "src/commands/help.js : 59");
+      await errorLogger(client, interaction, error, "src/commands/help.js : 81");
     });
   },
 }
