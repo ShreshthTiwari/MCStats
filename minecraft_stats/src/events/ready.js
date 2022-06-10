@@ -246,6 +246,8 @@ module.exports = {
               }else if(sampleList && sampleList.length > 0){
                 await statusEmbed.addField(`${users} PLAYERS`, `\`\`\`fix\n${sampleList}\n\`\`\``);
               }
+
+              statusEmbed.addField("POSTED", `<t:${Math.round(new Date().getTime()/1000)}:R>`);
               
               await postStatus();
             }else if(rawData[0] === "OFFLINE"){
@@ -271,7 +273,9 @@ module.exports = {
               if(hiddenPorts == "false"){
                 statusEmbed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${javaPort}\n\`\`\``);
               }
-              
+
+              statusEmbed.addField("POSTED", `<t:${new Date().getTime()}:R>`);
+            
               await postStatus();
             }else{
               statusEmbed = new MessageEmbed()
@@ -292,6 +296,8 @@ module.exports = {
               if(hiddenPorts == "false"){
                 statusEmbed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${javaPort}\n\`\`\``);
               }
+
+              statusEmbed.addField("POSTED", `<t:${new Date().getTime()}:R>`);
               
               await postStatus();
             }
@@ -314,6 +320,8 @@ module.exports = {
             if(hiddenPorts == "false"){
               statusEmbed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${javaPort}\n\`\`\``);
             }
+
+            statusEmbed.addField("POSTED", `<t:${new Date().getTime()}:R>`);
               
             serverStatusChannel = `ERROR`;
             await postStatus();
@@ -393,6 +401,10 @@ module.exports = {
                 {
                   name: `${pen} MOTD`,
                   value: `\`\`\`fix\n${motd}\n\`\`\``
+                },
+                {
+                  name: `${signal} POSTED`,
+                  value: `<t:${new Date().getTime()}:R>`
                 })
                 .setColor(embedConfig.successColor)
                 .setTimestamp()
@@ -418,6 +430,8 @@ module.exports = {
               if(hiddenPorts == "false"){
                 statusEmbed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${bedrockPort}\n\`\`\``);
               }
+
+              statusEmbed.addField("POSTED", `<t:${new Date().getTime()}:R>`);
               
               await postStatus();
             }else{
@@ -439,6 +453,8 @@ module.exports = {
               if(hiddenPorts == "false"){
                 statusEmbed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${bedrockPort}\n\`\`\``);
               }
+
+              statusEmbed.addField("POSTED", `<t:${new Date().getTime()}:R>`);
               
               await postStatus();
             }
@@ -461,6 +477,8 @@ module.exports = {
             if(hiddenPorts == "false"){
               statusEmbed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${bedrockPort}\n\`\`\``);
             }
+
+            statusEmbed.addField("POSTED", `<t:${new Date().getTime()}:R>`);
               
             await postStatus();
           }
