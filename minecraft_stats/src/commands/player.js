@@ -95,24 +95,21 @@ module.exports = {
 
     let namesList = "";
 
-    let i = 0;
-
     playerNameHistory.forEach(async name => {
-      let dateText = '';
-
       if(name.changedToAt){
-        dateText = ` | [${new Date(name.changedToAt).toLocaleString()}]`;
+        let date = `<t:${Math.round(new Date(name.changedToAt).getTime()/1000)}:R>`;
+        namesList += `\`${name.name}\`  **|**  ${date}\n`;
+      }else{
+        namesList += `\`${name.name}\`\n`;
       }
-
-      namesList += ++i + '. ' + name.name + dateText + "\n";
     });
 
     if(namesList && namesList.length > 0){
-      embed.addField("NAME HISTORY", `\`\`\`fix\n${namesList}\n\`\`\``);
+      embed.addField("NAME HISTORY", namesList);
     }
 
     await setPlayerImage(username);
     
-    await interaction.editReply({embeds: [embed]}).catch(erorr => {});
+    await interaction.editReply({embeds: [embed]}).catch(error => {});
   },
 }
