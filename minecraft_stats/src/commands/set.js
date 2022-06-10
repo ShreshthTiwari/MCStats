@@ -87,7 +87,7 @@ module.exports = {
       if(subCommand === "server_status_channel"){
         await database.set("statsEnabled", "true");
         
-        extraText = `**NOTE**\nStats are updated every \`${interval} minutes\`.`
+        extraText = `**NOTE**\nStats are updated every \`${interval+1} minutes\`.`
       }
   
       embed.setDescription(`${tick} Set ${channel} as minecraft \`${subCommand.replace("_", " ").replace("_", " ")}\`\n${extraText}`)

@@ -20,6 +20,8 @@ let serversData = {};
 let errors = 0;
 let success = 0;
 
+let totalTime = 50;
+
 module.exports = {
   name: 'ready',
   once: true,
@@ -237,7 +239,6 @@ module.exports = {
                   value: `\`\`\`fix\n${roundTripLatency}ms\n\`\`\``
                 })
                 .setColor(embedConfig.successColor)
-                .setTimestamp()
                 .setThumbnail(favicon);
     
               if(playersList && playersList.length > 0){
@@ -246,7 +247,7 @@ module.exports = {
                 await statusEmbed.addField(`${users} PLAYERS`, `\`\`\`fix\n${sampleList}\n\`\`\``);
               }
 
-              statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + 40}:R>`);
+              statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + totalTime }:R>`);
               
               await postStatus();
             }else if(rawData[0] === "OFFLINE"){
@@ -265,14 +266,13 @@ module.exports = {
                   value: `\`\`\`fix\n${IP}\n\`\`\``
                 })
                 .setColor(embedConfig.errorColor)
-                .setTimestamp()
                 .setThumbnail(defaultLogo);
               
               if(hiddenPorts == "false"){
                 statusEmbed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${javaPort}\n\`\`\``);
               }
 
-              statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + 40}:R>`);
+              statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + totalTime }:R>`);
             
               await postStatus();
             }else{
@@ -287,14 +287,13 @@ module.exports = {
                   value: `\`\`\`fix\n${IP}\n\`\`\``
                 })
                 .setColor(embedConfig.errorColor)
-                .setTimestamp()
                 .setThumbnail(defaultLogo);
               
               if(hiddenPorts == "false"){
                 statusEmbed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${javaPort}\n\`\`\``);
               }
 
-              statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + 40}:R>`);
+              statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + totalTime }:R>`);
               
               await postStatus();
             }
@@ -310,18 +309,17 @@ module.exports = {
                 value: `\`\`\`fix\n${IP}\n\`\`\``
               })
               .setColor(embedConfig.errorColor)
-              .setTimestamp()
               .setThumbnail(defaultLogo);
               
             if(hiddenPorts == "false"){
               statusEmbed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${javaPort}\n\`\`\``);
             }
 
-            statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + 40}:R>`);
+            statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + totalTime }:R>`);
               
             serverStatusChannel = `ERROR`;
 
-            statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + 40}:R>`);
+            statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + totalTime }:R>`);
 
             await postStatus();
           }
@@ -329,12 +327,11 @@ module.exports = {
           statusEmbed = new MessageEmbed()
             .setDescription(`${cross} **Error Fetching server stats**-\n\`\`\`${error}\`\`\``)
             .setColor(embedConfig.errorColor)
-            .setTimestamp()
             .setThumbnail(defaultLogo);
               
           serverStatusChannel = `ERROR`;
 
-          statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + 40}:R>`);
+          statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + totalTime }:R>`);
 
           await postStatus();
         }
@@ -404,10 +401,9 @@ module.exports = {
                   value: `\`\`\`fix\n${motd}\n\`\`\``
                 })
                 .setColor(embedConfig.successColor)
-                .setTimestamp()
                 .setThumbnail(defaultLogo);
 
-              statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + 40}:R>`);
+              statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + totalTime }:R>`);
               
               await postStatus();
             }else if(rawData[0] === "OFFLINE"){
@@ -421,14 +417,13 @@ module.exports = {
                   value: `\`\`\`fix\n${IP}\n\`\`\``
                 })
                 .setColor(embedConfig.errorColor)
-                .setTimestamp()
                 .setThumbnail(defaultLogo);
 
               if(hiddenPorts == "false"){
                 statusEmbed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${bedrockPort}\n\`\`\``);
               }
 
-              statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + 40}:R>`);
+              statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + totalTime }:R>`);
               
               await postStatus();
             }else{
@@ -443,14 +438,13 @@ module.exports = {
                   value: `\`\`\`fix\n${IP}\n\`\`\``
                 })
                 .setColor(embedConfig.errorColor)
-                .setTimestamp()
                 .setThumbnail(defaultLogo);
 
               if(hiddenPorts == "false"){
                 statusEmbed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${bedrockPort}\n\`\`\``);
               }
 
-              statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + 40}:R>`);
+              statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + totalTime }:R>`);
               
               await postStatus();
             }
@@ -466,14 +460,13 @@ module.exports = {
                 value: `\`\`\`fix\n${IP}\n\`\`\``
               })
               .setColor(embedConfig.errorColor)
-              .setTimestamp()
               .setThumbnail(defaultLogo);
 
             if(hiddenPorts == "false"){
               statusEmbed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${bedrockPort}\n\`\`\``);
             }
 
-            statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + 40}:R>`);
+            statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + totalTime }:R>`);
               
             await postStatus();
           }
@@ -481,10 +474,9 @@ module.exports = {
           statusEmbed = new MessageEmbed()
             .setDescription(`${cross} **Error Fetching server stats**-\n\`\`\`${error}\`\`\``)
             .setColor(embedConfig.errorColor)
-            .setTimestamp()
             .setThumbnail(defaultLogo);
 
-          statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + 40}:R>`);
+          statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + totalTime }:R>`);
               
           await postStatus();
         }
@@ -492,10 +484,9 @@ module.exports = {
         statusEmbed = new MessageEmbed()
           .setDescription(`${cross} **Error Fetching server stats**.`)
           .setColor(embedConfig.errorColor)
-          .setTimestamp()
           .setThumbnail(defaultLogo);
 
-        statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + 40}:R>`);
+        statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + totalTime }:R>`);
             
         await postStatus();
       }
@@ -631,7 +622,8 @@ module.exports = {
     await updater();
 
     console.log(line);
-    console.log(chalk.magenta(`Total Time- `) + chalk.blue(`${(Date.now() - t)/1000} seconds`) + chalk.magenta('.'));
+    totalTime = Math.round((Date.now() - t)/1000);
+    console.log(chalk.magenta(`Total Time- `) + chalk.blue(`${totalTime} seconds`) + chalk.magenta('.'));
     console.log(chalk.magenta(`Updating stats every `) + chalk.blue(`${interval} minutes`) + chalk.magenta('.'));
     console.log(line);
 
@@ -643,7 +635,8 @@ module.exports = {
       await updater();
 
       console.log(line);
-      console.log(chalk.magenta(`Total Time- `) + chalk.blue(`${(Date.now() - t)/1000} seconds`) + chalk.magenta('.'));
+      totalTime = Math.round((Date.now() - t)/1000);
+      console.log(chalk.magenta(`Total Time- `) + chalk.blue(`${totalTime} seconds`) + chalk.magenta('.'));
       console.log(chalk.magenta(`Updating stats every `) + chalk.blue(`${interval} minutes`) + chalk.magenta('.'));
       console.log(line);
 
