@@ -238,8 +238,7 @@ module.exports = {
                 })
                 .setColor(embedConfig.successColor)
                 .setTimestamp()
-                .setThumbnail(favicon)
-                .setFooter({text: `Updating Stats every ${interval} mins.`});
+                .setThumbnail(favicon);
     
               if(playersList && playersList.length > 0){
                 await statusEmbed.addField(`${users} PLAYERS`, `\`\`\`fix\n${playersList}\n\`\`\``);
@@ -247,7 +246,7 @@ module.exports = {
                 await statusEmbed.addField(`${users} PLAYERS`, `\`\`\`fix\n${sampleList}\n\`\`\``);
               }
 
-              statusEmbed.addField("POSTED", `<t:${Math.round(new Date().getTime()/1000)}:R>`);
+              statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + 40}:R>`);
               
               await postStatus();
             }else if(rawData[0] === "OFFLINE"){
@@ -267,14 +266,13 @@ module.exports = {
                 })
                 .setColor(embedConfig.errorColor)
                 .setTimestamp()
-                .setThumbnail(defaultLogo)
-                .setFooter({text: `Updating Stats every ${interval} mins.`});
+                .setThumbnail(defaultLogo);
               
               if(hiddenPorts == "false"){
                 statusEmbed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${javaPort}\n\`\`\``);
               }
 
-              statusEmbed.addField("POSTED", `<t:${new Date().getTime()}:R>`);
+              statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + 40}:R>`);
             
               await postStatus();
             }else{
@@ -290,14 +288,13 @@ module.exports = {
                 })
                 .setColor(embedConfig.errorColor)
                 .setTimestamp()
-                .setThumbnail(defaultLogo)
-                .setFooter({text: `Updating Stats every ${interval} mins.`});
+                .setThumbnail(defaultLogo);
               
               if(hiddenPorts == "false"){
                 statusEmbed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${javaPort}\n\`\`\``);
               }
 
-              statusEmbed.addField("POSTED", `<t:${new Date().getTime()}:R>`);
+              statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + 40}:R>`);
               
               await postStatus();
             }
@@ -314,16 +311,18 @@ module.exports = {
               })
               .setColor(embedConfig.errorColor)
               .setTimestamp()
-              .setThumbnail(defaultLogo)
-              .setFooter({text: `Updating Stats every ${interval} mins.`});
+              .setThumbnail(defaultLogo);
               
             if(hiddenPorts == "false"){
               statusEmbed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${javaPort}\n\`\`\``);
             }
 
-            statusEmbed.addField("POSTED", `<t:${new Date().getTime()}:R>`);
+            statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + 40}:R>`);
               
             serverStatusChannel = `ERROR`;
+
+            statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + 40}:R>`);
+
             await postStatus();
           }
         }catch (error){
@@ -331,10 +330,12 @@ module.exports = {
             .setDescription(`${cross} **Error Fetching server stats**-\n\`\`\`${error}\`\`\``)
             .setColor(embedConfig.errorColor)
             .setTimestamp()
-            .setThumbnail(defaultLogo)
-            .setFooter({text: `Updating Stats every ${interval} mins.`});
+            .setThumbnail(defaultLogo);
               
           serverStatusChannel = `ERROR`;
+
+          statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + 40}:R>`);
+
           await postStatus();
         }
       }else if(bedrockPort){
@@ -401,15 +402,12 @@ module.exports = {
                 {
                   name: `${pen} MOTD`,
                   value: `\`\`\`fix\n${motd}\n\`\`\``
-                },
-                {
-                  name: `${signal} POSTED`,
-                  value: `<t:${new Date().getTime()}:R>`
                 })
                 .setColor(embedConfig.successColor)
                 .setTimestamp()
-                .setThumbnail(defaultLogo)
-                .setFooter({text: `Updating Stats every ${interval} mins.`});
+                .setThumbnail(defaultLogo);
+
+              statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + 40}:R>`);
               
               await postStatus();
             }else if(rawData[0] === "OFFLINE"){
@@ -424,14 +422,13 @@ module.exports = {
                 })
                 .setColor(embedConfig.errorColor)
                 .setTimestamp()
-                .setThumbnail(defaultLogo)
-                .setFooter({text: `Updating Stats every ${interval} mins.`});
+                .setThumbnail(defaultLogo);
 
               if(hiddenPorts == "false"){
                 statusEmbed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${bedrockPort}\n\`\`\``);
               }
 
-              statusEmbed.addField("POSTED", `<t:${new Date().getTime()}:R>`);
+              statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + 40}:R>`);
               
               await postStatus();
             }else{
@@ -447,14 +444,13 @@ module.exports = {
                 })
                 .setColor(embedConfig.errorColor)
                 .setTimestamp()
-                .setThumbnail(defaultLogo)
-                .setFooter({text: `Updating Stats every ${interval} mins.`});
+                .setThumbnail(defaultLogo);
 
               if(hiddenPorts == "false"){
                 statusEmbed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${bedrockPort}\n\`\`\``);
               }
 
-              statusEmbed.addField("POSTED", `<t:${new Date().getTime()}:R>`);
+              statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + 40}:R>`);
               
               await postStatus();
             }
@@ -471,14 +467,13 @@ module.exports = {
               })
               .setColor(embedConfig.errorColor)
               .setTimestamp()
-              .setThumbnail(defaultLogo)
-              .setFooter({text: `Updating Stats every ${interval} mins.`});
+              .setThumbnail(defaultLogo);
 
             if(hiddenPorts == "false"){
               statusEmbed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${bedrockPort}\n\`\`\``);
             }
 
-            statusEmbed.addField("POSTED", `<t:${new Date().getTime()}:R>`);
+            statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + 40}:R>`);
               
             await postStatus();
           }
@@ -487,8 +482,9 @@ module.exports = {
             .setDescription(`${cross} **Error Fetching server stats**-\n\`\`\`${error}\`\`\``)
             .setColor(embedConfig.errorColor)
             .setTimestamp()
-            .setThumbnail(defaultLogo)
-            .setFooter({text: `Updating Stats every ${interval} mins.`});
+            .setThumbnail(defaultLogo);
+
+          statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + 40}:R>`);
               
           await postStatus();
         }
@@ -497,8 +493,9 @@ module.exports = {
           .setDescription(`${cross} **Error Fetching server stats**.`)
           .setColor(embedConfig.errorColor)
           .setTimestamp()
-          .setThumbnail(defaultLogo)
-          .setFooter({text: `Updating Stats every ${interval} mins.`});
+          .setThumbnail(defaultLogo);
+
+        statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + 40}:R>`);
             
         await postStatus();
       }

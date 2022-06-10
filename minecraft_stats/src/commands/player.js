@@ -91,7 +91,7 @@ module.exports = {
       .setColor(embedConfig.successColor);
 
 
-      const playerNameHistory = await playerNameHistoryFetcher(uuid);
+    const playerNameHistory = await playerNameHistoryFetcher(uuid);
 
     let namesList = "";
 
@@ -101,7 +101,7 @@ module.exports = {
       let dateText = '';
 
       if(name.changedToAt){
-        dateText = `   [${new Date(name.changedToAt).toLocaleString()}]`;
+        dateText = ` | [${new Date(name.changedToAt).toLocaleString()}]`;
       }
 
       namesList += ++i + '. ' + name.name + dateText + "\n";
