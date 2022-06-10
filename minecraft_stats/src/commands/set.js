@@ -61,7 +61,7 @@ module.exports = {
        (`**Set Help**
         **~~------------------------------------------~~**
         > **__Variables__**
-        > /set help **-** *See this help message*.
+        > /set help **-** *View this help message*.
         > /set ip \`<IP>\` **-** *Set IP of your minecraft server*.
         > /set query_port \`<port>\` **-** *Set QUERY PORT of your minecraft server*.
         > /set java_port \`<port>\` **-** *Set JAVA PORT of your minecraft server*.
