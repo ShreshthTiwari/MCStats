@@ -10,10 +10,10 @@ module.exports = async (client, ID, IP, port) => {
   let rawData = ["OFFLINE"];
 
   try{
-    rawData = await util.status(IP, port*1, { timeout: 1000 })
+    rawData = await util.status(IP, port*1, { timeout: 64 })
       .then((result) => {
         if(result.version.name){
-          if(result.players.max == '0'){
+          if(result.players.max <= '0'){
             return ["OFFLINE"];
           }
               
@@ -84,7 +84,7 @@ module.exports = async (client, ID, IP, port) => {
     return rawData;
   }catch{
     rawData = ["OFFLINE"];
-    
+
     return rawData;
   }
 }

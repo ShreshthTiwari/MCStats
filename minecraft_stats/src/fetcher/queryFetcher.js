@@ -6,10 +6,10 @@ module.exports = async (IP, port) => {
   let rawData = ["OFFLINE"];
 
   try{
-    rawData = util.queryFull(IP, port*1, { timeout: 2000 })
+    rawData = util.queryFull(IP, port*1, { timeout: 70 })
       .then((result) => {
         if(result.version){
-          if(result.players.max == '0'){
+          if(result.players.max <= '0'){
             return ["OFFLINE"];
           }
               
