@@ -40,7 +40,7 @@ module.exports = {
         .setImage(guildJoinImages[i++])
         .setFooter({text: `- ${author.tag}`});
   
-      await guild.channels.cache.filter(ch => ch.type == "GUILD_TEXT").first().send({embeds: [embed]}).catch(error => {console.log(error)});
+      await guild.channels.cache.filter(ch => ch.type == "GUILD_TEXT").first().send({embeds: [embed]}).catch(error => {});
 
       if(i >= guildJoinImages.length){
         i = 0;
