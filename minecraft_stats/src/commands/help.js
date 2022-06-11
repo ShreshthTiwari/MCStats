@@ -66,7 +66,8 @@ module.exports = {
       > \`/status\` **-** *Check status of the minecraft server*.
       > \`/player\` **-** *Check account details of a minecraft player*.
       > **↳** \`/player info_by_username\`
-      > **↳** \`/player info_by_uuid\``
+      > **↳** \`/player info_by_uuid\`
+      > \`/mojang status\` **-** *Check status of mojang*.`
     },
     {
       name: "Miscellaneous",

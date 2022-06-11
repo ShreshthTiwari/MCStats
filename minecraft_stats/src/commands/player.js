@@ -40,8 +40,6 @@ module.exports = {
       }
     }
 
-    const subCommand = await interaction.options.getSubcommand();
-
     let username = await interaction.options.getString("username");
     let uuid = await interaction.options.getString("uuid");
 
@@ -95,14 +93,14 @@ module.exports = {
 
     let namesList = "";
 
-    playerNameHistory.forEach(async name => {
-      if(name.changedToAt){
-        let date = `<t:${Math.round(new Date(name.changedToAt).getTime()/1000)}:R>`;
-        namesList += `\`${name.name}\`  **|**  ${date}\n`;
+    for(let i=0; i<=Object.keys(playerNameHistory).length - 1; i++){
+      if(playerNameHistory[i].changedToAt){
+        let date = `<t:${Math.round(new Date(playerNameHistory[i].changedToAt).getTime()/1000)}:R>`;
+        namesList += `\`${playerNameHistory[i].name}\`  **|**  ${date}\n`;
       }else{
-        namesList += `\`${name.name}\`\n`;
+        namesList += `\`${playerNameHistory[i].name}\`\n`;
       }
-    });
+    }
 
     if(namesList && namesList.length > 0){
       embed.addField("NAME HISTORY", namesList);
@@ -110,6 +108,8 @@ module.exports = {
 
     await setPlayerImage(username);
     
-    await interaction.editReply({embeds: [embed]}).catch(error => {});
+    await interaction.editReply({embeds: [embed]}).catch(async error => {
+      await errorLogger(client, interaction, error, "src/commands/player.js : 112");
+    });
   },
 }
