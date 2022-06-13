@@ -173,7 +173,7 @@ module.exports = {
       .setThumbnail(client.user.displayAvatarURL({dynamic: true}))
       .setColor(embedConfig.defaultColor);
 
-    if(subCommand === "help"){
+    /*if(subCommand === "help"){
       if(interaction.user.id !== authorID){
         await embed.setTitle("Bot Commands Help")
           .setDescription
@@ -196,7 +196,7 @@ module.exports = {
       await interaction.editReply({embeds: [embed], components: [buttons]}).catch(async error => {
         await errorLogger(client, interaction, error, "src/commands/bot.js : 197");
       });
-    }/*else if(subCommand === 'rename'){
+    }else if(subCommand === 'rename'){
       let newname = input;
       let name = client.user.username;
         
@@ -220,7 +220,7 @@ module.exports = {
       await interaction.editReply({embeds: [embed]}).catch(async error => {
         await errorLogger(client, interaction, error, "src/commands/bot.js : 221");
       });
-    }*/else if(subCommand === "ping"){
+    }else*/ if(subCommand === "ping"){
       const yourPing = new Date().getTime() - interaction.createdTimestamp;
       const botPing = Math.round(client.ws.ping);
       const time = new Date().getTime();
