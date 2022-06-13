@@ -25,7 +25,7 @@ module.exports = {
     let statusEmbed = new MessageEmbed()
       .setColor(embedConfig.defaultColor);
 
-    guildsCount = await client.guilds.cache.size;
+    const guildsCount = await client.guilds.cache.size;
 
     try{
       await client.user.setActivity(`For /help in ${guildsCount} ${guildsCount > 1 ? "servers" : "server"}`, {type: "WATCHING"});
