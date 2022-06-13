@@ -410,7 +410,7 @@ module.exports = {
     }
 
     async function updater(){
-      console.log(line + '\n' + chalk.magenta("Updating Server Stats now- ") + chalk.blue(new Date().toLocaleTimeString()) + chalk.magenta('.'));
+      console.log(line + '\n' + chalk.magenta("Updating Server Stats now- ") + chalk.blue(new Date().toLocaleTimeString('en-US',{timeZone:'Asia/Kolkata'})) + chalk.magenta('.'));
 
       database.serialize(async () => {
         database.each(`SELECT guild_id, server_status_channel, ip, java_port, bedrock_port, hidden_ports FROM GLOBAL WHERE (server_status_channel IS NOT NULL AND ip IS NOT NULL AND (java_port IS NOT NULL OR bedrock_port IS NOT NULL))`, async (error, row) => {
