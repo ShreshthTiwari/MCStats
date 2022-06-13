@@ -62,24 +62,24 @@ module.exports = {
   
             if(statusMessage){
               try{
-                statusMessage.edit({embeds: [statusEmbed]}).catch(error => {});
+                await statusMessage.edit({embeds: [statusEmbed]}).catch(error => {});
               }catch{
                 try{
-                  serverStatusChannel.send({embeds: [statusEmbed]}).catch(error => {});
+                  await serverStatusChannel.send({embeds: [statusEmbed]}).catch(error => {});
                 }catch{
                   return console.log(`${++count}. ` + chalk.red(`Error Updating Server Status Of- ${guild.name} | ${guild.id}. `) + chalk.magenta(`(${(new Date() - startTime) / 1000} seconds)`));
                 }
               }
             }else{
               try{
-                serverStatusChannel.send({embeds: [statusEmbed]}).catch(error => {});
+                await serverStatusChannel.send({embeds: [statusEmbed]}).catch(error => {});
               }catch{
                 return console.log(`${++count}. ` + chalk.red(`Error Updating Server Status Of- ${guild.name} | ${guild.id}. `) + chalk.magenta(`(${(new Date() - startTime) / 1000} seconds)`));
               }
             }
           }else{
             try{
-              serverStatusChannel.send({embeds: [statusEmbed]}).catch(error => {});
+              await serverStatusChannel.send({embeds: [statusEmbed]}).catch(error => {});
             }catch{
               return console.log(`${++count}. ` + chalk.red(`Error Updating Server Status Of- ${guild.name} | ${guild.id}. `) + chalk.magenta(`(${(new Date() - startTime) / 1000} seconds)`));
             }
@@ -358,7 +358,7 @@ module.exports = {
 
     setInterval(async () => {
       count = 0;
-      
+
       await updater();
     }, interval * 60 * 1000);
   },
