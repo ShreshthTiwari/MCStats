@@ -70,7 +70,7 @@ module.exports = async (client, ID, IP, port) => {
 
           fs.unlink(`minecraft_stats/src/commands/${ID}.png`, (error) => {});
         }else{
-          rawData[6] - defaultLogo;
+          rawData[6] = defaultLogo;
         }
       }else{
         rawData[6] = defaultLogo;
