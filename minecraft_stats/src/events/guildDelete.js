@@ -23,10 +23,6 @@ module.exports = {
       
     const logColor = embedConfig.errorColor;
 
-    const database = await databaseBuilder(client, guild);
-    
-    await database.clear();
-
     await logger(client, logTitle, logText, logColor, errorLogger);
   },
 };
