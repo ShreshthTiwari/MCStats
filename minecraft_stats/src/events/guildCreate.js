@@ -13,7 +13,7 @@ module.exports = {
     try{
       await client.user.setActivity(`For /help in ${guildsCount} ${guildsCount > 1 ? "servers" : "server"}`, {type: "WATCHING"});
     }catch(error){
-      await errorLogger(client, null, error, "src/commands/guildCreate.js : 11");
+      await errorLogger(client, null, error, "src/commands/guildCreate.js : 16");
     }
     
     embed = new MessageEmbed()

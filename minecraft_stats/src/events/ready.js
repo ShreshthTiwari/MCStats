@@ -30,7 +30,7 @@ module.exports = {
     try{
       await client.user.setActivity(`For /help in ${guildsCount} ${guildsCount > 1 ? "servers" : "server"}`, {type: "WATCHING"});
     }catch(error){
-      await errorLogger(client, null, error, "src/commands/ready.js : 45");
+      await errorLogger(client, null, error, "src/commands/ready.js : 33");
     }
 
     const emojis = await emojisFetcher(client);

@@ -80,7 +80,7 @@ module.exports = {
     });
 
     await interaction.editReply({embeds: [embed], components: [buttons]}).catch(async error => {
-      await errorLogger(client, interaction, error, "src/commands/help.js : 81");
+      await errorLogger(client, interaction, error, "src/commands/help.js : 83");
     });
   },
 }

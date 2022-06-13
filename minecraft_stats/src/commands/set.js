@@ -74,7 +74,7 @@ module.exports = {
         .setColor(embedConfig.defaultColor);
 
       await interaction.editReply({embeds: [embed]}).catch(async error => {
-        await errorLogger(client, interaction, error, "src/commands/set.js : 80");
+        await errorLogger(client, interaction, error, "src/commands/set.js : 77");
       });
     }else if(subCommand === "server_status_channel" || subCommand === "bot_updates_channel"){
       await runQuery(`UPDATE GLOBAL SET ${subCommand} = "${channel.id}"
@@ -90,7 +90,7 @@ module.exports = {
         .setColor(embedConfig.successColor);
   
       await interaction.editReply({embeds: [embed]}).catch(async error => {
-        await errorLogger(client, interaction, error, "src/commands/set.js : 97");
+        await errorLogger(client, interaction, error, "src/commands/set.js : 93");
       });
     }else{
       input = input + "";
@@ -107,7 +107,7 @@ module.exports = {
           .setColor(embedConfig.successColor);
   
         await interaction.editReply({embeds: [embed]}).catch(async error => {
-          await errorLogger(client, interaction, error, "src/commands/set.js : 113");
+          await errorLogger(client, interaction, error, "src/commands/set.js : 110");
         });
       }else{
         if(input.includes(" ")){
@@ -122,7 +122,7 @@ module.exports = {
           .setColor(embedConfig.successColor);
   
         await interaction.editReply({embeds: [embed]}).catch(async error => {
-          await errorLogger(client, interaction, error, "src/commands/set.js : 127");
+          await errorLogger(client, interaction, error, "src/commands/set.js : 125");
         });
       }
     }

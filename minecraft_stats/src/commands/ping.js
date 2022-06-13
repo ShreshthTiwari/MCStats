@@ -282,14 +282,14 @@ module.exports = {
         .setColor(embedConfig.errorColor);
       
       await interaction.editReply({embeds: [embed]}).catch(async error => {
-        await errorLogger(client, interaction, error, "src/commands/ping.js : 289");
+        await errorLogger(client, interaction, error, "src/commands/ping.js : 285");
       });
 
       return;
     }
       
     await interaction.editReply({embeds: [embed]}).catch(async error => {
-      await errorLogger(client, interaction, error, "src/commands/ping.js : 296");
+      await errorLogger(client, interaction, error, "src/commands/ping.js : 292");
     });
   },
 }

@@ -43,7 +43,7 @@ module.exports = {
                     .setColor(embedConfig.errorColor);
             
                   await interaction.editReply({embeds: [embed]}).catch(async error => {
-                    await errorLogger(client, interaction, error, "src/commands/interactionCreate.js : 41");
+                    await errorLogger(client, interaction, error, "src/commands/interactionCreate.js : 46");
                   });
             
                   return;
@@ -59,7 +59,7 @@ module.exports = {
         .setColor(embedConfig.errorColor);
 
         await interaction.editReply({embeds: [embed]}).catch(async error => {
-          await errorLogger(client, interaction, error, "src/commands/interactionCreate.js : 57");
+          await errorLogger(client, interaction, error, "src/commands/interactionCreate.js : 62");
         });
 
         return;
@@ -77,7 +77,7 @@ module.exports = {
         .setColor(embedConfig.errorColor);
   
       await interaction.editReply({ embeds: [embed]}).catch(async error => {
-        await errorLogger(client, interaction, error, "src/commands/interactionCreate.js : 75");
+        await errorLogger(client, interaction, error, "src/commands/interactionCreate.js : 80");
       });
     }
   },

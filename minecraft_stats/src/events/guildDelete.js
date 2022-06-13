@@ -10,7 +10,7 @@ module.exports = {
     try{
       await client.user.setActivity(`For /help in ${guildsCount} ${guildsCount > 1 ? "servers" : "server"}`, {type: "WATCHING"});
     }catch(error){
-      await errorLogger(client, null, error, "src/commands/guildDelete.js : 9");
+      await errorLogger(client, null, error, "src/commands/guildDelete.js : 13");
     }
     
     embed = new MessageEmbed()
