@@ -1,5 +1,6 @@
 module.exports = async (data) => {
   data = data + '';
+  data = data.toLowerCase();
   let rawData = data.split("");
   let finalData = [];
   let index = 0;
@@ -8,11 +9,7 @@ module.exports = async (data) => {
     for(let i=0; i<=rawData.length-1; i++){
       let d = rawData[i+1] + '';
 
-      if('A' <= d <= 'Z'){
-        d = d.toLowerCase();
-      }
-
-      if((rawData[i] === '§' || rawData[i] === '&') && ('0' <= d <= '9' || 'a' <= d <= 'z' || 'A' <= d < 'Z')){
+      if((rawData[i] === '§' || rawData[i] === '&') && ('0' <= d <= '9' || 'a' <= d <= 'z')){
         i++;
       }else{
         finalData[index] = rawData[i];
