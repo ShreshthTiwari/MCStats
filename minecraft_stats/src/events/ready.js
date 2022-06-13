@@ -14,6 +14,9 @@ let interval = 10;
 
 const line = "--------------------------------------------------------------";
 
+let count = 0;
+let startTime = new Date();
+
 module.exports = {
   name: 'ready',
   once: true,
@@ -61,27 +64,31 @@ module.exports = {
               try{
                 statusMessage.edit({embeds: [statusEmbed]}).catch(error => {});
               }catch{
-                return;
+                try{
+                  serverStatusChannel.send({embeds: [statusEmbed]}).catch(error => {});
+                }catch{
+                  return console.log(`${++count}. ` + chalk.red(`Error Updating Server Status Of- ${guild.name} | ${guild.id}. `) + chalk.magenta(`(${(new Date() - startTime) / 1000} seconds)`));
+                }
               }
             }else{
               try{
                 serverStatusChannel.send({embeds: [statusEmbed]}).catch(error => {});
               }catch{
-                return;
+                return console.log(`${++count}. ` + chalk.red(`Error Updating Server Status Of- ${guild.name} | ${guild.id}. `) + chalk.magenta(`(${(new Date() - startTime) / 1000} seconds)`));
               }
             }
           }else{
             try{
               serverStatusChannel.send({embeds: [statusEmbed]}).catch(error => {});
             }catch{
-              return
+              return console.log(`${++count}. ` + chalk.red(`Error Updating Server Status Of- ${guild.name} | ${guild.id}. `) + chalk.magenta(`(${(new Date() - startTime) / 1000} seconds)`));
             }
           }
         }catch{
-          return;
+          return console.log(`${++count}. ` + chalk.red(`Error Updating Server Status Of- ${guild.name} | ${guild.id}. `) + chalk.magenta(`(${(new Date() - startTime) / 1000} seconds)`));
         }
 
-        //console.log(`${++count}. ` + chalk.green(`Updating Server Status Of- ${guild.name} | ${guild.id}. `) + chalk.magenta(`(${(new Date() - startTime2) / 1000} seconds)`));
+        console.log(`${++count}. ` + chalk.green(`Updating Server Status Of- ${guild.name} | ${guild.id}. `) + chalk.magenta(`(${(new Date() - startTime) / 1000} seconds)`));
       }
 
       statusEmbed = new MessageEmbed()
@@ -89,7 +96,7 @@ module.exports = {
 
       if(javaPort){
         try{
-          let rawData = await javaFetcher(client, guild.id, IP, javaPort);
+          let rawData = await javaFetcher(client, guild.id, IP, javaPort) || ["OFFLINE"];
               
           if(rawData){
             if(rawData[0] === "ONLINE"){
@@ -197,53 +204,7 @@ module.exports = {
               statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) }:R>`);
             
               await postStatus();
-            }else{
-              statusEmbed = new MessageEmbed()
-                .setDescription(`${cross} Error showing server stats.`)
-                .addFields({
-                  name: `${grass} SERVER EDITION`,
-                  value: `\`\`\`fix\nJAVA\n\`\`\``
-                },
-                {
-                  name: `${wifi} SERVER IP`,
-                  value: `\`\`\`fix\n${IP}\n\`\`\``
-                })
-                .setColor(embedConfig.errorColor)
-                .setThumbnail(defaultLogo)
-                .setTimestamp();
-              
-              if(!hiddenPorts){
-                statusEmbed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${javaPort}\n\`\`\``);
-              }
-
-              statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) }:R>`);
-              
-              await postStatus();
             }
-          }else{
-            statusEmbed = new MessageEmbed()
-              .setDescription(`${cross} Unable to fetch the data. Please check if the **\`IP\`** and **\`PORT\`** are correct.\nAlso check if the server is online.`)
-              .addFields({
-                name: `${grass} SERVER EDITION`,
-                value: `\`\`\`fix\nJAVA\n\`\`\``
-              },
-              {
-                name: `${wifi} SERVER IP`,
-                value: `\`\`\`fix\n${IP}\n\`\`\``
-              })
-              .setColor(embedConfig.errorColor)
-              .setThumbnail(defaultLogo)
-              .setTimestamp();
-              
-            if(!hiddenPorts){
-              statusEmbed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${javaPort}\n\`\`\``);
-            }
-              
-            serverStatusChannel = `ERROR`;
-
-            statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) }:R>`);
-
-            await postStatus();
           }
         }catch (error){
           statusEmbed = new MessageEmbed()
@@ -260,7 +221,7 @@ module.exports = {
         }
       }else if(bedrockPort){
         try{
-          let rawData = await bedrockFetcher(IP, bedrockPort);
+          let rawData = await bedrockFetcher(IP, bedrockPort) || ["OFFLINE"];
               
           if(rawData){
             if(rawData[0] === "ONLINE"){
@@ -339,51 +300,7 @@ module.exports = {
               statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) }:R>`);
               
               await postStatus();
-            }else{
-              statusEmbed = new MessageEmbed()
-                .setDescription(`${cross} Error showing server stats.`)
-                .addFields({
-                  name: `${grass} SERVER EDITION`,
-                  value: `\`\`\`fix\nBEDROCK\n\`\`\``
-                },
-                {
-                  name: `${wifi} SERVER IP`,
-                  value: `\`\`\`fix\n${IP}\n\`\`\``
-                })
-                .setColor(embedConfig.errorColor)
-                .setThumbnail(defaultLogo)
-                .setTimestamp();
-
-              if(!hiddenPorts){
-                statusEmbed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${bedrockPort}\n\`\`\``);
-              }
-
-              statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) }:R>`);
-              
-              await postStatus();
             }
-          }else{
-            statusEmbed = new MessageEmbed()
-              .setDescription(`${cross} Unable to fetch the data. Please check if the **\`IP\`** and **\`PORT\`** are correct.\nAlso check if the server is online.`)
-              .addFields({
-                name: `${grass} SERVER EDITION`,
-                value: `\`\`\`fix\nBEDROCK\n\`\`\``
-              },
-              {
-                name: `${wifi} SERVER IP`,
-                value: `\`\`\`fix\n${IP}\n\`\`\``
-              })
-              .setColor(embedConfig.errorColor)
-              .setThumbnail(defaultLogo)
-              .setTimestamp();
-
-            if(!hiddenPorts){
-              statusEmbed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${bedrockPort}\n\`\`\``);
-            }
-
-            statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) }:R>`);
-              
-            await postStatus();
           }
         }catch (error){
           statusEmbed = new MessageEmbed()
@@ -440,6 +357,8 @@ module.exports = {
     await updater();
 
     setInterval(async () => {
+      count = 0;
+      
       await updater();
     }, interval * 60 * 1000);
   },
