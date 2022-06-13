@@ -6,9 +6,5 @@ module.exports = async (query) => {
     db.serialize(() => {
       db.run(query);
     });
-  }else{
-    return;
   }
-
-  return;
 }
