@@ -34,8 +34,6 @@ module.exports = {
 
     try{
       const guildJoinImages = config.guildJoinImages;
-
-      const author  = await client.users.cache.get(config.authorID);
   
       embed = new MessageEmbed()
         .setColor(embedConfig.defaultColor)
@@ -43,7 +41,7 @@ module.exports = {
         .setDescription(`> Thank you for inviting me to the server.
         > Use the command \`/help\` to see all the available commands.`)
         .setImage(guildJoinImages[i++])
-        .setFooter({text: `- ${author.tag}`});
+        .setFooter({text: `- ShreshthTiwari#6014`});
   
       await guild.channels.cache.filter(ch => ch.type == "GUILD_TEXT").first().send({embeds: [embed]}).catch(error => {});
 
