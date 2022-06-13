@@ -47,7 +47,6 @@ module.exports = {
 
       if(javaPort < 1){
         javaPort = null;
-        await database.set("java_port", javaPort);
 
         embed.setDescription(`${cross} Java Port Cannot be less than 0.`)
           .setDescription(embedConfig.errorColor);
@@ -57,7 +56,6 @@ module.exports = {
       
       if(bedrockPort < 1){
         bedrockPort = null;
-        await database.set("bedrock_port", bedrockPort);
       }
 
       try{
@@ -81,7 +79,6 @@ module.exports = {
 
             if(queryPort < 1){
               queryPort = null;
-              await database.set("query_port", queryPort);
             }
   
             if(queryPort){
@@ -188,7 +185,6 @@ module.exports = {
 
       if(bedrockPort < 1){
         bedrockPort = null;
-        await database.set("bedrock_port", bedrockPort);
 
         embed.setDescription(`${cross} Bedrock Port Cannot be less than 0.`)
           .setDescription(embedConfig.errorColor);

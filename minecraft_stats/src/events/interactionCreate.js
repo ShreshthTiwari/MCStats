@@ -1,8 +1,13 @@
+const runQuery = require("../sqlite/runQuery.js");
+
 const commandUsed = new Set();
 
 module.exports = {
   name: 'interactionCreate',
   async execute(client, embed, MessageEmbed, config, embedConfig, databaseBuilder, Permissions, messageEmojisReplacer, errorLogger, logger, interaction) {
+    await runQuery(`INSERT OR IGNORE INTO GLOBAL (guild_id) 
+        VALUES ("${interaction.guild.id}")`);
+
     embed = new MessageEmbed()
       .setColor(embedConfig.defaultColor);
       
@@ -24,7 +29,7 @@ module.exports = {
     const cross = "❌";
   
     try {
-      const database = await databaseBuilder(client, interaction);
+      const database = await databaseBuilder();
 
       if(!(commandName === "invite" || commandName === "bot" || commandName === "support" || commandName === "status" || commandName === "ping" || commandName === "vote" || commandName === "ip")){
         try{

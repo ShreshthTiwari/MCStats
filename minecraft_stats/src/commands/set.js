@@ -2,7 +2,7 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 
 const { ChannelType } = require("discord-api-types/v9");
 
-const databaseBuilder = require("../builder/databaseBuilder.js");
+const runQuery = require("../sqlite/runQuery.js");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -52,10 +52,7 @@ module.exports = {
 
     let channel = await interaction.options.getChannel("channel") || interaction.channel;
     let input = await interaction.options.getString("ip") || interaction.options.getInteger("port") || (interaction.options.getBoolean("option") + "");
-    
-    let gDB = await databaseBuilder(client, "global");
-    let interval = (await gDB.get("interval") * 1) || 2;
-    
+        
     if(subCommand === "help"){
       embed.setDescription
        (`**Set Help**
@@ -80,14 +77,13 @@ module.exports = {
         await errorLogger(client, interaction, error, "src/commands/set.js : 80");
       });
     }else if(subCommand === "server_status_channel" || subCommand === "bot_updates_channel"){
-      await database.set(subCommand, channel.id);
+      await runQuery(`UPDATE GLOBAL SET ${subCommand} = "${channel.id}"
+          WHERE guild_id LIKE "${interaction.guild.id}"`);
 
       let extraText = "";
 
       if(subCommand === "server_status_channel"){
-        await database.set("statsEnabled", "true");
-        
-        extraText = `**NOTE**\nStats are updated every \`${interval+1} minutes\`.`
+        extraText = `**NOTE**\nStats are updated every \`10 minutes\`.`
       }
   
       embed.setDescription(`${tick} Set ${channel} as minecraft \`${subCommand.replace("_", " ").replace("_", " ")}\`\n${extraText}`)
@@ -104,7 +100,8 @@ module.exports = {
       }
 
       if((!input) || input.toLowerCase() === "null" || input.toLowerCase() === "-1"){
-        await database.set(subCommand, null);
+        await runQuery(`UPDATE GLOBAL SET ${subCommand} = null
+            WHERE guild_id LIKE "${interaction.guild.id}"`);
 
         embed.setDescription(`${tick} Cleared the value of \`${subCommand.replace("_", " ")}\`.`)
           .setColor(embedConfig.successColor);
@@ -118,7 +115,8 @@ module.exports = {
           input = input[0];
         }
   
-        await database.set(subCommand, input);
+        await runQuery(`UPDATE GLOBAL SET ${subCommand} = "${input}"
+            WHERE guild_id LIKE "${interaction.guild.id}"`);
         
         embed.setDescription(`${tick} Set \`${subCommand}\` as \`${input}\`.`)
           .setColor(embedConfig.successColor);

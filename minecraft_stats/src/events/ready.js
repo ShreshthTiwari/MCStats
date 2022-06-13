@@ -8,38 +8,24 @@ const bedrockFetcher = require("../fetcher/bedrockFetcher.js");
 
 const emojisFetcher = require("../fetcher/emojisFetcher.js");
 
-let time;
-let guildsMap;
-let guildsCount;
-let database;
-let count = 1;
+const runQuery = require("../sqlite/runQuery.js");
+
 let interval = 10;
 
-let serversData = {};
-
-let errors = 0;
-let success = 0;
-
-let totalTime = 50;
+const line = "--------------------------------------------------------------";
 
 module.exports = {
   name: 'ready',
   once: true,
   async execute(client, embed, MessageEmbed, config, embedConfig, databaseBuilder, Permissions, messageEmojisReplacer, errorLogger, logger) {
+    const database = await databaseBuilder();
+
+    await runQuery(`CREATE TABLE IF NOT EXISTS GLOBAL (guild_id TEXT PRIMARY KEY, ip TEXT, java_port TEXT, query_port TEXT, bedrock_port TEXT, bot_updates_channel TEXT, server_status_channel TEXT, hidden_ports TEXT)`);
+
     let statusEmbed = new MessageEmbed()
       .setColor(embedConfig.defaultColor);
 
-    const line = "-----------------------------------------------------------------------------------------------------------------------";
-
-    time = new Date();
-
-    guildsMap = await client.guilds.cache
-      .sort((guild1, guild2) => guild2.memberCount - guild1.memberCount)
-      .map(guild => guild);
-
-    guildsCount = guildsMap.length;
-    guilds = guildsMap.length;
-    //interval = Math.round(Math.round(guildsCount/50) + 0.4);
+    guildsCount = await client.guilds.cache.size;
 
     try{
       await client.user.setActivity(`For /help in ${guildsCount} ${guildsCount > 1 ? "servers" : "server"}`, {type: "WATCHING"});
@@ -63,39 +49,8 @@ module.exports = {
       
     console.log(`${line}\n` + chalk.green(`${client.user.tag} is online\n`) + chalk.magenta('Made By- ShreshthTiwari\n') + chalk.blue("Discord- ShreshthTiwari#6014\n") + chalk.yellow("Support Server- https://dsc.gg/b0t-support\n") + chalk.red("GitHub- https://github.com/ShreshthTiwari/MCStats\n") + line);
 
-    async function mcStatsUpdater(guild, database, IP, javaPort, bedrockPort, hiddenPorts, serverStatusChannel){
-      embed = new MessageEmbed()
-        .setColor(embedConfig.defaultColor);
-
-      async function postStatus (){
-        async function showError(){
-          let botUpdatesChannelID = await database.get("bot_updates_channel");
-
-          if(botUpdatesChannelID){
-            let botUpdatesChannel = await database.get(botUpdatesChannelID);
-
-            if(botUpdatesChannel){
-              embed = new MessageEmbed()
-                .setDescription(`**UNABLE TO POST SERVER STATUS IN ${serverStatusChannel}.\n
-                Please provide me the following permissions in ${serverStatusChannel}-
-                1. \`SEND_MESSAGES\`
-                2. \`READ_MESSAGE_HISTORY\`
-                3. \`MANAGE_MESSAGES\`\n
-                ---------------------------\n
-                If you have already set the permissions and the bot is still not posting the server status.
-                Join the support server and report the issue-
-                [JOIN SUPPORT SERVER](${config.supportLink})`)
-                .setColor(embedConfig.errorColor);
-    
-              await botUpdatesChannel.send({embeds: [embed]}).then(async msg => {
-                setTimeout(async () => {
-                  await msg.delete().catch(error => {});
-                }, 2*60*1000);
-              });
-            }
-          }
-        }
-
+    async function updateStatus(guild, serverStatusChannel, IP, javaPort, queryPort, bedrockPort, hiddenPorts){
+      async function postStatus(){
         try{
           let messages = await serverStatusChannel.messages.fetch({limit: 3});
   
@@ -106,16 +61,12 @@ module.exports = {
               try{
                 statusMessage.edit({embeds: [statusEmbed]}).catch(error => {});
               }catch{
-                await showError();
-
                 return;
               }
             }else{
               try{
                 serverStatusChannel.send({embeds: [statusEmbed]}).catch(error => {});
               }catch{
-                await showError();
-
                 return;
               }
             }
@@ -123,41 +74,20 @@ module.exports = {
             try{
               serverStatusChannel.send({embeds: [statusEmbed]}).catch(error => {});
             }catch{
-              await showError();
-
-              return;
+              return
             }
           }
         }catch{
-          await showError();
-
-          console.log(`${count++}. ` + chalk.red(`Error Updating Server Status Of- ${guild.name} | ${guild.id} `) + chalk.magenta(`(${((new Date()) - time)/1000} seconds)`));
-
-          errors++;
-
           return;
         }
-        
-        console.log(`${count}. ` + chalk.green(`Updating Server Status Of- ${guild.name} | ${guild.id} `) + chalk.magenta(`(${((new Date()) - time)/1000} seconds)`));     
 
-        success++;   
-
-        count++;
+        //console.log(`${++count}. ` + chalk.green(`Updating Server Status Of- ${guild.name} | ${guild.id}. `) + chalk.magenta(`(${(new Date() - startTime2) / 1000} seconds)`));
       }
 
+      statusEmbed = new MessageEmbed()
+        .setColor(embedConfig.defaultColor);
+
       if(javaPort){
-        if(javaPort < '1'){
-          javaPort = null;
-
-          await database.set("java_port", javaPort);
-
-          console.log(`${count++}. ` + chalk.yellow(`Ignoring ${guild.name} | ${guild.id} | Invalid Java Port `) + chalk.magenta(`(${(new Date() - time)/1000} seconds)`));
-
-          return;
-        }
-
-        javaPort *= 1;
-
         try{
           let rawData = await javaFetcher(client, guild.id, IP, javaPort);
               
@@ -167,23 +97,13 @@ module.exports = {
               let version = rawData[2];
               let online = rawData[3];
               let max = rawData[4];
-    
               let sampleList = rawData[5];
-              
               let favicon = rawData[6];
               let roundTripLatency = rawData[7];
     
               let playersList;
-    
-              let queryPort = await database.get("query_port");
 
-              if(queryPort < '1'){
-                queryPort = null;
-                await database.set("query_port", queryPort);
-              }
-    
               if(queryPort){
-                queryPort *= 1;
                 let rawData2 = ["OFFLINE"];
 
                 try{
@@ -217,7 +137,7 @@ module.exports = {
                   value: `\`\`\`fix\n${IP}\n\`\`\``
                 });
               
-              if(hiddenPorts == "false"){
+              if(!hiddenPorts){
                 statusEmbed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${javaPort}\n\`\`\``);
               }
               
@@ -239,7 +159,8 @@ module.exports = {
                   value: `\`\`\`fix\n${roundTripLatency}ms\n\`\`\``
                 })
                 .setColor(embedConfig.successColor)
-                .setThumbnail(favicon);
+                .setThumbnail(favicon)
+                .setTimestamp();
     
               if(playersList && playersList.length > 0){
                 await statusEmbed.addField(`${users} PLAYERS`, `\`\`\`fix\n${playersList}\n\`\`\``);
@@ -247,7 +168,7 @@ module.exports = {
                 await statusEmbed.addField(`${users} PLAYERS`, `\`\`\`fix\n${sampleList}\n\`\`\``);
               }
 
-              statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + totalTime }:R>`);
+              statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) }:R>`);
               
               await postStatus();
             }else if(rawData[0] === "OFFLINE"){
@@ -266,13 +187,14 @@ module.exports = {
                   value: `\`\`\`fix\n${IP}\n\`\`\``
                 })
                 .setColor(embedConfig.errorColor)
-                .setThumbnail(defaultLogo);
+                .setThumbnail(defaultLogo)
+                .setTimestamp();
               
-              if(hiddenPorts == "false"){
+              if(!hiddenPorts){
                 statusEmbed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${javaPort}\n\`\`\``);
               }
 
-              statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + totalTime }:R>`);
+              statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) }:R>`);
             
               await postStatus();
             }else{
@@ -287,13 +209,14 @@ module.exports = {
                   value: `\`\`\`fix\n${IP}\n\`\`\``
                 })
                 .setColor(embedConfig.errorColor)
-                .setThumbnail(defaultLogo);
+                .setThumbnail(defaultLogo)
+                .setTimestamp();
               
-              if(hiddenPorts == "false"){
+              if(!hiddenPorts){
                 statusEmbed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${javaPort}\n\`\`\``);
               }
 
-              statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + totalTime }:R>`);
+              statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) }:R>`);
               
               await postStatus();
             }
@@ -309,17 +232,16 @@ module.exports = {
                 value: `\`\`\`fix\n${IP}\n\`\`\``
               })
               .setColor(embedConfig.errorColor)
-              .setThumbnail(defaultLogo);
+              .setThumbnail(defaultLogo)
+              .setTimestamp();
               
-            if(hiddenPorts == "false"){
+            if(!hiddenPorts){
               statusEmbed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${javaPort}\n\`\`\``);
             }
-
-            statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + totalTime }:R>`);
               
             serverStatusChannel = `ERROR`;
 
-            statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + totalTime }:R>`);
+            statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) }:R>`);
 
             await postStatus();
           }
@@ -327,27 +249,16 @@ module.exports = {
           statusEmbed = new MessageEmbed()
             .setDescription(`${cross} **Error Fetching server stats**-\n\`\`\`${error}\`\`\``)
             .setColor(embedConfig.errorColor)
-            .setThumbnail(defaultLogo);
+            .setThumbnail(defaultLogo)
+            .setTimestamp();
               
           serverStatusChannel = `ERROR`;
 
-          statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + totalTime }:R>`);
+          statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) }:R>`);
 
           await postStatus();
         }
       }else if(bedrockPort){
-        if(bedrockPort < '1'){
-          bedrockPort = null;
-
-          await database.set("bedrock_port", bedrockPort);
-
-          console.log(`${count++}. ` + chalk.yellow(`Ignoring ${guild.name} | ${guild.id} | Invalid Bedrock Port `) + chalk.magenta(`(${(new Date() - time)/1000} seconds)`));
-
-          return;
-        }
-  
-        bedrockPort *= 1;
-
         try{
           let rawData = await bedrockFetcher(IP, bedrockPort);
               
@@ -383,7 +294,7 @@ module.exports = {
                   value: `\`\`\`fix\n${IP}\n\`\`\``
                 });
 
-              if(hiddenPorts == "false"){
+              if(!hiddenPorts){
                 statusEmbed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${bedrockPort}\n\`\`\``);
               }
                 
@@ -401,9 +312,10 @@ module.exports = {
                   value: `\`\`\`fix\n${motd}\n\`\`\``
                 })
                 .setColor(embedConfig.successColor)
-                .setThumbnail(defaultLogo);
+                .setThumbnail(defaultLogo)
+                .setTimestamp();
 
-              statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + totalTime }:R>`);
+              statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) }:R>`);
               
               await postStatus();
             }else if(rawData[0] === "OFFLINE"){
@@ -417,13 +329,14 @@ module.exports = {
                   value: `\`\`\`fix\n${IP}\n\`\`\``
                 })
                 .setColor(embedConfig.errorColor)
-                .setThumbnail(defaultLogo);
+                .setThumbnail(defaultLogo)
+                .setTimestamp();
 
-              if(hiddenPorts == "false"){
+              if(!hiddenPorts){
                 statusEmbed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${bedrockPort}\n\`\`\``);
               }
 
-              statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + totalTime }:R>`);
+              statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) }:R>`);
               
               await postStatus();
             }else{
@@ -438,13 +351,14 @@ module.exports = {
                   value: `\`\`\`fix\n${IP}\n\`\`\``
                 })
                 .setColor(embedConfig.errorColor)
-                .setThumbnail(defaultLogo);
+                .setThumbnail(defaultLogo)
+                .setTimestamp();
 
-              if(hiddenPorts == "false"){
+              if(!hiddenPorts){
                 statusEmbed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${bedrockPort}\n\`\`\``);
               }
 
-              statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + totalTime }:R>`);
+              statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) }:R>`);
               
               await postStatus();
             }
@@ -460,13 +374,14 @@ module.exports = {
                 value: `\`\`\`fix\n${IP}\n\`\`\``
               })
               .setColor(embedConfig.errorColor)
-              .setThumbnail(defaultLogo);
+              .setThumbnail(defaultLogo)
+              .setTimestamp();
 
-            if(hiddenPorts == "false"){
+            if(!hiddenPorts){
               statusEmbed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${bedrockPort}\n\`\`\``);
             }
 
-            statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + totalTime }:R>`);
+            statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) }:R>`);
               
             await postStatus();
           }
@@ -474,9 +389,10 @@ module.exports = {
           statusEmbed = new MessageEmbed()
             .setDescription(`${cross} **Error Fetching server stats**-\n\`\`\`${error}\`\`\``)
             .setColor(embedConfig.errorColor)
-            .setThumbnail(defaultLogo);
+            .setThumbnail(defaultLogo)
+            .setTimestamp();
 
-          statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + totalTime }:R>`);
+          statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) }:R>`);
               
           await postStatus();
         }
@@ -484,163 +400,52 @@ module.exports = {
         statusEmbed = new MessageEmbed()
           .setDescription(`${cross} **Error Fetching server stats**.`)
           .setColor(embedConfig.errorColor)
-          .setThumbnail(defaultLogo);
+          .setThumbnail(defaultLogo)
+          .setTimestamp();
 
-        statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + totalTime }:R>`);
+        statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) }:R>`);
             
         await postStatus();
       }
     }
 
-    async function updateGuildsList(){
-      serversData = {};
-
-      let added = 0;
-      let ignored = 0;
-
-      guildsMap = await client.guilds.cache
-        .sort((guild1, guild2) => guild1.position - guild2.position)
-        .map(guild => guild);
-        
-      guildsCount = guildsMap.length;
-      //interval = Math.round(Math.round(guildsCount/35) + 0.4);
-
-      let index = 0;
-
-      console.log(line);
-
-      for(let i=0; i<=guildsCount-1; i++){
-        time = new Date();
-        
-        let guild = guildsMap[i];
-
-        if(guild){
-          database = await databaseBuilder(client, guild);
-
-          if(database){
-            let serverStatusChannelID = await database.get("server_status_channel");
-            
-            if(serverStatusChannelID){
-              let serverStatusChannel = await guild.channels.cache.get(serverStatusChannelID);
-
-              if(serverStatusChannel){
-                let IP = await database.get("ip");
-                let javaPort = await database.get("java_port");
-                let bedrockPort = await database.get("bedrock_port");
-                let hiddenPorts = await database.get("hidden_ports") || "false";
-
-                if(IP && (javaPort || bedrockPort)){
-                  serversData[index] = {
-                    guild: guild,
-                    database: database,
-                    IP: IP,
-                    javaPort: javaPort,
-                    bedrockPort: bedrockPort,
-                    hiddenPorts: hiddenPorts,
-                    serverStatusChannel: serverStatusChannel
-                  }
-
-                  index++;
-
-                  console.log(`${count++}. ` + chalk.green(`Added ${guild.name} | ${guild.id} | Channel, IP and port found`) + chalk.magenta(`(${((new Date()) - time)/1000} seconds)`));
-
-                  added++;
-                }else{
-                  console.log(`${count++}. ` + chalk.yellow(`Ignoring ${guild.name} | ${guild.id} | No IP or PORT `) + chalk.magenta(`(${((new Date()) - time)/1000} seconds)`));
-
-                  ignored++;
-                }
-              }else{
-                console.log(`${count++}. ` + chalk.yellow(`Ignoring ${guild.name} | ${guild.id} | Channel not found `) + chalk.magenta(`(${((new Date()) - time)/1000} seconds)`));
-
-                ignored++;
-              }
-            }else{
-              console.log(`${count++}. ` + chalk.yellow(`Ignoring ${guild.name} | ${guild.id} | Channel not set `) + chalk.magenta(`(${(new Date() - time)/1000} seconds)`));
-
-              ignored++;
-            }
-          }
-        }
-      }
-
-      console.log(line);
-
-      console.log(line);
-      console.log(chalk.magenta(`Total- ${added + ignored}`));
-      console.log(chalk.green(`Added- ${added}`));
-      console.log(chalk.yellow(`Ignored- ${ignored}`));
-      console.log(line);
-    }
-
     async function updater(){
-      count = 1;
+      console.log(line + '\n' + chalk.magenta("Updating Server Stats now- ") + chalk.yellow(new Date().toLocaleTimeString()));
 
-      await updateGuildsList();
+      database.serialize(async () => {
+        database.each(`SELECT guild_id, server_status_channel, ip, java_port, bedrock_port, hidden_ports FROM GLOBAL WHERE (server_status_channel IS NOT NULL AND ip IS NOT NULL AND (java_port IS NOT NULL OR bedrock_port IS NOT NULL))`, async (error, row) => {
+          let guild = await client.guilds.cache.get(row.guild_id);
 
-      count = 1;
+          if(guild){
+            let serverStatusChannel = await guild.channels.cache.get(row.server_status_channel);
 
-      embed = new MessageEmbed()
-        .setColor(embedConfig.defaultColor);
+            if(serverStatusChannel){
+              let IP = row.ip;
+              let javaPort = (row.java_port * 1) <= 0 ? null : (row.java_port * 1);
+              let queryPort = (row.query_port * 1) <= 0 ? null : (row.query_port * 1);
+              let bedrockPort = (row.bedrock_port * 1) <= 0 ? null : (row.bedrock_port * 1);
+              let hiddenPorts = (row.hidden_ports === "true") ? true : false;
+                
+              await updateStatus(guild, serverStatusChannel, IP, javaPort, queryPort, bedrockPort, hiddenPorts);
+            }
+          }else{
+            await runQuery(`DELETE FROM GLOBAL WHERE guild_id LIKE "${row.guild_id}"`);
+          }
+        });
 
-      success = errors = 0;
-
-      console.log(line);
-
-      for(let i=0; i<=Object.keys(serversData).length-1; i++){
-        embed = new MessageEmbed()
-          .setColor(embedConfig.defaultColor);
-        
-        let guild = serversData[i].guild;
-        database = serversData[i].database;
-        let IP = serversData[i].IP;
-        let javaPort = serversData[i].javaPort;
-        let bedrockPort = serversData[i].bedrockPort;
-        let hiddenPorts = serversData[i].hiddenPorts || "false";
-        let serverStatusChannel = serversData[i].serverStatusChannel;
-
-        time = new Date();
-
-        await mcStatsUpdater(guild, database, IP, javaPort, bedrockPort, hiddenPorts, serverStatusChannel);
-      }
-
-      console.log(line);
-
-      console.log(line);
-      console.log(chalk.magenta(`Total- ${success + errors}`));
-      console.log(chalk.green(`Success- ${success}`));
-      console.log(chalk.red(`Error- ${errors}`));
-      console.log(line);
+        console.log(chalk.magenta(`Updating stats every `) + chalk.blue(`${interval} minutes`) + chalk.magenta('.') + '\n' + line);
+      });
     }
 
-    let gDB = await databaseBuilder(client, "global");
-    await gDB.set("interval", interval);
-
-    let t = new Date();
-    count = 1;
+    await client.guilds.cache.forEach(async (Guild) => {
+      await runQuery(`INSERT OR IGNORE INTO GLOBAL (guild_id, hidden_ports) 
+      VALUES ("${Guild.id}", "false")`);
+    });
 
     await updater();
 
-    console.log(line);
-    totalTime = Math.round((Date.now() - t)/1000);
-    console.log(chalk.magenta(`Total Time- `) + chalk.blue(`${totalTime} seconds`) + chalk.magenta('.'));
-    console.log(chalk.magenta(`Updating stats every `) + chalk.blue(`${interval} minutes`) + chalk.magenta('.'));
-    console.log(line);
-
     setInterval(async () => {
-      t = new Date();
-
-      count = 1;
-
       await updater();
-
-      console.log(line);
-      totalTime = Math.round((Date.now() - t)/1000);
-      console.log(chalk.magenta(`Total Time- `) + chalk.blue(`${totalTime} seconds`) + chalk.magenta('.'));
-      console.log(chalk.magenta(`Updating stats every `) + chalk.blue(`${interval} minutes`) + chalk.magenta('.'));
-      console.log(line);
-
-      time = new Date();
     }, interval * 60 * 1000);
   },
 };

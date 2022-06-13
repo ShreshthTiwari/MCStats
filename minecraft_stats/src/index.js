@@ -7,7 +7,7 @@ const chalk = require("chalk");
 
 const config = require('./config/config.json');
 const embedConfig = require('./config/embedConfig.json');
-const databaseBuilder = require("./builder/databaseBuilder.js");
+const databaseBuilder = require("./sqlite/buildDB.js");
 const messageEmojisReplacer = require("./editor/messageEmojisReplacer.js");
 const errorLogger = require("./logger/errorLogger.js");
 const logger = require("./logger/logger.js");
@@ -54,11 +54,11 @@ for (const file of eventFiles) {
 
 const rest = new REST({ version: '9' }).setToken(token);
 
-/*rest.put(Routes.applicationGuildCommands(clientID, "956258527771508766"), { body: commands })
+/*rest.put(Routes.applicationGuildCommands(clientID, "985372488223571988"), { body: commands })
   .then(() => console.log('Successfully registered application commands.'))
   .catch(console.error);*/
 
-  const line = "-----------------------------------------------------------------------------------------------------------------------";
+const line = "-----------------------------------------------------------------------------------------------------------------------";
 
 rest.put(Routes.applicationCommands(clientID), { body: commands })
   .then(async () => console.log(`${line}\n` + chalk.green('All application commands registered.\n') + line))

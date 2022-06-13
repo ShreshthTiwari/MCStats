@@ -41,6 +41,7 @@ module.exports = {
     });
 
     await embed.setTitle(`${client.user.username} Help`)
+    .setThumbnail(client.user.displayAvatarURL({dynamic: true}));
     
     if(interaction.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR) || interaction.member.id === config.authorID){
       await embed.addField("Admin", `

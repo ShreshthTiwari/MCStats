@@ -1,9 +1,9 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { MessageActionRow, MessageButton } = require('discord.js');
 
-const databaseBuilder = require("../builder/databaseBuilder.js");
-
 const pageBuilder = require("../builder/pageBuilder.js");
+
+const runQuery = require("../sqlite/runQuery.js");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -41,11 +41,11 @@ module.exports = {
 
     const subCommand = await interaction.options.getSubcommand();
 
-    let input = await interaction.options.getString("name") || interaction.options.getString("avatar") || interaction.options.getString("message");
+    /*let input = await interaction.options.getString("name") || interaction.options.getString("avatar") || interaction.options.getString("message");
 
     let pno = 1;
 
-    /*if(subCommand !== "ping" && subCommand !== "help" && interaction.user.id !== authorID){
+    if(subCommand !== "ping" && subCommand !== "help" && interaction.user.id !== authorID){
       await embed.setDescription(`${cross} Developer only command.`)
         .setColor(embedConfig.errorColor);
 
@@ -74,7 +74,7 @@ module.exports = {
 
     const collector = await interaction.channel.createMessageComponentCollector();
     
-    let guildsMap;
+    /*let guildsMap;
     
     const fbButtons = new MessageActionRow()
       .addComponents(
@@ -145,7 +145,7 @@ module.exports = {
         await errorLogger(client, interaction, error, "src/commands/bot.js : 145");
       });
     }
-    
+    */
     collector.on('collect', async button => {
       if(button.customId === "vote"){
         const voteEmbed = new MessageEmbed()
@@ -224,7 +224,7 @@ module.exports = {
       const yourPing = new Date().getTime() - interaction.createdTimestamp;
       const botPing = Math.round(client.ws.ping);
       const time = new Date().getTime();
-      const db = await database.get("1");
+      const db = await runQuery();
       const dbPing = new Date().getTime() - time;
 
       await embed.setDescription
@@ -240,7 +240,7 @@ module.exports = {
       await interaction.editReply({embeds: [embed], components: [buttons]}).catch(async error => {
         await errorLogger(client, interaction, error, "src/commands/bot.js : 241");
       });
-    }else if(subCommand === 'guildslist'){
+    }/*else if(subCommand === 'guildslist'){
       guildsMap = await client.guilds.cache
         .sort((a, b) => b.memberCount - a.memberCount)
         .map(g => g);
@@ -248,7 +248,7 @@ module.exports = {
       pno = 1;
 
       await sendGuildsList(1);
-    }/*else if(subCommand === 'updates'){
+    }else if(subCommand === 'updates'){
       while(input.includes("<nl>")){
         input = await input.replace("<nl>", "\n");
       }

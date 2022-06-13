@@ -6,7 +6,7 @@ module.exports = async (IP, port) => {
   let rawData = ["OFFLINE"];
 
   try{
-    rawData = util.queryFull(IP, port*1, { timeout: 500 })
+    rawData = util.queryFull(IP, port*1, { timeout: 3000 })
       .then((result) => {
         if(result.version){
           return["ONLINE", result.players.list];
