@@ -410,7 +410,7 @@ module.exports = {
     }
 
     async function updater(){
-      console.log(line + '\n' + chalk.magenta("Updating Server Stats now- ") + chalk.blue(new Date().toLocaleTimeString()));
+      console.log(line + '\n' + chalk.magenta("Updating Server Stats now- ") + chalk.blue(new Date().toLocaleTimeString()) + chalk.magenta('.'));
 
       database.serialize(async () => {
         database.each(`SELECT guild_id, server_status_channel, ip, java_port, bedrock_port, hidden_ports FROM GLOBAL WHERE (server_status_channel IS NOT NULL AND ip IS NOT NULL AND (java_port IS NOT NULL OR bedrock_port IS NOT NULL))`, async (error, row) => {
@@ -436,11 +436,6 @@ module.exports = {
         console.log(chalk.magenta(`Updating stats every `) + chalk.blue(`${interval} minutes`) + chalk.magenta('.') + '\n' + line);
       });
     }
-
-    await client.guilds.cache.forEach(async (Guild) => {
-      await runQuery(`INSERT OR IGNORE INTO GLOBAL (guild_id, hidden_ports) 
-      VALUES ("${Guild.id}", "false")`);
-    });
 
     await updater();
 
