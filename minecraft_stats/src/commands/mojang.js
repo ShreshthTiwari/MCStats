@@ -19,10 +19,10 @@ module.exports = {
 
     if(mojangStatus.report.skins.status === "up"){
       skinsO = "🟢";
-      skinsStatus = `**↳** UPTIME- \`${mojangStatus.report.skins.uptime}%\``;
+      skinsStatus = `ㅤㅤ**↳** UPTIME- \`${mojangStatus.report.skins.uptime}%\``;
     }else{
-      skinsStatus = `**↳** UPTIME- \`${mojangStatus.report.skins.uptime}%\`
-      **↳** DOWN- <t:${new Date(mojangStatus.report.skins.down_since).getTime()/1000}:R>`;
+      skinsStatus = `ㅤㅤ**↳** UPTIME- \`${mojangStatus.report.skins.uptime}%\`
+      ㅤㅤ**↳** DOWN- <t:${new Date(mojangStatus.report.skins.down_since).getTime()/1000}:R>`;
     }
 
     let websiteStatus;
@@ -30,10 +30,10 @@ module.exports = {
 
     if(mojangStatus.report.website.status === "up"){
       websiteO = "🟢";
-      websiteStatus = `**↳** UPTIME- \`${mojangStatus.report.website.uptime}%\``;
+      websiteStatus = `ㅤㅤ**↳** UPTIME- \`${mojangStatus.report.website.uptime}%\``;
     }else{
-      websiteStatus = `**↳** UPTIME- \`${mojangStatus.report.website.uptime}%\`
-      **↳** DOWN- <t:${new Date(mojangStatus.report.website.down_since).getTime()}:R>`;
+      websiteStatus = `ㅤㅤ**↳** UPTIME- \`${mojangStatus.report.website.uptime}%\`
+      ㅤㅤ**↳** DOWN- <t:${new Date(mojangStatus.report.website.down_since).getTime()}:R>`;
     }
 
     let apiStatus;
@@ -41,10 +41,10 @@ module.exports = {
 
     if(mojangStatus.report.api.status === "up"){
       apiO = "🟢";
-      apiStatus = `**↳** UPTIME- \`${mojangStatus.report.api.uptime}%\``;
+      apiStatus = `ㅤㅤ**↳** UPTIME- \`${mojangStatus.report.api.uptime}%\``;
     }else{
-      apiStatus = `**↳** UPTIME- \`${mojangStatus.report.api.uptime}%\`
-      **↳** DOWN- <t:${new Date(mojangStatus.report.api.down_since).getTime()}:R>`;
+      apiStatus = `ㅤㅤ**↳** UPTIME- \`${mojangStatus.report.api.uptime}%\`
+      ㅤㅤ**↳** DOWN- <t:${new Date(mojangStatus.report.api.down_since).getTime()}:R>`;
     }
 
     let sessionStatus;
@@ -52,10 +52,10 @@ module.exports = {
 
     if(mojangStatus.report.session.status === "up"){
       sessionO = "🟢";
-      sessionStatus = `**↳** UPTIME- \`${mojangStatus.report.session.uptime}%\``;
+      sessionStatus = `ㅤㅤ**↳** UPTIME- \`${mojangStatus.report.session.uptime}%\``;
     }else{
-      apiStatus = `**↳** UPTIME- \`${mojangStatus.report.session.uptime}%\`
-      **↳** DOWN- <t:${new Date(mojangStatus.report.session.down_since).getTime()}:R>`;
+      apiStatus = `ㅤㅤ**↳** UPTIME- \`${mojangStatus.report.session.uptime}%\`
+      ㅤㅤ**↳** DOWN- <t:${new Date(mojangStatus.report.session.down_since).getTime()}:R>`;
     }
 
     let loginStatus;
@@ -63,10 +63,10 @@ module.exports = {
 
     if(mojangStatus.report.login.status === "up"){
       loginO = "🟢";
-      loginStatus = `**↳** UPTIME- \`${mojangStatus.report.login.uptime}%\``;
+      loginStatus = `ㅤㅤ**↳** UPTIME- \`${mojangStatus.report.login.uptime}%\``;
     }else{
-      loginStatus = `**↳** UPTIME- \`${mojangStatus.report.login.uptime}%\`
-      **↳** DOWN- <t:${new Date(mojangStatus.report.login.down_since).getTime()}:R>`;
+      loginStatus = `ㅤㅤ**↳** UPTIME- \`${mojangStatus.report.login.uptime}%\`
+      ㅤㅤ**↳** DOWN- <t:${new Date(mojangStatus.report.login.down_since).getTime()}:R>`;
     }
 
     let realmsStatus;
@@ -74,10 +74,10 @@ module.exports = {
 
     if(mojangStatus.report.realms.status === "up"){
       realmsO = "🟢";
-      realmsStatus = `**↳** UPTIME- \`${mojangStatus.report.realms.uptime}%\``;
+      realmsStatus = `ㅤㅤ**↳** UPTIME- \`${mojangStatus.report.realms.uptime}%\``;
     }else{
-      realmsStatus = `**↳** UPTIME- \`${mojangStatus.report.realms.uptime}%\`
-      **↳** DOWN- <t:${new Date(mojangStatus.report.realms.down_since).getTime()}:R>`;
+      realmsStatus = `ㅤㅤ**↳** UPTIME- \`${mojangStatus.report.realms.uptime}%\`
+      ㅤㅤ**↳** DOWN- <t:${new Date(mojangStatus.report.realms.down_since).getTime()}:R>`;
     }
 
     embed.setTitle("Mojang Status")
