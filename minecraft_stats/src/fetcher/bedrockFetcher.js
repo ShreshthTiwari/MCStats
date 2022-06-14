@@ -6,7 +6,7 @@ module.exports = async (IP, port) => {
   let rawData = ["OFFLINE"];
 
   try{
-    rawData = await util.statusBedrock(IP, port*1, { timeout: 2000 })
+    rawData = await util.statusBedrock(IP, port*1, { timeout: 3000 })
       .then((result) => {
         if(result.version.name){              
           return["ONLINE", result.edition, result.motd.clean, result.version.name, result.players.online, result.players.max, result.portIPv4, result.portIPv6];
