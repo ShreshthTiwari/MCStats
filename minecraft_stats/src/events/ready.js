@@ -52,9 +52,6 @@ module.exports = {
       
     console.log(`${line}\n` + chalk.green(`${client.user.tag} is online\n`) + chalk.magenta('Made By- ShreshthTiwari\n') + chalk.blue("Discord- ShreshthTiwari#6014\n") + chalk.yellow("Support Server- https://dsc.gg/b0t-support\n") + chalk.red("GitHub- https://github.com/ShreshthTiwari/MCStats\n") + line);
 
-    async function updateStatus(guild, serverStatusChannel, IP, javaPort, queryPort, bedrockPort, hiddenPorts, downtime, total, displayUptime){
-    }
-
     async function updater(){
       console.log(line + '\n' + chalk.magenta("Updating Server Stats now- ") + chalk.blue(new Date().toLocaleTimeString('en-US',{timeZone:'Asia/Kolkata'})) + chalk.magenta('.'));
 
