@@ -91,6 +91,15 @@ module.exports = {
         console.log(`${++count}. ` + chalk.green(`Updating Server Status Of- ${guild.name} | ${guild.id}. `) + chalk.magenta(`(${(new Date() - startTime) / 1000} seconds)`));
       }
 
+      /*async function updateDB(status, players){
+        if((!players) || players < 0 || isNaN(players)){
+          players = 0;
+        }
+
+        await runQuery(`DELETE FROM "${guild.id}" WHERE timestamp <= ${new Date().getTime() - 86400000}`);
+        await runQuery(`INSERT OR IGNORE INTO "${guild.id}"(timestamp, status, players) VALUES ("${new Date().getTime()}", "${status}", ${players})`);
+      }*/
+
       statusEmbed = new MessageEmbed()
         .setColor(embedConfig.defaultColor);
 
@@ -175,9 +184,11 @@ module.exports = {
                 await statusEmbed.addField(`${users} PLAYERS`, `\`\`\`fix\n${sampleList}\n\`\`\``);
               }
 
-              statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) }:R>`);
+              statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + 30}:R>`);
               
               await postStatus();
+
+              //await updateDB("ON", online);
             }else if(rawData[0] === "OFFLINE"){
               if(bedrockPort){
                 javaPort = `JAVA- ${javaPort}\nBEDROCK- ${bedrockPort}`;
@@ -204,6 +215,8 @@ module.exports = {
               statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) }:R>`);
             
               await postStatus();
+
+              //await updateDB("OFF", 0);
             }
           }
         }catch (error){
@@ -215,9 +228,11 @@ module.exports = {
               
           serverStatusChannel = `ERROR`;
 
-          statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) }:R>`);
+          statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + 30}:R>`);
 
           await postStatus();
+
+          //await updateDB("OFF", 0);
         }
       }else if(bedrockPort){
         try{
@@ -276,9 +291,11 @@ module.exports = {
                 .setThumbnail(defaultLogo)
                 .setTimestamp();
 
-              statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) }:R>`);
+              statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + 30}:R>`);
               
               await postStatus();
+
+              //await updateDB("ON", online);
             }else if(rawData[0] === "OFFLINE"){
               statusEmbed.setTitle("OFFLINE")
                 .addFields({
@@ -297,9 +314,11 @@ module.exports = {
                 statusEmbed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${bedrockPort}\n\`\`\``);
               }
 
-              statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) }:R>`);
+              statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + 30}:R>`);
               
               await postStatus();
+
+              //await updateDB("OFF", 0);
             }
           }
         }catch (error){
@@ -309,9 +328,11 @@ module.exports = {
             .setThumbnail(defaultLogo)
             .setTimestamp();
 
-          statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) }:R>`);
+          statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + 30}:R>`);
               
           await postStatus();
+
+          //await updateDB("OFF", 0);
         }
       }else{
         statusEmbed = new MessageEmbed()
@@ -320,9 +341,11 @@ module.exports = {
           .setThumbnail(defaultLogo)
           .setTimestamp();
 
-        statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) }:R>`);
+        statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + 30}:R>`);
             
         await postStatus();
+
+        //await updateDB("OFF", 0);
       }
     }
 
@@ -355,6 +378,12 @@ module.exports = {
         console.log(chalk.magenta(`Updating stats every `) + chalk.blue(`${interval} minutes`) + chalk.magenta('.') + '\n' + line);
       });
     }
+
+    /*await client.guilds.cache.forEach(async guild => {
+      //await runQuery(`DROP TABLE IF EXISTS "${guild.id}"`);
+      //await runQuery(`CREATE TABLE IF NOT EXISTS "${guild.id}" (timestamp INT, status TEXT, players INT)`);
+      //await runQuery(`INSERT OR IGNORE INTO GLOBAL (guild_id, hidden_ports) VALUES ("${guild.id}", "false")`);
+    });*/
 
     await updater();
  
