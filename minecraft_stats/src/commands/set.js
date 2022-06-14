@@ -126,7 +126,7 @@ module.exports = {
           .setColor(embedConfig.successColor);
 
         if(subCommand === "ip"){
-          await runQuery(`UPDATE TABLE GLOBAL SET downtime = 0, total = 0 WHERE guild_id LIKE "${interaction.guild.id}"`);
+          await runQuery(`UPDATE GLOBAL SET downtime = 0, total = 0 WHERE guild_id LIKE "${interaction.guild.id}"`);
         }
   
         await interaction.editReply({embeds: [embed]}).catch(async error => {

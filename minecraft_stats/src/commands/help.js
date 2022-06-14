@@ -77,6 +77,11 @@ module.exports = {
       > \`/bug\` **-** *Send bug report to bot developer*. 
       > \`/invite\` **-** *Get the bot's invite link*.
       > \`/support\` **-** *Get the invite link of the support server*.`
+    },
+    {
+      name: "Note-",
+      value: `To reset the server uptime, set your server IP again.
+      To clear value of a variable, set it as \`1\` or \`null\``
     });
 
     await interaction.editReply({embeds: [embed], components: [buttons]}).catch(async error => {
