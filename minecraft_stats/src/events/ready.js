@@ -28,7 +28,7 @@ module.exports = {
     let statusEmbed = new MessageEmbed()
       .setColor(embedConfig.defaultColor);
 
-    const guildsCount = await client.guilds.cache.size;
+    const guildsCount = await client.guilds.cache.size || 0;
 
     try{
       await client.user.setActivity(`For /help in ${guildsCount} ${guildsCount > 1 ? "servers" : "server"}`, {type: "WATCHING"});
@@ -330,24 +330,26 @@ module.exports = {
       console.log(line + '\n' + chalk.magenta("Updating Server Stats now- ") + chalk.blue(new Date().toLocaleTimeString('en-US',{timeZone:'Asia/Kolkata'})) + chalk.magenta('.'));
 
       database.serialize(async () => {
-        database.each(`SELECT guild_id, server_status_channel, ip, java_port, bedrock_port, hidden_ports FROM GLOBAL WHERE (server_status_channel IS NOT NULL AND ip IS NOT NULL AND (java_port IS NOT NULL OR bedrock_port IS NOT NULL))`, async (error, row) => {
-          let guild = await client.guilds.cache.get(row.guild_id);
-
-          if(guild){
-            let serverStatusChannel = await guild.channels.cache.get(row.server_status_channel);
-
-            if(serverStatusChannel){
-              let IP = row.ip;
-              let javaPort = (row.java_port * 1) <= 0 ? null : (row.java_port * 1);
-              let queryPort = (row.query_port * 1) <= 0 ? null : (row.query_port * 1);
-              let bedrockPort = (row.bedrock_port * 1) <= 0 ? null : (row.bedrock_port * 1);
-              let hiddenPorts = (row.hidden_ports === "true") ? true : false;
-                
-              await updateStatus(guild, serverStatusChannel, IP, javaPort, queryPort, bedrockPort, hiddenPorts);
+        database.all(`SELECT guild_id, server_status_channel, ip, java_port, bedrock_port, hidden_ports FROM GLOBAL WHERE (server_status_channel IS NOT NULL AND ip IS NOT NULL AND (java_port IS NOT NULL OR bedrock_port IS NOT NULL))`, async (error, rows) => {
+          await rows.forEach(async (row) => {
+            let guild = await client.guilds.cache.get(row.guild_id);
+  
+            if(guild){
+              let serverStatusChannel = await guild.channels.cache.get(row.server_status_channel);
+  
+              if(serverStatusChannel){
+                let IP = row.ip;
+                let javaPort = (row.java_port * 1) <= 0 ? null : (row.java_port * 1);
+                let queryPort = (row.query_port * 1) <= 0 ? null : (row.query_port * 1);
+                let bedrockPort = (row.bedrock_port * 1) <= 0 ? null : (row.bedrock_port * 1);
+                let hiddenPorts = (row.hidden_ports === "true") ? true : false;
+                  
+                await updateStatus(guild, serverStatusChannel, IP, javaPort, queryPort, bedrockPort, hiddenPorts);
+              }
+            }else{
+              await runQuery(`DELETE FROM GLOBAL WHERE guild_id LIKE "${row.guild_id}"`);
             }
-          }else{
-            await runQuery(`DELETE FROM GLOBAL WHERE guild_id LIKE "${row.guild_id}"`);
-          }
+          })
         });
 
         console.log(chalk.magenta(`Updating stats every `) + chalk.blue(`${interval} minutes`) + chalk.magenta('.') + '\n' + line);
@@ -355,9 +357,10 @@ module.exports = {
     }
 
     await updater();
-
+ 
     setInterval(async () => {
       count = 0;
+      startTime = new Date();
 
       await updater();
     }, interval * 60 * 1000);
