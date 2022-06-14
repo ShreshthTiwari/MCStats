@@ -23,7 +23,7 @@ module.exports = {
   async execute(client, embed, MessageEmbed, config, embedConfig, databaseBuilder, Permissions, messageEmojisReplacer, errorLogger, logger) {
     const database = await databaseBuilder();
 
-    await runQuery(`CREATE TABLE IF NOT EXISTS GLOBAL (guild_id TEXT PRIMARY KEY, ip TEXT, java_port TEXT, query_port TEXT, bedrock_port TEXT, bot_updates_channel TEXT, server_status_channel TEXT, hidden_ports TEXT)`);
+    await runQuery(`CREATE TABLE IF NOT EXISTS GLOBAL (guild_id TEXT PRIMARY KEY, ip TEXT, java_port TEXT, query_port TEXT, bedrock_port TEXT, bot_updates_channel TEXT, server_status_channel TEXT, hidden_ports TEXT, downtime INT, total INT, display_uptime TEXT)`);
 
     let statusEmbed = new MessageEmbed()
       .setColor(embedConfig.defaultColor);
@@ -52,8 +52,25 @@ module.exports = {
       
     console.log(`${line}\n` + chalk.green(`${client.user.tag} is online\n`) + chalk.magenta('Made By- ShreshthTiwari\n') + chalk.blue("Discord- ShreshthTiwari#6014\n") + chalk.yellow("Support Server- https://dsc.gg/b0t-support\n") + chalk.red("GitHub- https://github.com/ShreshthTiwari/MCStats\n") + line);
 
-    async function updateStatus(guild, serverStatusChannel, IP, javaPort, queryPort, bedrockPort, hiddenPorts){
+    async function updateStatus(guild, serverStatusChannel, IP, javaPort, queryPort, bedrockPort, hiddenPorts, downtime, total, displayUptime){
+      total++;
+
       async function postStatus(){
+        if(downtime < 0){
+          downtime = 0;
+        }
+
+        if(total < 0){
+          total = 1;
+        }
+
+        if(displayUptime){
+          statusEmbed.addField("UPTIME", `\`\`\`fix\n${100 - (downtime/total)}%\n\`\`\``);
+  
+          await runQuery(`UPDATE GLOBAL SET total = ${total}, downtime = ${downtime}
+          WHERE guild_id LIKE "${guild.id}"`);
+        }
+
         try{
           let messages = await serverStatusChannel.messages.fetch({limit: 3});
   
@@ -90,15 +107,6 @@ module.exports = {
 
         console.log(`${++count}. ` + chalk.green(`Updating Server Status Of- ${guild.name} | ${guild.id}. `) + chalk.magenta(`(${(new Date() - startTime) / 1000} seconds)`));
       }
-
-      /*async function updateDB(status, players){
-        if((!players) || players < 0 || isNaN(players)){
-          players = 0;
-        }
-
-        await runQuery(`DELETE FROM "${guild.id}" WHERE timestamp <= ${new Date().getTime() - 86400000}`);
-        await runQuery(`INSERT OR IGNORE INTO "${guild.id}"(timestamp, status, players) VALUES ("${new Date().getTime()}", "${status}", ${players})`);
-      }*/
 
       statusEmbed = new MessageEmbed()
         .setColor(embedConfig.defaultColor);
@@ -187,9 +195,9 @@ module.exports = {
               statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + 30}:R>`);
               
               await postStatus();
-
-              //await updateDB("ON", online);
             }else if(rawData[0] === "OFFLINE"){
+              downtime++;
+
               if(bedrockPort){
                 javaPort = `JAVA- ${javaPort}\nBEDROCK- ${bedrockPort}`;
               }
@@ -215,11 +223,11 @@ module.exports = {
               statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) }:R>`);
             
               await postStatus();
-
-              //await updateDB("OFF", 0);
             }
           }
         }catch (error){
+          downtime++;
+
           statusEmbed = new MessageEmbed()
             .setDescription(`${cross} **Error Fetching server stats**-\n\`\`\`${error}\`\`\``)
             .setColor(embedConfig.errorColor)
@@ -294,9 +302,9 @@ module.exports = {
               statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + 30}:R>`);
               
               await postStatus();
-
-              //await updateDB("ON", online);
             }else if(rawData[0] === "OFFLINE"){
+              downtime++;
+
               statusEmbed.setTitle("OFFLINE")
                 .addFields({
                   name: `${grass} SERVER EDITION`,
@@ -317,11 +325,11 @@ module.exports = {
               statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + 30}:R>`);
               
               await postStatus();
-
-              //await updateDB("OFF", 0);
             }
           }
         }catch (error){
+          downtime++;
+
           statusEmbed = new MessageEmbed()
             .setDescription(`${cross} **Error Fetching server stats**-\n\`\`\`${error}\`\`\``)
             .setColor(embedConfig.errorColor)
@@ -331,10 +339,10 @@ module.exports = {
           statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + 30}:R>`);
               
           await postStatus();
-
-          //await updateDB("OFF", 0);
         }
       }else{
+        downtime++;
+
         statusEmbed = new MessageEmbed()
           .setDescription(`${cross} **Error Fetching server stats**.`)
           .setColor(embedConfig.errorColor)
@@ -344,8 +352,6 @@ module.exports = {
         statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + 30}:R>`);
             
         await postStatus();
-
-        //await updateDB("OFF", 0);
       }
     }
 
@@ -353,7 +359,7 @@ module.exports = {
       console.log(line + '\n' + chalk.magenta("Updating Server Stats now- ") + chalk.blue(new Date().toLocaleTimeString('en-US',{timeZone:'Asia/Kolkata'})) + chalk.magenta('.'));
 
       database.serialize(async () => {
-        database.all(`SELECT guild_id, server_status_channel, ip, java_port, bedrock_port, hidden_ports FROM GLOBAL WHERE (server_status_channel IS NOT NULL AND ip IS NOT NULL AND (java_port IS NOT NULL OR bedrock_port IS NOT NULL))`, async (error, rows) => {
+        database.all(`SELECT guild_id, server_status_channel, ip, java_port, bedrock_port, hidden_ports, downtime, total, display_uptime FROM GLOBAL WHERE (server_status_channel IS NOT NULL AND ip IS NOT NULL AND (java_port IS NOT NULL OR bedrock_port IS NOT NULL))`, async (error, rows) => {
           await rows.forEach(async (row) => {
             let guild = await client.guilds.cache.get(row.guild_id);
   
@@ -366,8 +372,11 @@ module.exports = {
                 let queryPort = (row.query_port * 1) <= 0 ? null : (row.query_port * 1);
                 let bedrockPort = (row.bedrock_port * 1) <= 0 ? null : (row.bedrock_port * 1);
                 let hiddenPorts = (row.hidden_ports === "true") ? true : false;
+                let downtime = (row.downtime < 0 ? 0 : row.downtime) || 0;
+                let total = (row.total < 0 ? 0 : row.total) || 0;
+                let displayUptime = (row.display_uptime === "false") ? false : true;
                   
-                await updateStatus(guild, serverStatusChannel, IP, javaPort, queryPort, bedrockPort, hiddenPorts);
+                await updateStatus(guild, serverStatusChannel, IP, javaPort, queryPort, bedrockPort, hiddenPorts, downtime, total, displayUptime);
               }
             }else{
               await runQuery(`DELETE FROM GLOBAL WHERE guild_id LIKE "${row.guild_id}"`);
@@ -378,12 +387,6 @@ module.exports = {
         console.log(chalk.magenta(`Updating stats every `) + chalk.blue(`${interval} minutes`) + chalk.magenta('.') + '\n' + line);
       });
     }
-
-    /*await client.guilds.cache.forEach(async guild => {
-      //await runQuery(`DROP TABLE IF EXISTS "${guild.id}"`);
-      //await runQuery(`CREATE TABLE IF NOT EXISTS "${guild.id}" (timestamp INT, status TEXT, players INT)`);
-      //await runQuery(`INSERT OR IGNORE INTO GLOBAL (guild_id, hidden_ports) VALUES ("${guild.id}", "false")`);
-    });*/
 
     await updater();
  

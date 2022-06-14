@@ -27,12 +27,13 @@ module.exports = {
       .setColor(embedConfig.defaultColor);
 
     database.serialize(async () => {
-      database.each(`SELECT ip, java_port, query_port, bedrock_port, hidden_ports FROM GLOBAL WHERE guild_id like "${interaction.guild.id}"`, async (err, row) => {
+      database.each(`SELECT ip, java_port, query_port, bedrock_port, hidden_ports, downtime, total, display_uptime FROM GLOBAL WHERE guild_id like "${interaction.guild.id}"`, async (err, row) => {
         let IP = row.ip;
         let javaPort = (row.java_port * 1) <= 0 ? null : (row.java_port * 1);
         let queryPort = (row.query_port * 1) <= 0 ? null : (row.query_port * 1);
         let bedrockPort = (row.bedrock_port * 1) <= 0 ? null : (row.bedrock_port * 1);
         let hiddenPorts = (row.hidden_ports === "true") ? true : false;
+        let display_uptime = (row.display_uptime === "false") ? false : true;
 
         if(!IP){
           await embed.setDescription(`${cross} Server IP not set.`)
@@ -272,6 +273,13 @@ module.exports = {
          });
 
          return;
+       }
+
+       if(display_uptime){
+        let downtime = (row.downtime < 0 ? 0 : row.downtime) || 0;
+        let total = (row.total < 0 ? 0 : row.total) || 1;
+
+         embed.addField("UPTIME", `\`\`\`fix\n${100 - (downtime/total)}%\n\`\`\``);
        }
 
        await interaction.editReply({embeds: [embed]}).catch(async error => {

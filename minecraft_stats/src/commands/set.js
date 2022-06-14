@@ -20,6 +20,10 @@ module.exports = {
       subcommand.setName('help').setDescription("Help for /set command.")
     )
     .addSubcommand(subcommand =>
+      subcommand.setName('display_uptime').setDescription("Hide or show the downtime in server status.")
+        .addBooleanOption(option => option.setName("option").setDescription("Set TRUE or FALSE.").setRequired(true))
+    )
+    .addSubcommand(subcommand =>
       subcommand.setName('hidden_ports').setDescription("Hide or show the server port in server status.")
         .addBooleanOption(option => option.setName("option").setDescription("Set TRUE or FALSE.").setRequired(true))
     )
@@ -120,6 +124,10 @@ module.exports = {
         
         embed.setDescription(`${tick} Set \`${subCommand}\` as \`${input}\`.`)
           .setColor(embedConfig.successColor);
+
+        if(subCommand === "ip"){
+          await runQuery(`UPDATE TABLE GLOBAL SET downtime = 0, total = 0 WHERE guild_id LIKE "${interaction.guild.id}"`);
+        }
   
         await interaction.editReply({embeds: [embed]}).catch(async error => {
           await errorLogger(client, interaction, error, "src/commands/set.js : 125");

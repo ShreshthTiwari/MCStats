@@ -5,9 +5,8 @@ let i = 0;
 module.exports = {
   name: 'guildCreate',
   async execute(client, embed, MessageEmbed, config, embedConfig, databaseBuilder, Permissions, messageEmojisReplacer, errorLogger, logger, guild) {
-    await runQuery(`INSERT OR IGNORE INTO GLOBAL (guild_id, hidden_ports) 
-    VALUES ("${guild.id}", "false")`);
-
+    await runQuery(`INSERT OR IGNORE INTO GLOBAL (guild_id, hidden_ports, display_downtime) VALUES ("${guild.id}", "false", "true")`);
+    
     let guildsCount = await client.guilds.cache.size || 0;
 
     try{
