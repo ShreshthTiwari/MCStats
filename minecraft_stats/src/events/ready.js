@@ -18,7 +18,6 @@ let count = 0;
 let startTime = new Date();
 
 let serverStatusMessageID = [];
-let serverStatusMessage = [];
 let channel = [];
 let Embed = [];
 
@@ -346,46 +345,32 @@ module.exports = {
 
                 channel[guild.id] = serverStatusChannel;
                 Embed[guild.id] = statusEmbed;
+                serverStatusMessageID[guild.id] = row.status_message_id;
 
-                try{
-                  serverStatusMessageID[guild.id] = row.status_message_id;
-                  if(serverStatusMessageID[guild.id]){
-                    serverStatusMessage[guild.id] = await channel[guild.id].messages.fetch(serverStatusMessageID[guild.id]);
+                if(serverStatusMessageID[guild.id]){
+                  await channel[guild.id].messages.fetch(serverStatusMessageID[guild.id]).then(async (msg) => {
+                    await msg.edit({embeds: [Embed[guild.id]]});
 
-                    if(serverStatusMessage[guild.id]){
-                      await serverStatusMessage[guild.id].edit({embeds: [Embed[guild.id]]});
-                
-                      serverStatusMessageID[guild.id] = null;
-                      serverStatusMessage[guild.id] = null;
-                      channel[guild.id] = null;
-                      Embed[guild.id] = new MessageEmbed();
-                    }else{
-                      await channel[guild.id].send({embeds: [Embed[guild.id]]}).then(async (msg) => {
-                        console.log(msg.id);
-                        await runQuery(`UPDATE GLOBAL SET status_message_id = "${msg.id}" WHERE guild_id LIKE "${guild.id}"`);
-                      });
-                
-                      serverStatusMessageID[guild.id] = null;
-                      serverStatusMessage[guild.id] = null;
-                      channel[guild.id] = null;
-                      Embed[guild.id] = new MessageEmbed();
-                    }
-                  }else{
-                    await channel[guild.id].send({embeds: [Embed[guild.id]]}).then(async (msg) => {
-                      console.log(msg.id);
-                      await runQuery(`UPDATE GLOBAL SET status_message_id = "${msg.id}" WHERE guild_id LIKE "${guild.id}"`);
-                    });
-                
-                    serverStatusMessageID[guild.id] = null;
-                    serverStatusMessage[guild.id] = null;
-                    channel[guild.id] = null;
+                    channel[guild.id] = serverStatusMessageID[guild.id] = null;
                     Embed[guild.id] = new MessageEmbed();
-                  }
+                  }).catch(async () => {
+                    await runQuery(`UPDATE GLOBAL SET status_message_id = null WHERE guild_id LIKE "${guild.id}"`);
 
-                  console.log(`${++count}. ` + chalk.green(`Updating Server Status Of- ${guild.name} | ${guild.id}. `) + chalk.magenta(`(${(new Date() - startTime) / 1000} seconds)`));
-                }catch{
-                  console.log(`${++count}. ` + chalk.red(`Error Updating Server Status Of- ${guild.name} | ${guild.id}. `) + chalk.magenta(`(${(new Date() - startTime) / 1000} seconds)`));
+                    await channel[guild.id].send({embeds: [Embed[guild.id]]}).catch(error => {});
+
+                    channel[guild.id] = serverStatusMessageID[guild.id] = null;
+                    Embed[guild.id] = new MessageEmbed();
+                  });
+                }else{
+                  await runQuery(`UPDATE GLOBAL SET status_message_id = null WHERE guild_id LIKE "${guild.id}"`);
+
+                  await channel[guild.id].send({embeds: [Embed[guild.id]]}).catch(error => {});
+
+                  channel[guild.id] = serverStatusMessageID[guild.id] = null;
+                  Embed[guild.id] = new MessageEmbed();
                 }
+                
+                console.log(`${++count}. ` + chalk.green(`Updating Server Status Of- ${guild.name} | ${guild.id}. `) + chalk.magenta(`(${(new Date() - startTime) / 1000} seconds)`));
               }
             }else{
               await runQuery(`DELETE FROM GLOBAL WHERE guild_id LIKE "${row.guild_id}"`);
