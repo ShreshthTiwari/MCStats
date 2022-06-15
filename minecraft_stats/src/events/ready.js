@@ -319,7 +319,7 @@ module.exports = {
                 }
 
                 if(displayUptime){
-                  statusEmbed.addField("UPTIME", `\`\`\`fix\n${(100 - (downtime/total).toFixed(3))}%\n\`\`\``);
+                  statusEmbed.addField("UPTIME", `\`\`\`fix\n${(((100 - (downtime/total).toFixed(3)) + '').replace(".000", ""))}%\n\`\`\``);
 
                   await runQuery(`UPDATE GLOBAL SET total = ${total}, downtime = ${downtime}
                   WHERE guild_id LIKE "${guild.id}"`);
