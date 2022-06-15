@@ -167,8 +167,7 @@ module.exports = {
                             value: `\`\`\`fix\n${roundTripLatency}ms\n\`\`\``
                           })
                           .setColor(embedConfig.successColor)
-                          .setThumbnail(favicon)
-                          .setTimestamp();
+                          .setThumbnail(favicon);
               
                         if(playersList && playersList.length > 0){
                           await statusEmbed.addField(`${users} PLAYERS`, `\`\`\`fix\n${playersList}\n\`\`\``);
@@ -193,8 +192,7 @@ module.exports = {
                             value: `\`\`\`fix\n${IP}\n\`\`\``
                           })
                           .setColor(embedConfig.errorColor)
-                          .setThumbnail(defaultLogo)
-                          .setTimestamp();
+                          .setThumbnail(defaultLogo);
                         
                         if(!hiddenPorts){
                           statusEmbed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${javaPort}\n\`\`\``);
@@ -210,8 +208,7 @@ module.exports = {
                     statusEmbed = new MessageEmbed()
                       .setDescription(`${cross} **Error Fetching server stats**-\n\`\`\`${error}\`\`\``)
                       .setColor(embedConfig.errorColor)
-                      .setThumbnail(defaultLogo)
-                      .setTimestamp();
+                      .setThumbnail(defaultLogo);
                         
                     serverStatusChannel = `ERROR`;
                   }
@@ -272,8 +269,7 @@ module.exports = {
                             value: `\`\`\`fix\n${motd}\n\`\`\``
                           })
                           .setColor(embedConfig.successColor)
-                          .setThumbnail(defaultLogo)
-                          .setTimestamp();
+                          .setThumbnail(defaultLogo);
                       }else if(rawData[0] === "OFFLINE"){
                         downtime++;
 
@@ -287,8 +283,7 @@ module.exports = {
                             value: `\`\`\`fix\n${IP}\n\`\`\``
                           })
                           .setColor(embedConfig.errorColor)
-                          .setThumbnail(defaultLogo)
-                          .setTimestamp();
+                          .setThumbnail(defaultLogo);
 
                         if(!hiddenPorts){
                           statusEmbed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${bedrockPort}\n\`\`\``);
@@ -301,8 +296,7 @@ module.exports = {
                     statusEmbed = new MessageEmbed()
                       .setDescription(`${cross} **Error Fetching server stats**-\n\`\`\`${error}\`\`\``)
                       .setColor(embedConfig.errorColor)
-                      .setThumbnail(defaultLogo)
-                      .setTimestamp();
+                      .setThumbnail(defaultLogo);
                   }
                 }else{
                   statusEmbed = new MessageEmbed()
@@ -313,8 +307,7 @@ module.exports = {
                   statusEmbed = new MessageEmbed()
                     .setDescription(`${cross} **Error Fetching server stats**.`)
                     .setColor(embedConfig.errorColor)
-                    .setThumbnail(defaultLogo)
-                    .setTimestamp();
+                    .setThumbnail(defaultLogo);
                 }
 
                 if(downtime < 0){
@@ -332,7 +325,8 @@ module.exports = {
                   WHERE guild_id LIKE "${guild.id}"`);
                 }
 
-                statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + 30}:R>`);
+                statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + 30}:R>`)
+                  .setTimestamp();
 
                 channel[guild.id] = serverStatusChannel;
                 Embed[guild.id] = statusEmbed;
