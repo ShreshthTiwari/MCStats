@@ -175,8 +175,6 @@ module.exports = {
                         }else if(sampleList && sampleList.length > 0){
                           await statusEmbed.addField(`${users} PLAYERS`, `\`\`\`fix\n${sampleList}\n\`\`\``);
                         }
-
-                        statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + 30}:R>`);
                       }else if(rawData[0] === "OFFLINE"){
                         downtime++;
 
@@ -201,11 +199,12 @@ module.exports = {
                         if(!hiddenPorts){
                           statusEmbed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${javaPort}\n\`\`\``);
                         }
-
-                        statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) }:R>`);
                       }
                     }
                   }catch (error){
+                    statusEmbed = new MessageEmbed()
+                      .setColor(embedConfig.defaultColor);
+
                     downtime++;
 
                     statusEmbed = new MessageEmbed()
@@ -215,8 +214,6 @@ module.exports = {
                       .setTimestamp();
                         
                     serverStatusChannel = `ERROR`;
-
-                    statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + 30}:R>`);
                   }
                 }else if(bedrockPort){
                   statusEmbed = new MessageEmbed()
@@ -277,8 +274,6 @@ module.exports = {
                           .setColor(embedConfig.successColor)
                           .setThumbnail(defaultLogo)
                           .setTimestamp();
-
-                        statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + 30}:R>`);
                       }else if(rawData[0] === "OFFLINE"){
                         downtime++;
 
@@ -298,8 +293,6 @@ module.exports = {
                         if(!hiddenPorts){
                           statusEmbed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${bedrockPort}\n\`\`\``);
                         }
-
-                        statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + 30}:R>`);
                       }
                     }
                   }catch (error){
@@ -310,8 +303,6 @@ module.exports = {
                       .setColor(embedConfig.errorColor)
                       .setThumbnail(defaultLogo)
                       .setTimestamp();
-
-                    statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + 30}:R>`);
                   }
                 }else{
                   statusEmbed = new MessageEmbed()
@@ -324,8 +315,6 @@ module.exports = {
                     .setColor(embedConfig.errorColor)
                     .setThumbnail(defaultLogo)
                     .setTimestamp();
-
-                  statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + 30}:R>`);
                 }
 
                 if(downtime < 0){
@@ -342,6 +331,8 @@ module.exports = {
                   await runQuery(`UPDATE GLOBAL SET total = ${total}, downtime = ${downtime}
                   WHERE guild_id LIKE "${guild.id}"`);
                 }
+
+                statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + 30}:R>`);
 
                 channel[guild.id] = serverStatusChannel;
                 Embed[guild.id] = statusEmbed;
@@ -390,8 +381,13 @@ module.exports = {
     });*/
 
     await updater();
+
+    await updater();
  
     setInterval(async () => {
+      statusEmbed = new MessageEmbed()
+        .setColor(embedConfig.defaultColor);
+
       count = 0;
       startTime = new Date();
 
