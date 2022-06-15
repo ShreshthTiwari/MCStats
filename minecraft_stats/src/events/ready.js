@@ -340,14 +340,20 @@ module.exports = {
 
                 if(serverStatusMessageID[guild.id]){
                   await channel[guild.id].messages.fetch(serverStatusMessageID[guild.id]).then(async (msg) => {
-                    await msg.edit({embeds: [Embed[guild.id]]});
+                    await msg.edit({embeds: [Embed[guild.id]]}).then(async () => {
+                      console.log(`${++count}. ` + chalk.green(`Updating Server Status Of- ${guild.name} | ${guild.id}. `) + chalk.magenta(`(${(new Date() - startTime) / 1000} seconds)`));
+                    });
 
                     channel[guild.id] = serverStatusMessageID[guild.id] = null;
                     Embed[guild.id] = new MessageEmbed();
                   }).catch(async () => {
                     await runQuery(`UPDATE GLOBAL SET status_message_id = null WHERE guild_id LIKE "${guild.id}"`);
 
-                    await channel[guild.id].send({embeds: [Embed[guild.id]]}).catch(error => {});
+                    await channel[guild.id].send({embeds: [Embed[guild.id]]}).then(async () => {
+                      console.log(`${++count}. ` + chalk.green(`Updating Server Status Of- ${guild.name} | ${guild.id}. `) + chalk.magenta(`(${(new Date() - startTime) / 1000} seconds)`));
+                    }).catch(error => {
+                      console.log(`${++count}. ` + chalk.red(`Error Updating Server Status Of- ${guild.name} | ${guild.id}. `) + chalk.magenta(`(${(new Date() - startTime) / 1000} seconds)`));
+                    });
 
                     channel[guild.id] = serverStatusMessageID[guild.id] = null;
                     Embed[guild.id] = new MessageEmbed();
@@ -355,13 +361,15 @@ module.exports = {
                 }else{
                   await runQuery(`UPDATE GLOBAL SET status_message_id = null WHERE guild_id LIKE "${guild.id}"`);
 
-                  await channel[guild.id].send({embeds: [Embed[guild.id]]}).catch(error => {});
+                  await channel[guild.id].send({embeds: [Embed[guild.id]]}).then(async () => {
+                    console.log(`${++count}. ` + chalk.green(`Updating Server Status Of- ${guild.name} | ${guild.id}. `) + chalk.magenta(`(${(new Date() - startTime) / 1000} seconds)`));
+                  }).catch(error => {
+                    console.log(`${++count}. ` + chalk.red(`Error Updating Server Status Of- ${guild.name} | ${guild.id}. `) + chalk.magenta(`(${(new Date() - startTime) / 1000} seconds)`));
+                  });
 
                   channel[guild.id] = serverStatusMessageID[guild.id] = null;
                   Embed[guild.id] = new MessageEmbed();
                 }
-                
-                console.log(`${++count}. ` + chalk.green(`Updating Server Status Of- ${guild.name} | ${guild.id}. `) + chalk.magenta(`(${(new Date() - startTime) / 1000} seconds)`));
               }
             }else{
               await runQuery(`DELETE FROM GLOBAL WHERE guild_id LIKE "${row.guild_id}"`);
