@@ -7,6 +7,8 @@ module.exports = async (client) => {
   const Users = await client.emojis.cache.get(emojis.users);
   const Pen = await client.emojis.cache.get(emojis.pen);
   const Signal = await client.emojis.cache.get(emojis.signal);
+  const Branch = await client.emojis.cache.get(emojis.branch);
+  const BranchEnd = await client.emojis.cache.get(emojis.branchEnd);
 
   const Emojis = {
     grass: Grass,
@@ -14,7 +16,9 @@ module.exports = async (client) => {
     settings: Settings,
     users: Users,
     pen: Pen,
-    signal: Signal
+    signal: Signal,
+    branch: Branch,
+    branchEnd: BranchEnd 
   }
 
   return Emojis;

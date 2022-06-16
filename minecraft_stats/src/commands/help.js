@@ -1,12 +1,16 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { MessageButton, MessageActionRow, Permissions } = require("discord.js");
 
+const emojisFetcher = require("../fetcher/emojisFetcher.js");
+
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('help')
 	  .setDescription('Show help message.'),
   
   async execute(client, MessageEmbed, embed, config, embedConfig, database, Permissions, interaction, messageEmojisReplacer, tick, cross, errorLogger, logger){
+    const emojis = await emojisFetcher(client);
+    
     embed = new MessageEmbed()
       .setColor(embedConfig.defaultColor);
     
@@ -44,34 +48,34 @@ module.exports = {
     .setThumbnail(client.user.displayAvatarURL({dynamic: true}));
     
     if(interaction.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR) || interaction.member.id === config.authorID){
-      await embed.addField("Admin", `
+      await embed.addField("Admin 🛠️", `
       > \`/set\` **-** *Set bot variables*.
-      > **↳** \`/set help\`
-      > **↳** \`/set ip\`
-      > **↳** \`/set java_port\`
-      > **↳** \`/set query_port\`
-      > **↳** \`/set bedrock_port\`
-      > **↳** \`/set server_status_channel\`
-      > **↳** \`/set bot_updates_channel\`
-      > **↳** \`/set hidden_ports\``)
+      > ${emojis.branch} \`/set help\`
+      > ${emojis.branch} \`/set ip\`
+      > ${emojis.branch} \`/set java_port\`
+      > ${emojis.branch} \`/set query_port\`
+      > ${emojis.branch} \`/set bedrock_port\`
+      > ${emojis.branch} \`/set server_status_channel\`
+      > ${emojis.branch} \`/set bot_updates_channel\`
+      > ${emojis.branchEnd} \`/set hidden_ports\``)
     }
 
     embed.addFields({
-      name: "Member",
+      name: "Member 👥",
       value: `
       > \`/help\` **-** *See this help message*.
       > \`/ip\` **-** *Check the IP of the minecrtaft server*.
       > \`/ping\` **-** *Check status of a minecraft server*.
-      > **↳** \`/ping java\`
-      > **↳** \`/ping bedrock\`
+      > ${emojis.branch} \`/ping java\`
+      > ${emojis.branchEnd} \`/ping bedrock\`
       > \`/status\` **-** *Check status of the minecraft server*.
       > \`/player\` **-** *Check account details of a minecraft player*.
-      > **↳** \`/player info_by_username\`
-      > **↳** \`/player info_by_uuid\`
+      > ${emojis.branch} \`/player info_by_username\`
+      > ${emojis.branchEnd} \`/player info_by_uuid\`
       > \`/mojang status\` **-** *Check status of mojang*.`
     },
     {
-      name: "Miscellaneous",
+      name: "Miscellaneous 💠",
       value: `
       > \`/bot ping\` **-** *Check bot's ping*.
       > \`/bug\` **-** *Send bug report to bot developer*. 

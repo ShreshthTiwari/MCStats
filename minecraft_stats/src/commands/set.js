@@ -3,6 +3,7 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 const { ChannelType } = require("discord-api-types/v9");
 
 const runQuery = require("../sqlite/runQuery.js");
+const emojisFetcher = require("../fetcher/emojisFetcher.js");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -49,6 +50,8 @@ module.exports = {
     ),
   
   async execute(client, MessageEmbed, embed, config, embedConfig, database, Permissions, interaction, messageEmojisReplacer, tick, cross, errorLogger, logger) {
+    const emojis = await emojisFetcher(client);
+
     embed = new MessageEmbed()
       .setColor(embedConfig.defaultColor);
 
@@ -58,24 +61,26 @@ module.exports = {
     let input = await interaction.options.getString("ip") || interaction.options.getInteger("port") || (interaction.options.getBoolean("option") + "");
         
     if(subCommand === "help"){
-      embed.setDescription
-       (`**Set Help**
-        **~~------------------------------------------~~**
-        > **__Variables__**
-        > /set help **-** *View this help message*.
-        > /set ip \`<IP>\` **-** *Set IP of your minecraft server*.
-        > /set query_port \`<port>\` **-** *Set QUERY PORT of your minecraft server*.
-        > /set java_port \`<port>\` **-** *Set JAVA PORT of your minecraft server*.
-        > /set bedrock_port \`<port>\` **-** *Set BEDROCK PORT of your minecraft server*.
-        > /set server_status_channel \`<channel>\` **-** *Set the Text Channel where the Minecraft Server Status will be posted*.
-        > /set bot_updates_channel \`<channel>\` **-** *Set the Text Channel where the bot updates will be posted*.
-        > /set hidden_ports \`<option>\` **-** *Hide or show the server port in server status*.
-        **~~------------------------------------------~~**
-        **Note-**
-        > Provide the values as \`1\` or \`null\` to clear them from the database.
-        **~~------------------------------------------~~**
-       `)
-        .setColor(embedConfig.defaultColor);
+      embed.setTitle("Set Help")
+      .addFields({
+        name: "Variables",
+        value: `
+        > ${emojis.branch} /set help **-** *View this help message*.
+        > ${emojis.branch} /set ip \`<IP>\` **-** *Set IP of your minecraft server*.
+        > ${emojis.branch} /set query_port \`<port>\` **-** *Set QUERY PORT of your minecraft server*.
+        > ${emojis.branch} /set java_port \`<port>\` **-** *Set JAVA PORT of your minecraft server*.
+        > ${emojis.branch} /set bedrock_port \`<port>\` **-** *Set BEDROCK PORT of your minecraft server*.
+        > ${emojis.branch} /set server_status_channel \`<channel>\` **-** *Set the Text Channel where the Minecraft Server Status will be posted*.
+        > ${emojis.branch} /set bot_updates_channel \`<channel>\` **-** *Set the Text Channel where the bot updates will be posted*.
+        > ${emojis.branchEnd} /set hidden_ports \`<option>\` **-** *Hide or show the server port in server status*.`
+      },
+      {
+        name: "Note-",
+        value: `
+        > ${emojis.branchEnd} Provide the values as \`1\` or \`null\` to clear them from the database.
+        `
+      })
+      .setColor(embedConfig.defaultColor);
 
       await interaction.editReply({embeds: [embed]}).catch(async error => {
         await errorLogger(client, interaction, error, "src/commands/set.js : 77");

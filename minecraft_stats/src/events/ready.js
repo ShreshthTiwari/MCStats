@@ -19,7 +19,7 @@ let startTime = new Date();
 
 let serverStatusMessageID = [];
 let channel = [];
-let Embed = [];
+let statusEmbed = [];
 
 module.exports = {
   name: 'ready',
@@ -29,9 +29,6 @@ module.exports = {
 
     await runQuery(`CREATE TABLE IF NOT EXISTS GLOBAL (guild_id TEXT PRIMARY KEY, ip TEXT, java_port TEXT, query_port TEXT, bedrock_port TEXT, bot_updates_channel TEXT, server_status_channel TEXT, hidden_ports TEXT, downtime INT, total INT, display_uptime TEXT, status_message_id TEXT)`);
     await runQuery(`DELETE FROM GLOBAL WHERE NOT guild_id`);
-
-    let statusEmbed = new MessageEmbed()
-      .setColor(embedConfig.defaultColor);
 
     const guildsCount = await client.guilds.cache.size || 0;
 
@@ -63,19 +60,19 @@ module.exports = {
       await database.serialize(async () => {
         await database.all(`SELECT * FROM GLOBAL WHERE (server_status_channel IS NOT NULL AND ip IS NOT NULL AND (java_port IS NOT NULL OR bedrock_port IS NOT NULL))`, async (error, rows) => {
           rows.forEach(async row => {
-            statusEmbed = new MessageEmbed()
-              .setColor(embedConfig.defaultColor);
-
             const guild = await client.guilds.cache.get(row.guild_id);
+
+            statusEmbed[guild.id] = new MessageEmbed()
+              .setColor(embedConfig.defaultColor);
   
             if(guild){
-              statusEmbed = new MessageEmbed()
+              statusEmbed[guild.id] = new MessageEmbed()
                 .setColor(embedConfig.defaultColor);
 
               const serverStatusChannel = await guild.channels.cache.get(row.server_status_channel);
   
               if(serverStatusChannel){
-              statusEmbed = new MessageEmbed()
+              statusEmbed[guild.id] = new MessageEmbed()
                 .setColor(embedConfig.defaultColor);
 
                 let IP = row.ip;
@@ -89,11 +86,11 @@ module.exports = {
                   
                 total++;
 
-                statusEmbed = new MessageEmbed()
+                statusEmbed[guild.id] = new MessageEmbed()
                   .setColor(embedConfig.defaultColor);
 
                 if(javaPort){
-                  statusEmbed = new MessageEmbed()
+                  statusEmbed[guild.id] = new MessageEmbed()
                     .setColor(embedConfig.defaultColor);
 
                   try{
@@ -135,7 +132,7 @@ module.exports = {
                           }catch{}
                         }
                   
-                        statusEmbed = new MessageEmbed()
+                        statusEmbed[guild.id] = new MessageEmbed()
                           .addFields({
                             name: `${grass} SERVER EDITION`,
                             value: `\`\`\`fix\nJAVA\n\`\`\``
@@ -146,10 +143,10 @@ module.exports = {
                           });
                         
                         if(!hiddenPorts){
-                          statusEmbed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${javaPort}\n\`\`\``);
+                          statusEmbed[guild.id].addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${javaPort}\n\`\`\``);
                         }
                         
-                        statusEmbed.addFields(
+                        statusEmbed[guild.id].addFields(
                           {
                             name: `${settings} SERVER VERSION`,
                             value: `\`\`\`fix\n${version}\n\`\`\``
@@ -170,9 +167,9 @@ module.exports = {
                           .setThumbnail(favicon);
               
                         if(playersList && playersList.length > 0){
-                          await statusEmbed.addField(`${users} PLAYERS`, `\`\`\`fix\n${playersList}\n\`\`\``);
+                          await statusEmbed[guild.id].addField(`${users} PLAYERS`, `\`\`\`fix\n${playersList}\n\`\`\``);
                         }else if(sampleList && sampleList.length > 0){
-                          await statusEmbed.addField(`${users} PLAYERS`, `\`\`\`fix\n${sampleList}\n\`\`\``);
+                          await statusEmbed[guild.id].addField(`${users} PLAYERS`, `\`\`\`fix\n${sampleList}\n\`\`\``);
                         }
                       }else if(rawData[0] === "OFFLINE"){
                         downtime++;
@@ -181,7 +178,7 @@ module.exports = {
                           javaPort = `JAVA- ${javaPort}\nBEDROCK- ${bedrockPort}`;
                         }
 
-                        statusEmbed = new MessageEmbed()
+                        statusEmbed[guild.id] = new MessageEmbed()
                           .setTitle("OFFLINE")
                           .addFields({
                             name: `${grass} SERVER EDITION`,
@@ -195,17 +192,17 @@ module.exports = {
                           .setThumbnail(defaultLogo);
                         
                         if(!hiddenPorts){
-                          statusEmbed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${javaPort}\n\`\`\``);
+                          statusEmbed[guild.id].addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${javaPort}\n\`\`\``);
                         }
                       }
                     }
                   }catch (error){
-                    statusEmbed = new MessageEmbed()
+                    statusEmbed[guild.id] = new MessageEmbed()
                       .setColor(embedConfig.defaultColor);
 
                     downtime++;
 
-                    statusEmbed = new MessageEmbed()
+                    statusEmbed[guild.id] = new MessageEmbed()
                       .setDescription(`${cross} **Error Fetching server stats**-\n\`\`\`${error}\`\`\``)
                       .setColor(embedConfig.errorColor)
                       .setThumbnail(defaultLogo);
@@ -213,7 +210,7 @@ module.exports = {
                     serverStatusChannel = `ERROR`;
                   }
                 }else if(bedrockPort){
-                  statusEmbed = new MessageEmbed()
+                  statusEmbed[guild.id] = new MessageEmbed()
                     .setColor(embedConfig.defaultColor);
 
                   try{
@@ -241,7 +238,7 @@ module.exports = {
                           }
                         }
                   
-                        statusEmbed = new MessageEmbed()
+                        statusEmbed[guild.id] = new MessageEmbed()
                           .addFields({
                             name: `${grass} SERVER EDITION`,
                             value: `\`\`\`fix\n${edition}\n\`\`\``
@@ -252,10 +249,10 @@ module.exports = {
                           });
 
                         if(!hiddenPorts){
-                          statusEmbed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${bedrockPort}\n\`\`\``);
+                          statusEmbed[guild.id].addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${bedrockPort}\n\`\`\``);
                         }
                           
-                        statusEmbed.addFields(
+                        statusEmbed[guild.id].addFields(
                           {
                             name: `${settings} SERVER VERSION`,
                             value: `\`\`\`fix\n${version}\n\`\`\``
@@ -273,7 +270,7 @@ module.exports = {
                       }else if(rawData[0] === "OFFLINE"){
                         downtime++;
 
-                        statusEmbed.setTitle("OFFLINE")
+                        statusEmbed[guild.id].setTitle("OFFLINE")
                           .addFields({
                             name: `${grass} SERVER EDITION`,
                             value: `\`\`\`fix\nBEDROCK\n\`\`\``
@@ -286,25 +283,25 @@ module.exports = {
                           .setThumbnail(defaultLogo);
 
                         if(!hiddenPorts){
-                          statusEmbed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${bedrockPort}\n\`\`\``);
+                          statusEmbed[guild.id].addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${bedrockPort}\n\`\`\``);
                         }
                       }
                     }
                   }catch (error){
                     downtime++;
 
-                    statusEmbed = new MessageEmbed()
+                    statusEmbed[guild.id] = new MessageEmbed()
                       .setDescription(`${cross} **Error Fetching server stats**-\n\`\`\`${error}\`\`\``)
                       .setColor(embedConfig.errorColor)
                       .setThumbnail(defaultLogo);
                   }
                 }else{
-                  statusEmbed = new MessageEmbed()
+                  statusEmbed[guild.id] = new MessageEmbed()
                     .setColor(embedConfig.defaultColor);
 
                   downtime++;
 
-                  statusEmbed = new MessageEmbed()
+                  statusEmbed[guild.id] = new MessageEmbed()
                     .setDescription(`${cross} **Error Fetching server stats**.`)
                     .setColor(embedConfig.errorColor)
                     .setThumbnail(defaultLogo);
@@ -319,50 +316,49 @@ module.exports = {
                 }
 
                 if(displayUptime){
-                  statusEmbed.addField("UPTIME", `\`\`\`fix\n${(((100 - (downtime/total).toFixed(3)) + '').replace(".000", ""))}%\n\`\`\``);
+                  statusEmbed[guild.id].addField("UPTIME", `\`\`\`fix\n${(((100 - (downtime/total).toFixed(3)) + '').replace(".000", ""))}%\n\`\`\``);
 
                   await runQuery(`UPDATE GLOBAL SET total = ${total}, downtime = ${downtime}
                   WHERE guild_id LIKE "${guild.id}"`);
                 }
 
-                statusEmbed.addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + 30}:R>`)
+                statusEmbed[guild.id].addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + 30}:R>`)
                   .setTimestamp();
 
                 channel[guild.id] = serverStatusChannel;
-                Embed[guild.id] = statusEmbed;
                 serverStatusMessageID[guild.id] = row.status_message_id;
 
                 if(serverStatusMessageID[guild.id]){
                   await channel[guild.id].messages.fetch(serverStatusMessageID[guild.id]).then(async (msg) => {
-                    await msg.edit({embeds: [Embed[guild.id]]}).then(async () => {
+                    await msg.edit({embeds: [statusEmbed[guild.id]]}).then(async () => {
                       console.log(`${++count}. ` + chalk.green(`Updating Server Status Of- ${guild.name} | ${guild.id}. `) + chalk.magenta(`(${(new Date() - startTime) / 1000} seconds)`));
                     });
 
                     channel[guild.id] = serverStatusMessageID[guild.id] = null;
-                    Embed[guild.id] = new MessageEmbed();
+                    statusEmbed[guild.id] = new MessageEmbed();
                   }).catch(async () => {
-                    await channel[guild.id].send({embeds: [Embed[guild.id]]}).then(async (msg) => {
+                    await channel[guild.id].send({embeds: [statusEmbed[guild.id]]}).then(async (msg) => {
                       await runQuery(`UPDATE GLOBAL SET status_message_id = "${msg.id}" WHERE guild_id LIKE "${guild.id}"`);
 
                       console.log(`${++count}. ` + chalk.green(`Updating Server Status Of- ${guild.name} | ${guild.id}. `) + chalk.magenta(`(${(new Date() - startTime) / 1000} seconds)`));
-                    }).catch(error => {
+                    }).catch(() => {
                       console.log(`${++count}. ` + chalk.red(`Error Updating Server Status Of- ${guild.name} | ${guild.id}. `) + chalk.magenta(`(${(new Date() - startTime) / 1000} seconds)`));
                     });
 
                     channel[guild.id] = serverStatusMessageID[guild.id] = null;
-                    Embed[guild.id] = new MessageEmbed();
+                    statusEmbed[guild.id] = new MessageEmbed();
                   });
                 }else{
-                  await channel[guild.id].send({embeds: [Embed[guild.id]]}).then(async (msg) => {
+                  await channel[guild.id].send({embeds: [statusEmbed[guild.id]]}).then(async (msg) => {
                     await runQuery(`UPDATE GLOBAL SET status_message_id = "${msg.id}" WHERE guild_id LIKE "${guild.id}"`);
 
                     console.log(`${++count}. ` + chalk.green(`Updating Server Status Of- ${guild.name} | ${guild.id}. `) + chalk.magenta(`(${(new Date() - startTime) / 1000} seconds)`));
-                  }).catch(error => {
+                  }).catch(() => {
                     console.log(`${++count}. ` + chalk.red(`Error Updating Server Status Of- ${guild.name} | ${guild.id}. `) + chalk.magenta(`(${(new Date() - startTime) / 1000} seconds)`));
                   });
 
                   channel[guild.id] = serverStatusMessageID[guild.id] = null;
-                  Embed[guild.id] = new MessageEmbed();
+                  statusEmbed[guild.id] = new MessageEmbed();
                 }
               }
             }else{
@@ -383,13 +379,8 @@ module.exports = {
     });*/
 
     await updater();
-
-    await updater();
  
     setInterval(async () => {
-      statusEmbed = new MessageEmbed()
-        .setColor(embedConfig.defaultColor);
-
       count = 0;
       startTime = new Date();
 
