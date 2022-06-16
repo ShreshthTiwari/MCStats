@@ -81,7 +81,7 @@ module.exports = {
     {
       name: "Note-",
       value: `To reset the server uptime, set your server IP again.
-      To clear value of a variable, set it as \`1\` or \`null\``
+      To clear value of a variable, set it as \`-1\` or \`null\``
     });
 
     await interaction.editReply({embeds: [embed], components: [buttons]}).catch(async error => {

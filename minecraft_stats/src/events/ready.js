@@ -341,9 +341,9 @@ module.exports = {
                     channel[guild.id] = serverStatusMessageID[guild.id] = null;
                     Embed[guild.id] = new MessageEmbed();
                   }).catch(async () => {
-                    await runQuery(`UPDATE GLOBAL SET status_message_id = null WHERE guild_id LIKE "${guild.id}"`);
+                    await channel[guild.id].send({embeds: [Embed[guild.id]]}).then(async (msg) => {
+                      await runQuery(`UPDATE GLOBAL SET status_message_id = "${msg.id}" WHERE guild_id LIKE "${guild.id}"`);
 
-                    await channel[guild.id].send({embeds: [Embed[guild.id]]}).then(async () => {
                       console.log(`${++count}. ` + chalk.green(`Updating Server Status Of- ${guild.name} | ${guild.id}. `) + chalk.magenta(`(${(new Date() - startTime) / 1000} seconds)`));
                     }).catch(error => {
                       console.log(`${++count}. ` + chalk.red(`Error Updating Server Status Of- ${guild.name} | ${guild.id}. `) + chalk.magenta(`(${(new Date() - startTime) / 1000} seconds)`));
@@ -353,9 +353,9 @@ module.exports = {
                     Embed[guild.id] = new MessageEmbed();
                   });
                 }else{
-                  await runQuery(`UPDATE GLOBAL SET status_message_id = null WHERE guild_id LIKE "${guild.id}"`);
+                  await channel[guild.id].send({embeds: [Embed[guild.id]]}).then(async (msg) => {
+                    await runQuery(`UPDATE GLOBAL SET status_message_id = "${msg.id}" WHERE guild_id LIKE "${guild.id}"`);
 
-                  await channel[guild.id].send({embeds: [Embed[guild.id]]}).then(async () => {
                     console.log(`${++count}. ` + chalk.green(`Updating Server Status Of- ${guild.name} | ${guild.id}. `) + chalk.magenta(`(${(new Date() - startTime) / 1000} seconds)`));
                   }).catch(error => {
                     console.log(`${++count}. ` + chalk.red(`Error Updating Server Status Of- ${guild.name} | ${guild.id}. `) + chalk.magenta(`(${(new Date() - startTime) / 1000} seconds)`));
