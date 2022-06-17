@@ -66,8 +66,8 @@ module.exports = {
         > ${emojis.branch} /set query_port \`<port>\` **-** *Set QUERY PORT of your minecraft server*.
         > ${emojis.branch} /set java_port \`<port>\` **-** *Set JAVA PORT of your minecraft server*.
         > ${emojis.branch} /set bedrock_port \`<port>\` **-** *Set BEDROCK PORT of your minecraft server*.
-        > ${emojis.branch} /set server_status_channel \`<channel>\` **-** *Set the Text Channel where the Minecraft Server Status will be posted*.
-        > ${emojis.branch} /set bot_updates_channel \`<channel>\` **-** *Set the Text Channel where the bot updates will be posted*.
+        > ${emojis.branch} /set server_status_channel \`<channel>\` **-** *Set the Minecraft Server Status channel*.
+        > ${emojis.branch} /set bot_updates_channel \`<channel>\` **-** *Set the Bot Updates channel*.
         > ${emojis.branch} /set hidden_ports \`<TRUE/FALSE>\` **-** *Hide or show the server port in server status*.
         > ${emojis.branchEnd} /set display_uptime \`<TRUE/FALSE>\` **-** *Hide or show the server uptime in server status*.`
       },
