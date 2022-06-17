@@ -57,7 +57,8 @@ module.exports = {
       > ${emojis.branch} \`/set bedrock_port\`
       > ${emojis.branch} \`/set server_status_channel\`
       > ${emojis.branch} \`/set bot_updates_channel\`
-      > ${emojis.branchEnd} \`/set hidden_ports\``)
+      > ${emojis.branch} \`/set hidden_ports\`
+      > ${emojis.branchEnd} \`/set display_uptime\``)
     }
 
     embed.addFields({

@@ -72,7 +72,8 @@ module.exports = {
         > ${emojis.branch} /set bedrock_port \`<port>\` **-** *Set BEDROCK PORT of your minecraft server*.
         > ${emojis.branch} /set server_status_channel \`<channel>\` **-** *Set the Text Channel where the Minecraft Server Status will be posted*.
         > ${emojis.branch} /set bot_updates_channel \`<channel>\` **-** *Set the Text Channel where the bot updates will be posted*.
-        > ${emojis.branchEnd} /set hidden_ports \`<option>\` **-** *Hide or show the server port in server status*.`
+        > ${emojis.branch} /set hidden_ports \`<TRUE/FALSE>\` **-** *Hide or show the server port in server status*.
+        > ${emojis.branchEnd} /set display_uptime \`<TRUE/FALSE>\` **-** *Hide or show the server uptime in server status*.`
       },
       {
         name: "Note-",
