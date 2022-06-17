@@ -37,10 +37,6 @@ module.exports = {
         .addIntegerOption(option => option.setName("port").setDescription("Provide the server port.").setRequired(true))
     )
     .addSubcommand(subcommand =>
-      subcommand.setName('numeric_ip').setDescription("Set numeric IP of the minecraft server.")
-        .addStringOption(option => option.setName("ip").setDescription("Provide the numeric server IP.").setRequired(true))
-    )
-    .addSubcommand(subcommand =>
       subcommand.setName('query_port').setDescription("Set query port of the minecraft java server.")
         .addIntegerOption(option => option.setName("port").setDescription("Provide the server port.").setRequired(true))
     )
