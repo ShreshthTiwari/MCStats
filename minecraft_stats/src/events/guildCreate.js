@@ -23,10 +23,10 @@ module.exports = {
 
     const logTitle = `[+] Server (${client.guilds.cache.size})`;  
       
-    const logText = `**NAME**- \`\`\`${guild.name}\`\`\`
-    **ID**- \`\`\`${guild.id}\`\`\`
-    **MEMBERS**- \`\`\`${guild.memberCount}\`\`\`
-    **OWNER**- \`\`\`${guildOwner.displayName}\`\`\``;
+    const logText = `**NAME**- \`\`\`fix\n${guild.name}\n\`\`\`
+    **ID**- \`\`\`fix\n${guild.id}\n\`\`\`
+    **MEMBERS**- \`\`\`fix\n${guild.memberCount}\n\`\`\`
+    **OWNER**- \`\`\`fix\n${guildOwner.displayName}\n\`\`\``;
       
     const logColor = embedConfig.successColor;
 

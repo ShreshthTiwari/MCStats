@@ -4,6 +4,7 @@ module.exports = {
   name: 'guildDelete',
   async execute(client, embed, MessageEmbed, config, embedConfig, databaseBuilder, Permissions, messageEmojisReplacer, errorLogger, logger, guild) {
     await runQuery(`DELETE FROM GLOBAL WHERE guild_id LIKE "${guild.id}"`);
+    //await runQuery(`DROP TABLE IF EXISTS "${guild.id}"`);
 
     let guildsCount = await client.guilds.cache.size || 0;
 
@@ -18,8 +19,8 @@ module.exports = {
     
     const logTitle = `[-] Server (${client.guilds.cache.size})`;
        
-    const logText = `**NAME**- \`\`\`${guild.name}\`\`\`
-    **ID**- \`\`\`${guild.id}\`\`\``;
+    const logText = `**NAME**- \`\`\`fix\n${guild.name}\n\`\`\`
+    **ID**- \`\`\`fix\n${guild.id}\n\`\`\``;
       
     const logColor = embedConfig.errorColor;
 
