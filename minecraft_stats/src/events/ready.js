@@ -20,6 +20,7 @@ let startTime = new Date();
 let serverStatusMessageID = [];
 let channel = [];
 let statusEmbed = [];
+let status = [];
 
 module.exports = {
   name: 'ready',
@@ -27,7 +28,7 @@ module.exports = {
   async execute(client, embed, MessageEmbed, config, embedConfig, databaseBuilder, Permissions, messageEmojisReplacer, errorLogger, logger) {
     const database = await databaseBuilder();
 
-    await runQuery(`CREATE TABLE IF NOT EXISTS GLOBAL (guild_id TEXT PRIMARY KEY, ip TEXT, java_port TEXT, query_port TEXT, bedrock_port TEXT, bot_updates_channel TEXT, server_status_channel TEXT, hidden_ports TEXT, downtime INT, total INT, display_uptime TEXT, status_message_id TEXT)`);
+    await runQuery(`CREATE TABLE IF NOT EXISTS GLOBAL (guild_id TEXT PRIMARY KEY, ip TEXT, java_port TEXT, query_port TEXT, bedrock_port TEXT, bot_updates_channel TEXT, server_status_channel TEXT, hidden_ports TEXT, downtime INT, total INT, display_uptime TEXT, status_message_id TEXT, online_since TEXT)`);
     await runQuery(`DELETE FROM GLOBAL WHERE NOT guild_id`);
 
     const guildsCount = await client.guilds.cache.size || 0;
@@ -72,8 +73,8 @@ module.exports = {
               const serverStatusChannel = await guild.channels.cache.get(row.server_status_channel);
   
               if(serverStatusChannel){
-              statusEmbed[guild.id] = new MessageEmbed()
-                .setColor(embedConfig.defaultColor);
+                statusEmbed[guild.id] = new MessageEmbed()
+                  .setColor(embedConfig.defaultColor);
 
                 let IP = row.ip;
                 let javaPort = (row.java_port * 1) <= 0 ? null : (row.java_port * 1);
@@ -83,6 +84,8 @@ module.exports = {
                 let downtime = (row.downtime < 0 ? 0 : row.downtime) || 0;
                 let total = (row.total < 0 ? 0 : row.total) || 0;
                 let displayUptime = (row.display_uptime === "false") ? false : true;
+                let onlineSince = ((row.online_since * 1) <= 0 ? null : (row.online_since * 1));
+                status[guild.id] = "OFFLINE";
                   
                 total++;
 
@@ -98,6 +101,14 @@ module.exports = {
                         
                     if(rawData){
                       if(rawData[0] === "ONLINE"){
+                        if(!onlineSince){
+                          onlineSince = new Date().getTime();
+                          
+                          await runQuery(`UPDATE GLOBAL SET online_since = "${onlineSince}" WHERE guild_id LIKE "${guild.id}"`);
+                        }
+
+                        status[guild.id] = "ONLINE";
+
                         let motd = rawData[1];
                         let version = rawData[2];
                         let online = rawData[3];
@@ -218,6 +229,14 @@ module.exports = {
                         
                     if(rawData){
                       if(rawData[0] === "ONLINE"){
+                        if(!onlineSince){
+                          onlineSince = new Date().getTime();
+                          
+                          await runQuery(`UPDATE GLOBAL SET online_since = "${onlineSince}" WHERE guild_id LIKE "${guild.id}"`);
+                        }
+
+                        status[guild.id] = "ONLINE";
+
                         let edition = rawData[1];
                         let motd = rawData[2];
                         let version = rawData[3];
@@ -318,8 +337,15 @@ module.exports = {
                 if(displayUptime){
                   statusEmbed[guild.id].addField("UPTIME", `\`\`\`fix\n${(((100 - (downtime/total).toFixed(3)) + '').replace(".000", ""))}%\n\`\`\``);
 
-                  await runQuery(`UPDATE GLOBAL SET total = ${total}, downtime = ${downtime}
-                  WHERE guild_id LIKE "${guild.id}"`);
+                  await runQuery(`UPDATE GLOBAL SET total = ${total}, downtime = ${downtime} WHERE guild_id LIKE "${guild.id}"`);
+                }
+
+                if(status[guild.id] === "ONLINE"){
+                  statusEmbed[guild.id].addField("ONLINE SINCE", `<t:${Math.round((onlineSince * 1)/1000)}:R>`);
+                }else{
+                  if(onlineSince){
+                    await runQuery(`UPDATE GLOBAL SET online_since = null WHERE guild_id LIKE "${guild.id}"`);
+                  }
                 }
 
                 statusEmbed[guild.id].addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + 30}:R>`)

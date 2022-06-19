@@ -23,6 +23,8 @@ module.exports = {
     const pen = emojis.pen;
     const signal = emojis.signal;
 
+    let status = "OFFLINE";
+
     embed = new MessageEmbed()
       .setColor(embedConfig.defaultColor);
 
@@ -34,6 +36,7 @@ module.exports = {
         let bedrockPort = (row.bedrock_port * 1) <= 0 ? null : (row.bedrock_port * 1);
         let hiddenPorts = (row.hidden_ports === "true") ? true : false;
         let display_uptime = (row.display_uptime === "false") ? false : true;
+        let onlineSince = ((row.online_since * 1) <= 0 ? null : (row.online_since * 1));
 
         if(!IP){
           await embed.setDescription(`${cross} Server IP not set.`)
@@ -63,6 +66,12 @@ module.exports = {
             
             if(rawData){
               if(rawData[0] === "ONLINE"){
+                if(!onlineSince){
+                  onlineSince = new Date().getTime();
+                  
+                  await runQuery(`UPDATE GLOBAL SET online_since = "${onlineSince}" WHERE guild_id LIKE "${guild.id}"`);
+                }
+
                 let motd = rawData[1];
                 let version = rawData[2];
                 let online = rawData[3];
@@ -182,6 +191,12 @@ module.exports = {
             
             if(rawData){
               if(rawData[0] === "ONLINE"){  
+                if(!onlineSince){
+                  onlineSince = new Date().getTime();
+                  
+                  await runQuery(`UPDATE GLOBAL SET online_since = "${onlineSince}" WHERE guild_id LIKE "${guild.id}"`);
+                }
+
                 let edition = rawData[1];
                 let motd = rawData[2];
                 let version = rawData[3];
@@ -230,61 +245,69 @@ module.exports = {
                    value: `\`\`\`fix\n${motd}\n\`\`\``
                   })
                   .setColor(embedConfig.successColor);
-             }else if(rawData[0] === "OFFLINE"){
-               await embed.setTitle("OFFLINE")
-                 .addFields({
-                   name: `${grass} SERVER EDITION`,
-                   value: `\`\`\`fix\nBEDROCK\n\`\`\``
-                 },
-                 {
-                   name: `${wifi} SERVER IP`,
-                   value: `\`\`\`fix\n${IP}\n\`\`\``
-                 })
-                 .setColor(embedConfig.errorColor)
-                 .setThumbnail(defaultLogo);
+              }else if(rawData[0] === "OFFLINE"){
+                await embed.setTitle("OFFLINE")
+                  .addFields({
+                    name: `${grass} SERVER EDITION`,
+                    value: `\`\`\`fix\nBEDROCK\n\`\`\``
+                  },
+                  {
+                    name: `${wifi} SERVER IP`,
+                    value: `\`\`\`fix\n${IP}\n\`\`\``
+                  })
+                  .setColor(embedConfig.errorColor)
+                  .setThumbnail(defaultLogo);
 
-               if(!hiddenPorts){
-                 embed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${bedrockPort}\n\`\`\``);
-               }
-             }else{
-               embed = new MessageEmbed()
-                 .setDescription(`${cross} Error showing server stats.`)
-                 .setColor(embedConfig.errorColor)
-                 .setThumbnail(defaultLogo);
-             }
-           }else{
-             embed = new MessageEmbed()
-              .setDescription(`${cross} Unable to fetch the data. Please check if the **\`IP\`** and **\`PORT\`** are correct.\nAlso check if the server is online.`)
+                if(!hiddenPorts){
+                  embed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${bedrockPort}\n\`\`\``);
+                }
+              }else{
+                embed = new MessageEmbed()
+                  .setDescription(`${cross} Error showing server stats.`)
+                  .setColor(embedConfig.errorColor)
+                  .setThumbnail(defaultLogo);
+              }
+            }else{
+              embed = new MessageEmbed()
+                .setDescription(`${cross} Unable to fetch the data. Please check if the **\`IP\`** and **\`PORT\`** are correct.\nAlso check if the server is online.`)
+                .setColor(embedConfig.errorColor)
+                .setThumbnail(defaultLogo);
+            }
+          }catch (error){
+            embed = new MessageEmbed()
+              .setDescription(`${cross} **Error Fetching server stats**-\n\`\`\`${error}\`\`\``)
               .setColor(embedConfig.errorColor)
               .setThumbnail(defaultLogo);
-           }
-         }catch (error){
-           embed = new MessageEmbed()
-            .setDescription(`${cross} **Error Fetching server stats**-\n\`\`\`${error}\`\`\``)
-            .setColor(embedConfig.errorColor)
-            .setThumbnail(defaultLogo);
-         }
-       }else{
-         await embed.setDescription(`${cross} Server IP, port not set.`)
-           .setColor(embedConfig.errorColor);
+          }
+        }else{
+          await embed.setDescription(`${cross} Server IP, port not set.`)
+            .setColor(embedConfig.errorColor);
       
-         await interaction.editReply({embeds: [embed]}).catch(async error => {
-           await errorLogger(client, interaction, error, "src/commands/status.js : 271");
-         });
+          await interaction.editReply({embeds: [embed]}).catch(async error => {
+            await errorLogger(client, interaction, error, "src/commands/status.js : 271");
+          });
 
-         return;
-       }
+          return;
+        }
 
-       if(display_uptime){
-        let downtime = (row.downtime < 0 ? 0 : row.downtime) || 0;
-        let total = (row.total < 0 ? 0 : row.total) || 1;
+        if(display_uptime){
+          let downtime = (row.downtime < 0 ? 0 : row.downtime) || 0;
+          let total = (row.total < 0 ? 0 : row.total) || 1;
 
-         embed.addField("UPTIME", `\`\`\`fix\n${100 - (downtime/total)}%\n\`\`\``);
-       }
+          embed.addField("UPTIME", `\`\`\`fix\n${100 - (downtime/total)}%\n\`\`\``);
+        }
 
-       await interaction.editReply({embeds: [embed]}).catch(async error => {
-         await errorLogger(client, interaction, error, "src/commands/status.js : 278");
-       });
+        if(status === "ONLINE"){
+          embed[guild.id].addField("ONLINE SINCE", `<t:${Math.round((onlineSince * 1)/1000)}:R>`);
+        }else{
+          if(onlineSince){
+            await runQuery(`UPDATE GLOBAL SET online_since = null WHERE guild_id LIKE "${guild.id}"`);
+          }
+        }
+
+        await interaction.editReply({embeds: [embed]}).catch(async error => {
+          await errorLogger(client, interaction, error, "src/commands/status.js : 278");
+        });
       });
     });
   },
