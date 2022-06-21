@@ -386,6 +386,8 @@ module.exports = {
                   channel[guild.id] = serverStatusMessageID[guild.id] = null;
                   statusEmbed[guild.id] = new MessageEmbed();
                 }
+              }else{
+                await runQuery(`UPDATE GLOBAL SET server_status_channel = null WHERE guild_id LIKE "${guild.id}"`);
               }
             }else{
               await runQuery(`DELETE FROM GLOBAL WHERE guild_id LIKE "${row.guild_id}"`);
