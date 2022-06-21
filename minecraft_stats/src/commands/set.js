@@ -55,6 +55,11 @@ module.exports = {
 
     let channel = await interaction.options.getChannel("channel") || interaction.channel;
     let input = await interaction.options.getString("ip") || interaction.options.getInteger("port") || (interaction.options.getBoolean("option") + "");
+
+    if(input && input.length >= 100){
+      input.length = 97;
+      input = input + '...';
+    }
         
     if(subCommand === "help"){
       embed.setTitle("Set Help")

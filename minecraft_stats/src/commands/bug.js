@@ -14,8 +14,8 @@ module.exports = {
 
     const user = await interaction.user;
 
-    if(message.length >= 1000){
-      message.length = 997;
+    if(message.length >= 800){
+      message.length = 797;
       message = message + "...";
     }
 
@@ -29,7 +29,7 @@ module.exports = {
 
     if(channel){
       await channel.send({embeds: [embed]})
-        .then(async success => {
+        .then(async () => {
           embed = new MessageEmbed()
             .setDescription
              (`
