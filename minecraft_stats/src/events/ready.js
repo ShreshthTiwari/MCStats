@@ -5,7 +5,6 @@ let defaultLogo = "https://i.ibb.co/NY6KH17/default-icon.png";
 const javaFetcher = require("../fetcher/javaFetcher.js");
 const queryFetcher = require("../fetcher/queryFetcher.js");
 const bedrockFetcher = require("../fetcher/bedrockFetcher.js");
-
 const emojisFetcher = require("../fetcher/emojisFetcher.js");
 
 const runQuery = require("../sqlite/runQuery.js");
