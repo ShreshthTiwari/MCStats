@@ -205,15 +205,15 @@ module.exports = {
                 let portIPv4 = rawData[6];
                 let portIPv6 = rawData[7];
 
-                if(portIPv4 !== "NULL"){
-                  bedrockPort = `DEFAULT- ${bedrockPort}\nIPv4- ${portIPv4}`;
+                if(portIPv4 !== "NULL" || portIPv6 !== "NULL"){
+                  bedrockPort = `DEFAULT- ${bedrockPort}`;
+
+                  if(portIPv4 !== "NULL"){
+                    bedrockPort = bedrockPort + `\nIPv4- ${portIPv4}`;
+                  }
 
                   if(portIPv6 !== "NULL"){
-                    bedrockPort = bedrockPort + `\nIPv6- ${portIPv6}`
-                  }
-                }else{
-                  if(portIPv6 !== "NULL"){
-                    bedrockPort = `DEFAULT- ${bedrockPort}\nIPv6- ${portIPv6}`
+                    bedrockPort = bedrockPort + `\nIPv6- ${portIPv6}`;
                   }
                 }
       
