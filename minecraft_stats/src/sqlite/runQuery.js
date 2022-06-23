@@ -9,6 +9,6 @@ module.exports = async (query) => {
       });
     }
   }catch(error){
-    console.log(error);
+    await errorLogger(client, null, error, "src/sqlite/runQuery.js : 12");
   }
 }

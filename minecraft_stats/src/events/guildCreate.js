@@ -49,7 +49,7 @@ module.exports = {
         i = 0;
       }
     }catch(error){
-      console.log(error);
+      await errorLogger(client, null, error, "src/events/guildCreate.js : 52");
     }
   },
 };

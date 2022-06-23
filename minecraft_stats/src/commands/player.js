@@ -48,7 +48,7 @@ module.exports = {
           .addField("SKIN", `[__DOWNLOAD__](${playerStatus.skin.texture.download})`);
         }
       }catch (error){
-        console.log(error);
+        await errorLogger(client, interaction, error, "src/commands/player.js : 51");
       }
     }
 

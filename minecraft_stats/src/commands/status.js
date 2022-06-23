@@ -31,7 +31,7 @@ module.exports = {
     database.serialize(async () => {
       database.each(`SELECT ip, java_port, query_port, bedrock_port, hidden_ports, downtime, total, display_uptime FROM GLOBAL WHERE guild_id like "${interaction.guild.id}"`, async (error, row) => {
         if(error){
-          console.log(error);
+          await errorLogger(client, interaction, error, "src/commands/status.js : 34");
         }else{
           let IP = row.ip;
           let javaPort = (row.java_port * 1) <= 0 ? null : (row.java_port * 1);

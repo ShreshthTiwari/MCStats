@@ -108,7 +108,7 @@ module.exports = {
       .setThumbnail("https://i.ibb.co/71P14DF/mojang-logo.png");
 
     await interaction.editReply({embeds: [embed]}).catch(async error => {
-      await errorLogger(client, interaction, error, "src/commands/mojang.js : 11");
+      await errorLogger(client, interaction, error, "src/commands/mojang.js : 111");
     });
   },
 }
