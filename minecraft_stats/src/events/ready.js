@@ -9,7 +9,7 @@ const emojisFetcher = require("../fetcher/emojisFetcher.js");
 
 const runQuery = require("../sqlite/runQuery.js");
 
-let interval = 10;
+let interval;
 
 const line = "--------------------------------------------------------------";
 
@@ -25,6 +25,8 @@ module.exports = {
   name: 'ready',
   once: true,
   async execute(client, embed, MessageEmbed, config, embedConfig, databaseBuilder, Permissions, messageEmojisReplacer, errorLogger, logger) {
+    interval = config.interval;
+
     const database = await databaseBuilder();
 
     await runQuery(`CREATE TABLE IF NOT EXISTS GLOBAL (guild_id TEXT PRIMARY KEY, ip TEXT, java_port TEXT, query_port TEXT, bedrock_port TEXT, bot_updates_channel TEXT, server_status_channel TEXT, hidden_ports TEXT, downtime INT, total INT, display_uptime TEXT, status_message_id TEXT, online_since TEXT)`);

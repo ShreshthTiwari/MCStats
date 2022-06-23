@@ -5,8 +5,9 @@ const commandUsed = new Set();
 module.exports = {
   name: 'interactionCreate',
   async execute(client, embed, MessageEmbed, config, embedConfig, databaseBuilder, Permissions, messageEmojisReplacer, errorLogger, logger, interaction) {
-    await runQuery(`INSERT OR IGNORE INTO GLOBAL (guild_id) 
-        VALUES ("${interaction.guild.id}")`);
+    const commandsCooldown = config.commandsCooldown;
+    
+    await runQuery(`INSERT OR IGNORE INTO GLOBAL (guild_id) VALUES ("${interaction.guild.id}")`);
 
     embed = new MessageEmbed()
       .setColor(embedConfig.defaultColor);
@@ -70,7 +71,7 @@ module.exports = {
         
         setTimeout(() => {
           commandUsed.delete(interaction.user.id);
-        }, 3 * 1000);
+        }, commandsCooldown * 1000);
       }
     }catch(error){
       embed.setDescription(`${cross} Error while executing this command.\n\`\`\`\n${error}\n\`\`\``)

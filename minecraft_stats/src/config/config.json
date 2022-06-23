@@ -9,5 +9,7 @@
   "authorID": "564106279862140938",
   "bugReportsChannel": "",
   "miscChannel": "",
-  "guildJoinImages": ["https://media3.giphy.com/media/25oFarLxPqrNS/200.gif", "https://i.pinimg.com/originals/c3/b8/2f/c3b82f8fd712118015d74be806df38fe.gif", "https://i.pinimg.com/originals/87/aa/59/87aa5954ccfbfa87dc44c19054943ca7.gif", "http://pa1.narvii.com/5804/ec2675abdbf5621c52ef5699d31655281704c2c7_00.gif"]
+  "guildJoinImages": ["https://media3.giphy.com/media/25oFarLxPqrNS/200.gif", "https://i.pinimg.com/originals/c3/b8/2f/c3b82f8fd712118015d74be806df38fe.gif", "https://i.pinimg.com/originals/87/aa/59/87aa5954ccfbfa87dc44c19054943ca7.gif", "http://pa1.narvii.com/5804/ec2675abdbf5621c52ef5699d31655281704c2c7_00.gif"],
+  "commandsCooldown": 3,
+  "interval": 10
 }
