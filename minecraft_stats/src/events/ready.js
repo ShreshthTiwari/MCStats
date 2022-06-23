@@ -59,330 +59,334 @@ module.exports = {
 
       await database.serialize(async () => {
         await database.all(`SELECT * FROM GLOBAL WHERE (server_status_channel IS NOT NULL AND ip IS NOT NULL AND (java_port IS NOT NULL OR bedrock_port IS NOT NULL))`, async (error, rows) => {
-          rows.forEach(async row => {
-            const guild = await client.guilds.cache.get(row.guild_id);
-  
-            if(guild){
-              statusEmbed[guild.id] = new MessageEmbed()
-                .setColor(embedConfig.defaultColor);
-
-              const serverStatusChannel = await guild.channels.cache.get(row.server_status_channel);
-  
-              if(serverStatusChannel){
+          if(error){
+            await errorLogger(client, null, error, "src/events/ready.js : 63");
+          }else{
+            rows.forEach(async row => {
+              const guild = await client.guilds.cache.get(row.guild_id);
+    
+              if(guild){
                 statusEmbed[guild.id] = new MessageEmbed()
                   .setColor(embedConfig.defaultColor);
-
-                let IP = row.ip;
-                let javaPort = (row.java_port * 1) <= 0 ? null : (row.java_port * 1);
-                let queryPort = (row.query_port * 1) <= 0 ? null : (row.query_port * 1);
-                let bedrockPort = (row.bedrock_port * 1) <= 0 ? null : (row.bedrock_port * 1);
-                let hiddenPorts = (row.hidden_ports === "true") ? true : false;
-                let downtime = (row.downtime < 0 ? 0 : row.downtime) || 0;
-                let total = (row.total < 0 ? 0 : row.total) || 0;
-                let displayUptime = (row.display_uptime === "false") ? false : true;
-                let onlineSince = ((row.online_since * 1) <= 0 ? null : (row.online_since * 1));
-                status[guild.id] = "OFFLINE";
-                  
-                total++;
-
-                statusEmbed[guild.id] = new MessageEmbed()
-                  .setColor(embedConfig.defaultColor);
-
-                if(javaPort){
+  
+                const serverStatusChannel = await guild.channels.cache.get(row.server_status_channel);
+    
+                if(serverStatusChannel){
                   statusEmbed[guild.id] = new MessageEmbed()
                     .setColor(embedConfig.defaultColor);
-
-                  try{
-                    let rawData = await javaFetcher(client, guild.id, IP, javaPort) || ["OFFLINE"];
-                        
-                    if(rawData){
-                      if(rawData[0] === "ONLINE"){
-                        if(!onlineSince){
-                          onlineSince = new Date().getTime();
-                          
-                          await runQuery(`UPDATE GLOBAL SET online_since = "${onlineSince}" WHERE guild_id LIKE "${guild.id}"`);
-                        }
-
-                        status[guild.id] = "ONLINE";
-
-                        let motd = rawData[1];
-                        let version = rawData[2];
-                        let online = rawData[3];
-                        let max = rawData[4];
-                        let sampleList = rawData[5];
-                        let favicon = rawData[6];
-                        let roundTripLatency = rawData[7];
-              
-                        let playersList;
-
-                        if(queryPort){
-                          let rawData2 = ["OFFLINE"];
-
-                          try{
-                            rawData2 = await queryFetcher(IP, queryPort);
-              
-                            if(rawData2[0] === "ONLINE"){
-                              playersList = rawData2[1];
-                            }
-                          }catch{}
-                        }
-            
-                        if(bedrockPort){
-                          let rawData3 = ["OFFLINE"];
-
-                          try{
-                            rawData3 = await bedrockFetcher(IP, bedrockPort);
-                
-                            if(rawData3[0] === "ONLINE"){
-                              javaPort = `JAVA- ${javaPort}\nBEDROCK/PE- ${bedrockPort}`;
-                            }
-                          }catch{}
-                        }
-                  
-                        statusEmbed[guild.id] = new MessageEmbed()
-                          .addFields({
-                            name: `${grass} SERVER EDITION`,
-                            value: `\`\`\`fix\nJAVA\n\`\`\``
-                          },
-                          {
-                            name: `${wifi} SERVER IP`,
-                            value: `\`\`\`fix\n${IP}\n\`\`\``
-                          });
-                        
-                        if(!hiddenPorts){
-                          statusEmbed[guild.id].addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${javaPort}\n\`\`\``);
-                        }
-                        
-                        statusEmbed[guild.id].addFields(
-                          {
-                            name: `${settings} SERVER VERSION`,
-                            value: `\`\`\`fix\n${version}\n\`\`\``
-                          },
-                          {
-                            name: `${users} PLAYING`,
-                            value: `\`\`\`fix\n${online}/${max}\n\`\`\``
-                          },
-                          {
-                            name: `${pen} MOTD`,
-                            value: `\`\`\`fix\n${motd}\n\`\`\``
-                          },
-                          {
-                            name: `${signal} LATENCY`,
-                            value: `\`\`\`fix\n${roundTripLatency}ms\n\`\`\``
-                          })
-                          .setColor(embedConfig.successColor)
-                          .setThumbnail(favicon);
-              
-                        if(playersList && playersList.length > 0){
-                          await statusEmbed[guild.id].addField(`${users} PLAYERS`, `\`\`\`fix\n${playersList}\n\`\`\``);
-                        }else if(sampleList && sampleList.length > 0){
-                          await statusEmbed[guild.id].addField(`${users} PLAYERS`, `\`\`\`fix\n${sampleList}\n\`\`\``);
-                        }
-                      }else if(rawData[0] === "OFFLINE"){
-                        downtime++;
-
-                        if(bedrockPort){
-                          javaPort = `JAVA- ${javaPort}\nBEDROCK- ${bedrockPort}`;
-                        }
-
-                        statusEmbed[guild.id] = new MessageEmbed()
-                          .setTitle("OFFLINE")
-                          .addFields({
-                            name: `${grass} SERVER EDITION`,
-                            value: `\`\`\`fix\nJAVA\n\`\`\``
-                          },
-                          {
-                            name: `${wifi} SERVER IP`,
-                            value: `\`\`\`fix\n${IP}\n\`\`\``
-                          })
-                          .setColor(embedConfig.errorColor)
-                          .setThumbnail(defaultLogo);
-                        
-                        if(!hiddenPorts){
-                          statusEmbed[guild.id].addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${javaPort}\n\`\`\``);
-                        }
-                      }
-                    }
-                  }catch (error){
+  
+                  let IP = row.ip;
+                  let javaPort = (row.java_port * 1) <= 0 ? null : (row.java_port * 1);
+                  let queryPort = (row.query_port * 1) <= 0 ? null : (row.query_port * 1);
+                  let bedrockPort = (row.bedrock_port * 1) <= 0 ? null : (row.bedrock_port * 1);
+                  let hiddenPorts = (row.hidden_ports === "true") ? true : false;
+                  let downtime = (row.downtime < 0 ? 0 : row.downtime) || 0;
+                  let total = (row.total < 0 ? 0 : row.total) || 0;
+                  let displayUptime = (row.display_uptime === "false") ? false : true;
+                  let onlineSince = ((row.online_since * 1) <= 0 ? null : (row.online_since * 1));
+                  status[guild.id] = "OFFLINE";
+                    
+                  total++;
+  
+                  statusEmbed[guild.id] = new MessageEmbed()
+                    .setColor(embedConfig.defaultColor);
+  
+                  if(javaPort){
                     statusEmbed[guild.id] = new MessageEmbed()
                       .setColor(embedConfig.defaultColor);
-
-                    statusEmbed[guild.id] = new MessageEmbed()
-                      .setDescription(`${cross} **Error Fetching server stats**-\n\`\`\`${error}\`\`\``)
-                      .setColor(embedConfig.errorColor)
-                      .setThumbnail(defaultLogo);
-                        
-                    serverStatusChannel = `ERROR`;
-                  }
-                }else if(bedrockPort){
-                  statusEmbed[guild.id] = new MessageEmbed()
-                    .setColor(embedConfig.defaultColor);
-
-                  try{
-                    let rawData = await bedrockFetcher(IP, bedrockPort) || ["OFFLINE"];
-                        
-                    if(rawData){
-                      if(rawData[0] === "ONLINE"){
-                        if(!onlineSince){
-                          onlineSince = new Date().getTime();
+  
+                    try{
+                      let rawData = await javaFetcher(client, guild.id, IP, javaPort) || ["OFFLINE"];
                           
-                          await runQuery(`UPDATE GLOBAL SET online_since = "${onlineSince}" WHERE guild_id LIKE "${guild.id}"`);
-                        }
-
-                        status[guild.id] = "ONLINE";
-
-                        let edition = rawData[1];
-                        let motd = rawData[2];
-                        let version = rawData[3];
-                        let online = rawData[4];
-                        let max = rawData[5];
-                        let portIPv4 = rawData[6];
-                        let portIPv6 = rawData[7];
-
-                        if(portIPv4 !== "NULL" || portIPv6 !== "NULL"){
-                          bedrockPort = `DEFAULT- ${bedrockPort}`;
-
-                          if(portIPv4 !== "NULL"){
-                            bedrockPort = bedrockPort + `\nIPv4- ${portIPv4}`;
+                      if(rawData){
+                        if(rawData[0] === "ONLINE"){
+                          if(!onlineSince){
+                            onlineSince = new Date().getTime();
+                            
+                            await runQuery(`UPDATE GLOBAL SET online_since = "${onlineSince}" WHERE guild_id LIKE "${guild.id}"`);
                           }
-
-                          if(portIPv6 !== "NULL"){
-                            bedrockPort = bedrockPort + `\nIPv6- ${portIPv6}`;
+  
+                          status[guild.id] = "ONLINE";
+  
+                          let motd = rawData[1];
+                          let version = rawData[2];
+                          let online = rawData[3];
+                          let max = rawData[4];
+                          let sampleList = rawData[5];
+                          let favicon = rawData[6];
+                          let roundTripLatency = rawData[7];
+                
+                          let playersList;
+  
+                          if(queryPort){
+                            let rawData2 = ["OFFLINE"];
+  
+                            try{
+                              rawData2 = await queryFetcher(IP, queryPort);
+                
+                              if(rawData2[0] === "ONLINE"){
+                                playersList = rawData2[1];
+                              }
+                            }catch{}
                           }
-                        }
+              
+                          if(bedrockPort){
+                            let rawData3 = ["OFFLINE"];
+  
+                            try{
+                              rawData3 = await bedrockFetcher(IP, bedrockPort);
                   
-                        statusEmbed[guild.id] = new MessageEmbed()
-                          .addFields({
-                            name: `${grass} SERVER EDITION`,
-                            value: `\`\`\`fix\n${edition}\n\`\`\``
-                          },
-                          {
-                            name: `${wifi} SERVER IP`,
-                            value: `\`\`\`fix\n${IP}\n\`\`\``
-                          });
-
-                        if(!hiddenPorts){
-                          statusEmbed[guild.id].addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${bedrockPort}\n\`\`\``);
-                        }
+                              if(rawData3[0] === "ONLINE"){
+                                javaPort = `JAVA- ${javaPort}\nBEDROCK/PE- ${bedrockPort}`;
+                              }
+                            }catch{}
+                          }
+                    
+                          statusEmbed[guild.id] = new MessageEmbed()
+                            .addFields({
+                              name: `${grass} SERVER EDITION`,
+                              value: `\`\`\`fix\nJAVA\n\`\`\``
+                            },
+                            {
+                              name: `${wifi} SERVER IP`,
+                              value: `\`\`\`fix\n${IP}\n\`\`\``
+                            });
                           
-                        statusEmbed[guild.id].addFields(
-                          {
-                            name: `${settings} SERVER VERSION`,
-                            value: `\`\`\`fix\n${version}\n\`\`\``
-                          },
-                          {
-                            name: `${users} PLAYING`,
-                            value: `\`\`\`fix\n${online}/${max}\n\`\`\``
-                          },
-                          {
-                            name: `${pen} MOTD`,
-                            value: `\`\`\`fix\n${motd}\n\`\`\``
-                          })
-                          .setColor(embedConfig.successColor)
-                          .setThumbnail(defaultLogo);
-                      }else if(rawData[0] === "OFFLINE"){
-                        downtime++;
-
-                        statusEmbed[guild.id].setTitle("OFFLINE")
-                          .addFields({
-                            name: `${grass} SERVER EDITION`,
-                            value: `\`\`\`fix\nBEDROCK\n\`\`\``
-                          },
-                          {
-                            name: `${wifi} SERVER IP`,
-                            value: `\`\`\`fix\n${IP}\n\`\`\``
-                          })
-                          .setColor(embedConfig.errorColor)
-                          .setThumbnail(defaultLogo);
-
-                        if(!hiddenPorts){
-                          statusEmbed[guild.id].addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${bedrockPort}\n\`\`\``);
+                          if(!hiddenPorts){
+                            statusEmbed[guild.id].addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${javaPort}\n\`\`\``);
+                          }
+                          
+                          statusEmbed[guild.id].addFields(
+                            {
+                              name: `${settings} SERVER VERSION`,
+                              value: `\`\`\`fix\n${version}\n\`\`\``
+                            },
+                            {
+                              name: `${users} PLAYING`,
+                              value: `\`\`\`fix\n${online}/${max}\n\`\`\``
+                            },
+                            {
+                              name: `${pen} MOTD`,
+                              value: `\`\`\`fix\n${motd}\n\`\`\``
+                            },
+                            {
+                              name: `${signal} LATENCY`,
+                              value: `\`\`\`fix\n${roundTripLatency}ms\n\`\`\``
+                            })
+                            .setColor(embedConfig.successColor)
+                            .setThumbnail(favicon);
+                
+                          if(playersList && playersList.length > 0){
+                            await statusEmbed[guild.id].addField(`${users} PLAYERS`, `\`\`\`fix\n${playersList}\n\`\`\``);
+                          }else if(sampleList && sampleList.length > 0){
+                            await statusEmbed[guild.id].addField(`${users} PLAYERS`, `\`\`\`fix\n${sampleList}\n\`\`\``);
+                          }
+                        }else if(rawData[0] === "OFFLINE"){
+                          downtime++;
+  
+                          if(bedrockPort){
+                            javaPort = `JAVA- ${javaPort}\nBEDROCK- ${bedrockPort}`;
+                          }
+  
+                          statusEmbed[guild.id] = new MessageEmbed()
+                            .setTitle("OFFLINE")
+                            .addFields({
+                              name: `${grass} SERVER EDITION`,
+                              value: `\`\`\`fix\nJAVA\n\`\`\``
+                            },
+                            {
+                              name: `${wifi} SERVER IP`,
+                              value: `\`\`\`fix\n${IP}\n\`\`\``
+                            })
+                            .setColor(embedConfig.errorColor)
+                            .setThumbnail(defaultLogo);
+                          
+                          if(!hiddenPorts){
+                            statusEmbed[guild.id].addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${javaPort}\n\`\`\``);
+                          }
                         }
                       }
+                    }catch (error){
+                      statusEmbed[guild.id] = new MessageEmbed()
+                        .setColor(embedConfig.defaultColor);
+  
+                      statusEmbed[guild.id] = new MessageEmbed()
+                        .setDescription(`${cross} **Error Fetching server stats**-\n\`\`\`${error}\`\`\``)
+                        .setColor(embedConfig.errorColor)
+                        .setThumbnail(defaultLogo);
+                          
+                      serverStatusChannel = `ERROR`;
                     }
-                  }catch (error){
+                  }else if(bedrockPort){
                     statusEmbed[guild.id] = new MessageEmbed()
-                      .setDescription(`${cross} **Error Fetching server stats**-\n\`\`\`${error}\`\`\``)
+                      .setColor(embedConfig.defaultColor);
+  
+                    try{
+                      let rawData = await bedrockFetcher(IP, bedrockPort) || ["OFFLINE"];
+                          
+                      if(rawData){
+                        if(rawData[0] === "ONLINE"){
+                          if(!onlineSince){
+                            onlineSince = new Date().getTime();
+                            
+                            await runQuery(`UPDATE GLOBAL SET online_since = "${onlineSince}" WHERE guild_id LIKE "${guild.id}"`);
+                          }
+  
+                          status[guild.id] = "ONLINE";
+  
+                          let edition = rawData[1];
+                          let motd = rawData[2];
+                          let version = rawData[3];
+                          let online = rawData[4];
+                          let max = rawData[5];
+                          let portIPv4 = rawData[6];
+                          let portIPv6 = rawData[7];
+  
+                          if(portIPv4 !== "NULL" || portIPv6 !== "NULL"){
+                            bedrockPort = `DEFAULT- ${bedrockPort}`;
+  
+                            if(portIPv4 !== "NULL"){
+                              bedrockPort = bedrockPort + `\nIPv4- ${portIPv4}`;
+                            }
+  
+                            if(portIPv6 !== "NULL"){
+                              bedrockPort = bedrockPort + `\nIPv6- ${portIPv6}`;
+                            }
+                          }
+                    
+                          statusEmbed[guild.id] = new MessageEmbed()
+                            .addFields({
+                              name: `${grass} SERVER EDITION`,
+                              value: `\`\`\`fix\n${edition}\n\`\`\``
+                            },
+                            {
+                              name: `${wifi} SERVER IP`,
+                              value: `\`\`\`fix\n${IP}\n\`\`\``
+                            });
+  
+                          if(!hiddenPorts){
+                            statusEmbed[guild.id].addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${bedrockPort}\n\`\`\``);
+                          }
+                            
+                          statusEmbed[guild.id].addFields(
+                            {
+                              name: `${settings} SERVER VERSION`,
+                              value: `\`\`\`fix\n${version}\n\`\`\``
+                            },
+                            {
+                              name: `${users} PLAYING`,
+                              value: `\`\`\`fix\n${online}/${max}\n\`\`\``
+                            },
+                            {
+                              name: `${pen} MOTD`,
+                              value: `\`\`\`fix\n${motd}\n\`\`\``
+                            })
+                            .setColor(embedConfig.successColor)
+                            .setThumbnail(defaultLogo);
+                        }else if(rawData[0] === "OFFLINE"){
+                          downtime++;
+  
+                          statusEmbed[guild.id].setTitle("OFFLINE")
+                            .addFields({
+                              name: `${grass} SERVER EDITION`,
+                              value: `\`\`\`fix\nBEDROCK\n\`\`\``
+                            },
+                            {
+                              name: `${wifi} SERVER IP`,
+                              value: `\`\`\`fix\n${IP}\n\`\`\``
+                            })
+                            .setColor(embedConfig.errorColor)
+                            .setThumbnail(defaultLogo);
+  
+                          if(!hiddenPorts){
+                            statusEmbed[guild.id].addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${bedrockPort}\n\`\`\``);
+                          }
+                        }
+                      }
+                    }catch (error){
+                      statusEmbed[guild.id] = new MessageEmbed()
+                        .setDescription(`${cross} **Error Fetching server stats**-\n\`\`\`${error}\`\`\``)
+                        .setColor(embedConfig.errorColor)
+                        .setThumbnail(defaultLogo);
+                    }
+                  }else{
+                    statusEmbed[guild.id] = new MessageEmbed()
+                      .setColor(embedConfig.defaultColor);
+  
+                    statusEmbed[guild.id] = new MessageEmbed()
+                      .setDescription(`${cross} **Error Fetching server stats**.`)
                       .setColor(embedConfig.errorColor)
                       .setThumbnail(defaultLogo);
                   }
-                }else{
-                  statusEmbed[guild.id] = new MessageEmbed()
-                    .setColor(embedConfig.defaultColor);
-
-                  statusEmbed[guild.id] = new MessageEmbed()
-                    .setDescription(`${cross} **Error Fetching server stats**.`)
-                    .setColor(embedConfig.errorColor)
-                    .setThumbnail(defaultLogo);
-                }
-
-                if(downtime < 0){
-                  downtime = 0;
-                }
-
-                if(total < 0){
-                  total = 1;
-                }
-
-                if(displayUptime){
-                  statusEmbed[guild.id].addField("UPTIME", `\`\`\`fix\n${(((100 - (downtime/total).toFixed(3)) + '').replace(".000", ""))}%\n\`\`\``);
-
-                  await runQuery(`UPDATE GLOBAL SET total = ${total}, downtime = ${downtime} WHERE guild_id LIKE "${guild.id}"`);
-                }
-
-                if(status[guild.id] === "ONLINE"){
-                  statusEmbed[guild.id].addField("ONLINE SINCE", `<t:${Math.round((onlineSince * 1)/1000)}:R>`);
-                }else{
-                  if(onlineSince){
-                    await runQuery(`UPDATE GLOBAL SET online_since = null WHERE guild_id LIKE "${guild.id}"`);
+  
+                  if(downtime < 0){
+                    downtime = 0;
                   }
-                }
-
-                statusEmbed[guild.id].addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + 30}:R>`)
-                  .setTimestamp();
-
-                channel[guild.id] = serverStatusChannel;
-                serverStatusMessageID[guild.id] = row.status_message_id;
-
-                if(serverStatusMessageID[guild.id]){
-                  await channel[guild.id].messages.fetch(serverStatusMessageID[guild.id]).then(async (msg) => {
-                    await msg.edit({embeds: [statusEmbed[guild.id]]}).then(async () => {
-                      console.log(`${++count}. ` + chalk.green(`Updating Server Status Of- ${guild.name} | ${guild.id}. `) + chalk.magenta(`(${(new Date() - startTime) / 1000} seconds)`));
+  
+                  if(total < 0){
+                    total = 1;
+                  }
+  
+                  if(displayUptime){
+                    statusEmbed[guild.id].addField("UPTIME", `\`\`\`fix\n${(((100 - (downtime/total).toFixed(3)) + '').replace(".000", ""))}%\n\`\`\``);
+  
+                    await runQuery(`UPDATE GLOBAL SET total = ${total}, downtime = ${downtime} WHERE guild_id LIKE "${guild.id}"`);
+                  }
+  
+                  if(status[guild.id] === "ONLINE"){
+                    statusEmbed[guild.id].addField("ONLINE SINCE", `<t:${Math.round((onlineSince * 1)/1000)}:R>`);
+                  }else{
+                    if(onlineSince){
+                      await runQuery(`UPDATE GLOBAL SET online_since = null WHERE guild_id LIKE "${guild.id}"`);
+                    }
+                  }
+  
+                  statusEmbed[guild.id].addField("UPDATING", `<t:${Math.round(new Date().getTime()/1000) + (interval * 60) + 30}:R>`)
+                    .setTimestamp();
+  
+                  channel[guild.id] = serverStatusChannel;
+                  serverStatusMessageID[guild.id] = row.status_message_id;
+  
+                  if(serverStatusMessageID[guild.id]){
+                    await channel[guild.id].messages.fetch(serverStatusMessageID[guild.id]).then(async (msg) => {
+                      await msg.edit({embeds: [statusEmbed[guild.id]]}).then(async () => {
+                        console.log(`${++count}. ` + chalk.green(`Updating Server Status Of- ${guild.name} | ${guild.id}. `) + chalk.magenta(`(${(new Date() - startTime) / 1000} seconds)`));
+                      });
+  
+                      channel[guild.id] = serverStatusMessageID[guild.id] = null;
+                      statusEmbed[guild.id] = new MessageEmbed();
+                    }).catch(async () => {
+                      await channel[guild.id].send({embeds: [statusEmbed[guild.id]]}).then(async (msg) => {
+                        await runQuery(`UPDATE GLOBAL SET status_message_id = "${msg.id}" WHERE guild_id LIKE "${guild.id}"`);
+  
+                        console.log(`${++count}. ` + chalk.green(`Updating Server Status Of- ${guild.name} | ${guild.id}. `) + chalk.magenta(`(${(new Date() - startTime) / 1000} seconds)`));
+                      }).catch(() => {
+                        console.log(`${++count}. ` + chalk.red(`Error Updating Server Status Of- ${guild.name} | ${guild.id}. `) + chalk.magenta(`(${(new Date() - startTime) / 1000} seconds)`));
+                      });
+  
+                      channel[guild.id] = serverStatusMessageID[guild.id] = null;
+                      statusEmbed[guild.id] = new MessageEmbed();
                     });
-
-                    channel[guild.id] = serverStatusMessageID[guild.id] = null;
-                    statusEmbed[guild.id] = new MessageEmbed();
-                  }).catch(async () => {
+                  }else{
                     await channel[guild.id].send({embeds: [statusEmbed[guild.id]]}).then(async (msg) => {
                       await runQuery(`UPDATE GLOBAL SET status_message_id = "${msg.id}" WHERE guild_id LIKE "${guild.id}"`);
-
+  
                       console.log(`${++count}. ` + chalk.green(`Updating Server Status Of- ${guild.name} | ${guild.id}. `) + chalk.magenta(`(${(new Date() - startTime) / 1000} seconds)`));
                     }).catch(() => {
                       console.log(`${++count}. ` + chalk.red(`Error Updating Server Status Of- ${guild.name} | ${guild.id}. `) + chalk.magenta(`(${(new Date() - startTime) / 1000} seconds)`));
                     });
-
+  
                     channel[guild.id] = serverStatusMessageID[guild.id] = null;
                     statusEmbed[guild.id] = new MessageEmbed();
-                  });
+                  }
                 }else{
-                  await channel[guild.id].send({embeds: [statusEmbed[guild.id]]}).then(async (msg) => {
-                    await runQuery(`UPDATE GLOBAL SET status_message_id = "${msg.id}" WHERE guild_id LIKE "${guild.id}"`);
-
-                    console.log(`${++count}. ` + chalk.green(`Updating Server Status Of- ${guild.name} | ${guild.id}. `) + chalk.magenta(`(${(new Date() - startTime) / 1000} seconds)`));
-                  }).catch(() => {
-                    console.log(`${++count}. ` + chalk.red(`Error Updating Server Status Of- ${guild.name} | ${guild.id}. `) + chalk.magenta(`(${(new Date() - startTime) / 1000} seconds)`));
-                  });
-
-                  channel[guild.id] = serverStatusMessageID[guild.id] = null;
-                  statusEmbed[guild.id] = new MessageEmbed();
+                  await runQuery(`UPDATE GLOBAL SET server_status_channel = null WHERE guild_id LIKE "${guild.id}"`);
                 }
               }else{
-                await runQuery(`UPDATE GLOBAL SET server_status_channel = null WHERE guild_id LIKE "${guild.id}"`);
+                await runQuery(`DELETE FROM GLOBAL WHERE guild_id LIKE "${row.guild_id}"`);
               }
-            }else{
-              await runQuery(`DELETE FROM GLOBAL WHERE guild_id LIKE "${row.guild_id}"`);
-            }
-          })
+            });
+          }
         });
 
         console.log(chalk.magenta(`Updating stats every `) + chalk.blue(`${interval} minutes`) + chalk.magenta('.') + '\n' + line);
