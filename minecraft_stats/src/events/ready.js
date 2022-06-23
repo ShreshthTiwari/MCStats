@@ -61,9 +61,6 @@ module.exports = {
         await database.all(`SELECT * FROM GLOBAL WHERE (server_status_channel IS NOT NULL AND ip IS NOT NULL AND (java_port IS NOT NULL OR bedrock_port IS NOT NULL))`, async (error, rows) => {
           rows.forEach(async row => {
             const guild = await client.guilds.cache.get(row.guild_id);
-
-            statusEmbed[guild.id] = new MessageEmbed()
-              .setColor(embedConfig.defaultColor);
   
             if(guild){
               statusEmbed[guild.id] = new MessageEmbed()
@@ -210,8 +207,6 @@ module.exports = {
                     statusEmbed[guild.id] = new MessageEmbed()
                       .setColor(embedConfig.defaultColor);
 
-                    downtime++;
-
                     statusEmbed[guild.id] = new MessageEmbed()
                       .setDescription(`${cross} **Error Fetching server stats**-\n\`\`\`${error}\`\`\``)
                       .setColor(embedConfig.errorColor)
@@ -306,8 +301,6 @@ module.exports = {
                       }
                     }
                   }catch (error){
-                    downtime++;
-
                     statusEmbed[guild.id] = new MessageEmbed()
                       .setDescription(`${cross} **Error Fetching server stats**-\n\`\`\`${error}\`\`\``)
                       .setColor(embedConfig.errorColor)
@@ -316,8 +309,6 @@ module.exports = {
                 }else{
                   statusEmbed[guild.id] = new MessageEmbed()
                     .setColor(embedConfig.defaultColor);
-
-                  downtime++;
 
                   statusEmbed[guild.id] = new MessageEmbed()
                     .setDescription(`${cross} **Error Fetching server stats**.`)
