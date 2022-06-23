@@ -5,8 +5,20 @@ const playerNameFetcher = require("../fetcher/playerNameFetcher.js");
 const playerStatusFetcher = require("../fetcher/playerStatusFetcher.js");
 const playerNameHistoryFetcher = require("../fetcher/playerNameHistoryFetcher.js");
 
-async function validUUID(UUID){
+async function isValidUUID(UUID){
+  if(UUID.length !== 32){
+    return false;
+  }
+
   return /^[A-Za-z0-9]*$/.test(UUID);
+}
+
+async function isValidUsername(Username){
+  if(Username.length < 3 || Username.length > 16){
+    return false;
+  }
+
+  return /^[A-Za-z0-9_]*$/.test(Username);
 }
 
 module.exports = {
@@ -44,6 +56,15 @@ module.exports = {
     let uuid = await interaction.options.getString("uuid");
 
     if(username){
+      if(! await isValidUsername(username)){
+        embed.setDescription(`Invalid username- \`${username}\`.`)
+          .setColor(embedConfig.errorColor);
+        
+        await interaction.editReply({embeds: [embed]}).catch(error => {});
+  
+        return;
+      }
+
       uuid = await playerUUIDFetcher(username);
 
       if(!uuid){
@@ -57,7 +78,7 @@ module.exports = {
 
       username = await playerNameFetcher(uuid);
     }else if(uuid){
-      if((uuid.length !== 32) || (! await validUUID(uuid))){
+      if(! await isValidUUID(uuid)){
         embed.setDescription(`Invalid UUID- \`${uuid}\`.`)
           .setColor(embedConfig.errorColor);
       
@@ -109,7 +130,7 @@ module.exports = {
     await setPlayerImage(username);
     
     await interaction.editReply({embeds: [embed]}).catch(async error => {
-      await errorLogger(client, interaction, error, "src/commands/player.js : 112");
+      await errorLogger(client, interaction, error, "src/commands/player.js : 133");
     });
   },
 }
