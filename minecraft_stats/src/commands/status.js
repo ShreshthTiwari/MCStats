@@ -73,7 +73,7 @@ module.exports = {
                   if(!onlineSince){
                     onlineSince = new Date().getTime();
                     
-                    await runQuery(`UPDATE GLOBAL SET online_since = "${onlineSince}" WHERE guild_id LIKE "${guild.id}"`);
+                    await runQuery(`UPDATE GLOBAL SET online_since = "${onlineSince}" WHERE guild_id LIKE "${interaction.guild.id}"`);
                   }
   
                   let motd = rawData[1];
@@ -198,7 +198,7 @@ module.exports = {
                   if(!onlineSince){
                     onlineSince = new Date().getTime();
                     
-                    await runQuery(`UPDATE GLOBAL SET online_since = "${onlineSince}" WHERE guild_id LIKE "${guild.id}"`);
+                    await runQuery(`UPDATE GLOBAL SET online_since = "${onlineSince}" WHERE guild_id LIKE "${interaction.guild.id}"`);
                   }
   
                   let edition = rawData[1];
@@ -298,14 +298,14 @@ module.exports = {
             let downtime = (row.downtime < 0 ? 0 : row.downtime) || 0;
             let total = (row.total < 0 ? 0 : row.total) || 1;
   
-            embed.addField("UPTIME", `\`\`\`fix\n${100 - (downtime/total)}%\n\`\`\``);
+            embed.addField("UPTIME", `\`\`\`fix\n${(((100 - (downtime/total).toFixed(3)) + '').replace(".000", ""))}%\n\`\`\``);
           }
   
           if(status === "ONLINE"){
-            embed[guild.id].addField("ONLINE SINCE", `<t:${Math.round((onlineSince * 1)/1000)}:R>`);
+            embed.addField("ONLINE SINCE", `<t:${Math.round((onlineSince * 1)/1000)}:R>`);
           }else{
             if(onlineSince){
-              await runQuery(`UPDATE GLOBAL SET online_since = null WHERE guild_id LIKE "${guild.id}"`);
+              await runQuery(`UPDATE GLOBAL SET online_since = null WHERE guild_id LIKE "${interaction.guild.id}"`);
             }
           }
   
