@@ -88,8 +88,7 @@ module.exports = {
         await errorLogger(client, interaction, error, "src/commands/set.js : 77");
       });
     }else if(subCommand === "server_status_channel" || subCommand === "bot_updates_channel"){
-      await runQuery(`UPDATE GLOBAL SET ${subCommand} = "${channel.id}"
-          WHERE guild_id LIKE "${interaction.guild.id}"`);
+      await runQuery(`UPDATE GLOBAL SET ${subCommand} = "${channel.id}" WHERE guild_id LIKE "${interaction.guild.id}"`);
 
       let extraText = "";
 
@@ -111,8 +110,7 @@ module.exports = {
       }
 
       if((!input) || input.toLowerCase() === "null" || input.toLowerCase() === "-1"){
-        await runQuery(`UPDATE GLOBAL SET ${subCommand} = null
-            WHERE guild_id LIKE "${interaction.guild.id}"`);
+        await runQuery(`UPDATE GLOBAL SET ${subCommand} = null WHERE guild_id LIKE "${interaction.guild.id}"`);
 
         embed.setDescription(`${tick} Cleared the value of \`${subCommand.replace("_", " ")}\`.`)
           .setColor(embedConfig.successColor);
@@ -126,8 +124,7 @@ module.exports = {
           input = input[0];
         }
   
-        await runQuery(`UPDATE GLOBAL SET ${subCommand} = "${input}"
-            WHERE guild_id LIKE "${interaction.guild.id}"`);
+        await runQuery(`UPDATE GLOBAL SET ${subCommand} = "${input}" WHERE guild_id LIKE "${interaction.guild.id}"`);
         
         embed.setDescription(`${tick} Set \`${subCommand}\` as \`${input}\`.`)
           .setColor(embedConfig.successColor);
