@@ -5,6 +5,7 @@ let defaultLogo = "https://i.ibb.co/NY6KH17/default-icon.png";
 const javaFetcher = require("../fetcher/javaFetcher.js");
 const queryFetcher = require("../fetcher/queryFetcher.js");
 const bedrockFetcher = require("../fetcher/bedrockFetcher.js");
+const runQuery = require("../sqlite/runQuery.js");
 
 const emojisFetcher = require("../fetcher/emojisFetcher.js");
 
@@ -31,7 +32,7 @@ module.exports = {
     database.serialize(async () => {
       database.each(`SELECT ip, java_port, query_port, bedrock_port, hidden_ports, downtime, total, display_uptime FROM GLOBAL WHERE guild_id like "${interaction.guild.id}"`, async (error, row) => {
         if(error){
-          await errorLogger(client, interaction, error, "src/commands/status.js : 34");
+          await errorLogger(client, interaction, error, "src/commands/status.js : 35");
         }else{
           let IP = row.ip;
           let javaPort = (row.java_port * 1) <= 0 ? null : (row.java_port * 1);
@@ -46,7 +47,7 @@ module.exports = {
               .setColor(embedConfig.errorColor);
             
             await interaction.editReply({embeds: [embed]}).catch(async error => {
-              await errorLogger(client, interaction, error, "src/commands/status.js : 49");
+              await errorLogger(client, interaction, error, "src/commands/status.js : 50");
             });
       
             return;
@@ -57,7 +58,7 @@ module.exports = {
               .setColor(embedConfig.errorColor);
             
             await interaction.editReply({embeds: [embed]}).catch(async error => {
-              await errorLogger(client, interaction, error, "src/commands/status.js : 60");
+              await errorLogger(client, interaction, error, "src/commands/status.js : 61");
             });
       
             return;
@@ -287,7 +288,7 @@ module.exports = {
               .setColor(embedConfig.errorColor);
         
             await interaction.editReply({embeds: [embed]}).catch(async error => {
-              await errorLogger(client, interaction, error, "src/commands/status.js : 290");
+              await errorLogger(client, interaction, error, "src/commands/status.js : 291");
             });
   
             return;
@@ -309,7 +310,7 @@ module.exports = {
           }
   
           await interaction.editReply({embeds: [embed]}).catch(async error => {
-            await errorLogger(client, interaction, error, "src/commands/status.js : 312");
+            await errorLogger(client, interaction, error, "src/commands/status.js : 313");
           });
         }
       });
