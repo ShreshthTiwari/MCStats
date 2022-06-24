@@ -37,7 +37,7 @@ module.exports = {
     try{
       await client.user.setActivity(`For /help in ${guildsCount} ${guildsCount > 1 ? "servers" : "server"}`, {type: "WATCHING"});
     }catch(error){
-      await errorLogger(client, null, error, "src/commands/ready.js : 33");
+      await errorLogger(client, null, error, "src/commands/ready.js : 40");
     }
 
     const emojis = await emojisFetcher(client);
@@ -62,7 +62,7 @@ module.exports = {
       await database.serialize(async () => {
         await database.all(`SELECT * FROM GLOBAL WHERE (server_status_channel IS NOT NULL AND ip IS NOT NULL AND (java_port IS NOT NULL OR bedrock_port IS NOT NULL))`, async (error, rows) => {
           if(error){
-            await errorLogger(client, null, error, "src/events/ready.js : 63");
+            await errorLogger(client, null, error, "src/events/ready.js : 65");
           }else{
             rows.forEach(async row => {
               const guild = await client.guilds.cache.get(row.guild_id);
@@ -362,8 +362,10 @@ module.exports = {
                         await runQuery(`UPDATE GLOBAL SET status_message_id = "${msg.id}" WHERE guild_id LIKE "${guild.id}"`);
   
                         console.log(`${++count}. ` + chalk.green(`Updating Server Status Of- ${guild.name} | ${guild.id}. `) + chalk.magenta(`(${(new Date() - startTime) / 1000} seconds)`));
-                      }).catch(() => {
+                      }).catch(async () => {
                         console.log(`${++count}. ` + chalk.red(`Error Updating Server Status Of- ${guild.name} | ${guild.id}. `) + chalk.magenta(`(${(new Date() - startTime) / 1000} seconds)`));
+
+                        await runQuery(`UPDATE GLOBAL SET server_status_channel = null WHERE guild_id LIKE "${guild.id}"`);
                       });
   
                       channel[guild.id] = serverStatusMessageID[guild.id] = null;
@@ -374,8 +376,10 @@ module.exports = {
                       await runQuery(`UPDATE GLOBAL SET status_message_id = "${msg.id}" WHERE guild_id LIKE "${guild.id}"`);
   
                       console.log(`${++count}. ` + chalk.green(`Updating Server Status Of- ${guild.name} | ${guild.id}. `) + chalk.magenta(`(${(new Date() - startTime) / 1000} seconds)`));
-                    }).catch(() => {
+                    }).catch(async () => {
                       console.log(`${++count}. ` + chalk.red(`Error Updating Server Status Of- ${guild.name} | ${guild.id}. `) + chalk.magenta(`(${(new Date() - startTime) / 1000} seconds)`));
+
+                      await runQuery(`UPDATE GLOBAL SET server_status_channel = null WHERE guild_id LIKE "${guild.id}"`);
                     });
   
                     channel[guild.id] = serverStatusMessageID[guild.id] = null;
