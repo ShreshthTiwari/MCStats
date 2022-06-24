@@ -224,7 +224,7 @@ module.exports = {
       const yourPing = new Date().getTime() - interaction.createdTimestamp;
       const botPing = Math.round(client.ws.ping);
       const time = new Date().getTime();
-      const db = await runQuery(`SELECT * FROM GLOBAL`);
+      await runQuery(`SELECT * FROM GLOBAL`);
       const dbPing = new Date().getTime() - time;
 
       await embed.setDescription
