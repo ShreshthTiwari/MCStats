@@ -85,7 +85,7 @@ module.exports = {
       .setColor(embedConfig.defaultColor);
 
       await interaction.editReply({embeds: [embed]}).catch(async error => {
-        await errorLogger(client, interaction, error, "src/commands/set.js : 77");
+        await errorLogger(client, interaction, error, "src/commands/set.js : 88");
       });
     }else if(subCommand === "server_status_channel" || subCommand === "bot_updates_channel"){
       await runQuery(`UPDATE GLOBAL SET ${subCommand} = "${channel.id}" WHERE guild_id LIKE "${interaction.guild.id}"`);
@@ -100,7 +100,7 @@ module.exports = {
         .setColor(embedConfig.successColor);
   
       await interaction.editReply({embeds: [embed]}).catch(async error => {
-        await errorLogger(client, interaction, error, "src/commands/set.js : 93");
+        await errorLogger(client, interaction, error, "src/commands/set.js : 103");
       });
     }else{
       input = input + "";
@@ -116,12 +116,23 @@ module.exports = {
           .setColor(embedConfig.successColor);
   
         await interaction.editReply({embeds: [embed]}).catch(async error => {
-          await errorLogger(client, interaction, error, "src/commands/set.js : 110");
+          await errorLogger(client, interaction, error, "src/commands/set.js : 119");
         });
       }else{
         if(input.includes(" ")){
           input = input.split(" ");
           input = input[0];
+        }else if(! isNaN(input)){
+          if(input < 1 && input > 65535){
+            embed.setDescription(`Invalid port number- \`${input}\`.`)
+              .setColor(embedConfig.errorColor);
+  
+            await interaction.editReply({embeds: [embed]}).catch(async error => {
+              await errorLogger(client, interaction, error, "src/commands/set.js : 131");
+            });
+
+            return;
+          }
         }
   
         await runQuery(`UPDATE GLOBAL SET ${subCommand} = "${input}" WHERE guild_id LIKE "${interaction.guild.id}"`);
@@ -134,7 +145,7 @@ module.exports = {
         }
   
         await interaction.editReply({embeds: [embed]}).catch(async error => {
-          await errorLogger(client, interaction, error, "src/commands/set.js : 125");
+          await errorLogger(client, interaction, error, "src/commands/set.js : 148");
         });
       }
     }
