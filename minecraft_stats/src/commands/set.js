@@ -46,6 +46,8 @@ module.exports = {
     ),
   
   async execute(client, MessageEmbed, embed, config, embedConfig, database, Permissions, interaction, messageEmojisReplacer, tick, cross, errorLogger, logger) {
+    const interval = config.interval;
+
     const emojis = await emojisFetcher(client);
 
     embed = new MessageEmbed()
@@ -85,7 +87,7 @@ module.exports = {
       .setColor(embedConfig.defaultColor);
 
       await interaction.editReply({embeds: [embed]}).catch(async error => {
-        await errorLogger(client, interaction, error, "src/commands/set.js : 88");
+        await errorLogger(client, interaction, error, "src/commands/set.js : 90");
       });
     }else if(subCommand === "server_status_channel" || subCommand === "bot_updates_channel"){
       await runQuery(`UPDATE GLOBAL SET ${subCommand} = "${channel.id}" WHERE guild_id LIKE "${interaction.guild.id}"`);
@@ -93,7 +95,7 @@ module.exports = {
       let extraText = "";
 
       if(subCommand === "server_status_channel"){
-        extraText = `**NOTE**\nStats are updated every \`10 minutes\`.`
+        extraText = `**NOTE**\nStats are updated every \`${interval} minutes\`.`
       }
 
       extraText += `\nPlease make sure I have the following permissions in ${channel}-
@@ -105,7 +107,7 @@ module.exports = {
         .setColor(embedConfig.successColor);
   
       await interaction.editReply({embeds: [embed]}).catch(async error => {
-        await errorLogger(client, interaction, error, "src/commands/set.js : 103");
+        await errorLogger(client, interaction, error, "src/commands/set.js : 110");
       });
     }else{
       input = input + "";
@@ -121,19 +123,19 @@ module.exports = {
           .setColor(embedConfig.successColor);
   
         await interaction.editReply({embeds: [embed]}).catch(async error => {
-          await errorLogger(client, interaction, error, "src/commands/set.js : 119");
+          await errorLogger(client, interaction, error, "src/commands/set.js : 126");
         });
       }else{
         if(input.includes(" ")){
           input = input.split(" ");
           input = input[0];
         }else if(! isNaN(input)){
-          if(input < 1 && input > 65535){
+          if(input < 1 || input > 65535){
             embed.setDescription(`Invalid port number- \`${input}\`.`)
               .setColor(embedConfig.errorColor);
   
             await interaction.editReply({embeds: [embed]}).catch(async error => {
-              await errorLogger(client, interaction, error, "src/commands/set.js : 131");
+              await errorLogger(client, interaction, error, "src/commands/set.js : 138");
             });
 
             return;
@@ -150,7 +152,7 @@ module.exports = {
         }
   
         await interaction.editReply({embeds: [embed]}).catch(async error => {
-          await errorLogger(client, interaction, error, "src/commands/set.js : 148");
+          await errorLogger(client, interaction, error, "src/commands/set.js : 155");
         });
       }
     }
