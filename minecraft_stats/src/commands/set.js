@@ -95,8 +95,13 @@ module.exports = {
       if(subCommand === "server_status_channel"){
         extraText = `**NOTE**\nStats are updated every \`10 minutes\`.`
       }
+
+      extraText += `\nPlease make sure I have the following permissions in ${channel}-
+      ${emojis.branch} \`VIEW CHANNEL\`
+      ${emojis.branch} \`SEND MESSAGES\`
+      ${emojis.branchEnd} \`READ MESSAGE HISTORY\``;
   
-      embed.setDescription(`${tick} Set ${channel} as minecraft \`${subCommand.replace("_", " ").replace("_", " ")}\`\n${extraText}`)
+      embed.setDescription(`${tick} Set ${channel} as \`${subCommand.replace("_", " ").replace("_", " ")}\`\n-------------------------\n${extraText}`)
         .setColor(embedConfig.successColor);
   
       await interaction.editReply({embeds: [embed]}).catch(async error => {
