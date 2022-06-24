@@ -79,7 +79,7 @@ module.exports = {
       {
         name: "Note-",
         value: `
-        > ${emojis.branchEnd} Provide the values as \`1\` or \`null\` to clear them from the database.
+        > ${emojis.branchEnd} Provide the values as \`-1\` or \`null\` to clear them from the database.
         `
       })
       .setColor(embedConfig.defaultColor);
