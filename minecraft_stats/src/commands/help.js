@@ -10,6 +10,8 @@ module.exports = {
   
   async execute(client, MessageEmbed, embed, config, embedConfig, database, Permissions, interaction, messageEmojisReplacer, tick, cross, errorLogger, logger){
     const emojis = await emojisFetcher(client);
+    const branch = await emojis.branch;
+    const branchEnd = await emojis.branchEnd;
     
     embed = new MessageEmbed()
       .setColor(embedConfig.defaultColor);
@@ -50,15 +52,15 @@ module.exports = {
     if(interaction.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR) || interaction.member.id === config.authorID){
       await embed.addField("Admin 🛠️", `
       > \`/set\` **-** *Set bot variables*.
-      > ${emojis.branch} \`/set help\`
-      > ${emojis.branch} \`/set ip\`
-      > ${emojis.branch} \`/set java_port\`
-      > ${emojis.branch} \`/set query_port\`
-      > ${emojis.branch} \`/set bedrock_port\`
-      > ${emojis.branch} \`/set server_status_channel\`
-      > ${emojis.branch} \`/set bot_updates_channel\`
-      > ${emojis.branch} \`/set hidden_ports\`
-      > ${emojis.branchEnd} \`/set display_uptime\``)
+      > ${branch} \`/set help\`
+      > ${branch} \`/set ip\`
+      > ${branch} \`/set java_port\`
+      > ${branch} \`/set query_port\`
+      > ${branch} \`/set bedrock_port\`
+      > ${branch} \`/set server_status_channel\`
+      > ${branch} \`/set bot_updates_channel\`
+      > ${branch} \`/set hidden_ports\`
+      > ${branchEnd} \`/set display_uptime\``)
     }
 
     embed.addFields({
@@ -67,12 +69,12 @@ module.exports = {
       > \`/help\` **-** *See this help message*.
       > \`/ip\` **-** *Check the IP of the minecrtaft server*.
       > \`/ping\` **-** *Check status of a minecraft server*.
-      > ${emojis.branch} \`/ping java\`
-      > ${emojis.branchEnd} \`/ping bedrock\`
+      > ${branch} \`/ping java\`
+      > ${branchEnd} \`/ping bedrock\`
       > \`/status\` **-** *Check status of the minecraft server*.
       > \`/player\` **-** *Check account details of a minecraft player*.
-      > ${emojis.branch} \`/player info_by_username\`
-      > ${emojis.branchEnd} \`/player info_by_uuid\`
+      > ${branch} \`/player info_by_username\`
+      > ${branchEnd} \`/player info_by_uuid\`
       > \`/mojang status\` **-** *Check status of mojang*.`
     },
     {

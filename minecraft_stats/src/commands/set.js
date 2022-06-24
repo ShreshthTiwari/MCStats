@@ -49,6 +49,8 @@ module.exports = {
     const interval = config.interval;
 
     const emojis = await emojisFetcher(client);
+    const branch = await emojis.branch;
+    const branchEnd = await emojis.branchEnd;
 
     embed = new MessageEmbed()
       .setColor(embedConfig.defaultColor);
@@ -68,20 +70,20 @@ module.exports = {
       .addFields({
         name: "Variables",
         value: `
-        > ${emojis.branch} /set help **-** *View this help message*.
-        > ${emojis.branch} /set ip \`<IP>\` **-** *Set IP of your minecraft server*.
-        > ${emojis.branch} /set query_port \`<port>\` **-** *Set QUERY PORT of your minecraft server*.
-        > ${emojis.branch} /set java_port \`<port>\` **-** *Set JAVA PORT of your minecraft server*.
-        > ${emojis.branch} /set bedrock_port \`<port>\` **-** *Set BEDROCK PORT of your minecraft server*.
-        > ${emojis.branch} /set server_status_channel \`<channel>\` **-** *Set the Minecraft Server Status channel*.
-        > ${emojis.branch} /set bot_updates_channel \`<channel>\` **-** *Set the Bot Updates channel*.
-        > ${emojis.branch} /set hidden_ports \`<TRUE/FALSE>\` **-** *Hide or show the server port in server status*.
-        > ${emojis.branchEnd} /set display_uptime \`<TRUE/FALSE>\` **-** *Hide or show the server uptime in server status*.`
+        > ${branch} /set help **-** *View this help message*.
+        > ${branch} /set ip \`<IP>\` **-** *Set IP of your minecraft server*.
+        > ${branch} /set query_port \`<port>\` **-** *Set QUERY PORT of your minecraft server*.
+        > ${branch} /set java_port \`<port>\` **-** *Set JAVA PORT of your minecraft server*.
+        > ${branch} /set bedrock_port \`<port>\` **-** *Set BEDROCK PORT of your minecraft server*.
+        > ${branch} /set server_status_channel \`<channel>\` **-** *Set the Minecraft Server Status channel*.
+        > ${branch} /set bot_updates_channel \`<channel>\` **-** *Set the Bot Updates channel*.
+        > ${branch} /set hidden_ports \`<TRUE/FALSE>\` **-** *Hide or show the server port in server status*.
+        > ${branchEnd} /set display_uptime \`<TRUE/FALSE>\` **-** *Hide or show the server uptime in server status*.`
       },
       {
         name: "Note-",
         value: `
-        > ${emojis.branchEnd} Provide the values as \`-1\` or \`null\` to clear them from the database.
+        > ${branchEnd} Provide the values as \`-1\` or \`null\` to clear them from the database.
         `
       })
       .setColor(embedConfig.defaultColor);
@@ -99,9 +101,9 @@ module.exports = {
       }
 
       extraText += `\nPlease make sure I have the following permissions in ${channel}-
-      ${emojis.branch} \`VIEW CHANNEL\`
-      ${emojis.branch} \`SEND MESSAGES\`
-      ${emojis.branchEnd} \`READ MESSAGE HISTORY\``;
+      ${branch} \`VIEW CHANNEL\`
+      ${branch} \`SEND MESSAGES\`
+      ${branchEnd} \`READ MESSAGE HISTORY\``;
   
       embed.setDescription(`${tick} Set ${channel} as \`${subCommand.replace("_", " ").replace("_", " ")}\`\n-------------------------\n${extraText}`)
         .setColor(embedConfig.successColor);
