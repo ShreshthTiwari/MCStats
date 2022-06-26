@@ -29,7 +29,7 @@ module.exports = {
 
     const database = await databaseBuilder();
 
-    await runQuery(`CREATE TABLE IF NOT EXISTS GLOBAL (guild_id TEXT PRIMARY KEY, ip TEXT, java_port TEXT, query_port TEXT, bedrock_port TEXT, bot_updates_channel TEXT, server_status_channel TEXT, hidden_ports TEXT, downtime INT, total INT, display_uptime TEXT, status_message_id TEXT, online_since TEXT)`);
+    await runQuery(`CREATE TABLE IF NOT EXISTS GLOBAL (guild_id TEXT PRIMARY KEY, ip TEXT, java_port TEXT, query_port TEXT, bedrock_port TEXT, bot_updates_channel TEXT, server_status_channel TEXT, hidden_ports TEXT, downtime INT, total INT, display_uptime TEXT, status_message_id TEXT, online_since TEXT, fake_players_online TEXT)`);
     await runQuery(`DELETE FROM GLOBAL WHERE NOT guild_id`);
 
     const guildsCount = await client.guilds.cache.size || 0;
@@ -86,6 +86,7 @@ module.exports = {
                   let total = (row.total < 0 ? 0 : row.total) || 0;
                   let displayUptime = (row.display_uptime === "false") ? false : true;
                   let onlineSince = ((row.online_since * 1) <= 0 ? null : (row.online_since * 1));
+                  let fakePlayersOnline = (row.fake_players_online === "true") ? true : false;
                   status[guild.id] = "OFFLINE";
                     
                   total++;
@@ -142,6 +143,14 @@ module.exports = {
                                 javaPort = `JAVA- ${javaPort}\nBEDROCK/PE- ${bedrockPort}`;
                               }
                             }catch{}
+                          }
+
+                          if(fakePlayersOnline){
+                            online = online + Math.round((Math.random() * (max - online)) + 1);
+        
+                            if(online > max){
+                              max = online;
+                            }
                           }
                     
                           statusEmbed[guild.id] = new MessageEmbed()
@@ -253,6 +262,14 @@ module.exports = {
   
                             if(portIPv6 !== "NULL"){
                               bedrockPort = bedrockPort + `\nIPv6- ${portIPv6}`;
+                            }
+                          }
+
+                          if(fakePlayersOnline){
+                            online = online + Math.round((Math.random() * (max - online)) + 1);
+        
+                            if(online > max){
+                              max = online;
                             }
                           }
                     
@@ -392,6 +409,8 @@ module.exports = {
                 await runQuery(`DELETE FROM GLOBAL WHERE guild_id LIKE "${row.guild_id}"`);
               }
             });
+
+            console.log(line);
           }
         });
 

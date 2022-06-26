@@ -51,7 +51,7 @@ module.exports = {
     
     if(interaction.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR) || interaction.member.id === config.authorID){
       await embed.addField("Admin 🛠️", `
-      > \`/set\` **-** *Set bot variables*.
+      > • \`/set\`
       > ${branch} \`/set help\`
       > ${branch} \`/set ip\`
       > ${branch} \`/set java_port\`
@@ -60,35 +60,36 @@ module.exports = {
       > ${branch} \`/set server_status_channel\`
       > ${branch} \`/set bot_updates_channel\`
       > ${branch} \`/set hidden_ports\`
+      > ${branch} \`/set fake_players_online\`
       > ${branchEnd} \`/set display_uptime\``)
     }
 
     embed.addFields({
       name: "Member 👥",
       value: `
-      > \`/help\` **-** *See this help message*.
-      > \`/ip\` **-** *Check the IP of the minecrtaft server*.
-      > \`/ping\` **-** *Check status of a minecraft server*.
+      > • \`/help\`
+      > • \`/ip\`
+      > • \`/ping\`
       > ${branch} \`/ping java\`
       > ${branchEnd} \`/ping bedrock\`
-      > \`/status\` **-** *Check status of the minecraft server*.
-      > \`/player\` **-** *Check account details of a minecraft player*.
+      > • \`/status\`
+      > • \`/player\`
       > ${branch} \`/player info_by_username\`
       > ${branchEnd} \`/player info_by_uuid\`
-      > \`/mojang status\` **-** *Check status of mojang*.`
+      > • \`/mojang status\``
     },
     {
       name: "Miscellaneous 💠",
       value: `
-      > \`/bot ping\` **-** *Check bot's ping*.
-      > \`/bug\` **-** *Send bug report to bot developer*. 
-      > \`/invite\` **-** *Get the bot's invite link*.
-      > \`/support\` **-** *Get the invite link of the support server*.`
+      > • \`/bot ping\`
+      > • \`/bug\`
+      > • \`/invite\` 
+      > • \`/support\``
     },
     {
       name: "Note-",
-      value: `To reset the server uptime, set your server IP again.
-      To clear value of a variable, set it as \`-1\` or \`null\``
+      value: `> • To reset the server uptime, set your server IP again.
+      > • To clear value of a variable, set it as \`-1\` or \`null\``
     });
 
     await interaction.editReply({embeds: [embed], components: [buttons]}).catch(async error => {

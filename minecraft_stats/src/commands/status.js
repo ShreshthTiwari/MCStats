@@ -30,7 +30,7 @@ module.exports = {
       .setColor(embedConfig.defaultColor);
 
     database.serialize(async () => {
-      database.each(`SELECT ip, java_port, query_port, bedrock_port, hidden_ports, downtime, total, display_uptime FROM GLOBAL WHERE guild_id like "${interaction.guild.id}"`, async (error, row) => {
+      database.each(`SELECT * FROM GLOBAL WHERE guild_id like "${interaction.guild.id}"`, async (error, row) => {
         if(error){
           await errorLogger(client, interaction, error, "src/commands/status.js : 35");
         }else{
@@ -41,6 +41,7 @@ module.exports = {
           let hiddenPorts = (row.hidden_ports === "true") ? true : false;
           let display_uptime = (row.display_uptime === "false") ? false : true;
           let onlineSince = ((row.online_since * 1) <= 0 ? null : (row.online_since * 1));
+          let fakePlayersOnline = (row.fake_players_online === "true") ? true : false;
   
           if(!IP){
             await embed.setDescription(`${cross} Server IP not set.`)
@@ -110,6 +111,14 @@ module.exports = {
                         javaPort = `JAVA- ${javaPort}\nBEDROCK/PE- ${bedrockPort}`;
                       }
                     }catch{}
+                  }
+
+                  if(fakePlayersOnline){
+                    online = online + Math.round((Math.random() * (max - online)) + 1);
+
+                    if(online > max){
+                      max = online;
+                    }
                   }
         
                   embed = new MessageEmbed()
@@ -218,6 +227,14 @@ module.exports = {
   
                     if(portIPv6 !== "NULL"){
                       bedrockPort = bedrockPort + `\nIPv6- ${portIPv6}`;
+                    }
+                  }
+
+                  if(fakePlayersOnline){
+                    online = online + Math.round((Math.random() * (max - online)) + 1);
+
+                    if(online > max){
+                      max = online;
                     }
                   }
         

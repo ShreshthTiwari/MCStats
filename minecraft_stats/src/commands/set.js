@@ -29,6 +29,10 @@ module.exports = {
         .addBooleanOption(option => option.setName("option").setDescription("Set TRUE or FALSE.").setRequired(true))
     )
     .addSubcommand(subcommand =>
+      subcommand.setName('fake_players_online').setDescription("Hide or show fake players count in server status.")
+        .addBooleanOption(option => option.setName("option").setDescription("Set TRUE or FALSE.").setRequired(true))
+    )
+    .addSubcommand(subcommand =>
       subcommand.setName('ip').setDescription("Set ip of the minecraft server.")
         .addStringOption(option => option.setName("ip").setDescription("Provide the server IP.").setRequired(true))
     )
@@ -66,24 +70,25 @@ module.exports = {
     }
         
     if(subCommand === "help"){
-      embed.setTitle("Set Help")
+      embed.setTitle("Set Help 🔁")
       .addFields({
         name: "Variables",
         value: `
-        > ${branch} /set help **-** *View this help message*.
-        > ${branch} /set ip \`<IP>\` **-** *Set IP of your minecraft server*.
-        > ${branch} /set query_port \`<port>\` **-** *Set QUERY PORT of your minecraft server*.
-        > ${branch} /set java_port \`<port>\` **-** *Set JAVA PORT of your minecraft server*.
-        > ${branch} /set bedrock_port \`<port>\` **-** *Set BEDROCK PORT of your minecraft server*.
-        > ${branch} /set server_status_channel \`<channel>\` **-** *Set the Minecraft Server Status channel*.
-        > ${branch} /set bot_updates_channel \`<channel>\` **-** *Set the Bot Updates channel*.
-        > ${branch} /set hidden_ports \`<TRUE/FALSE>\` **-** *Hide or show the server port in server status*.
-        > ${branchEnd} /set display_uptime \`<TRUE/FALSE>\` **-** *Hide or show the server uptime in server status*.`
+        > • \`/set help\`
+        > • \`/set ip\`
+        > • \`/set query_port\`
+        > • \`/set java_port\`
+        > • \`/set bedrock_port\`
+        > • \`/set server_status_channel\`
+        > • \`/set bot_updates_channel\`
+        > • \`/set hidden_ports\`
+        > • \`/set fake_players_online\`
+        > • \`/set display_uptime\``
       },
       {
         name: "Note-",
         value: `
-        > ${branchEnd} Provide the values as \`-1\` or \`null\` to clear them from the database.
+        > • Provide the values as \`-1\` or \`null\` to clear them from the database.
         `
       })
       .setColor(embedConfig.defaultColor);
@@ -101,8 +106,8 @@ module.exports = {
       }
 
       extraText += `\nPlease make sure I have the following permissions in ${channel}-
-      ${branch} \`VIEW CHANNEL\`
-      ${branch} \`SEND MESSAGES\`
+      • \`VIEW CHANNEL\`
+      • \`SEND MESSAGES\`
       ${branchEnd} \`READ MESSAGE HISTORY\``;
   
       embed.setDescription(`${tick} Set ${channel} as \`${subCommand.replace("_", " ").replace("_", " ")}\`\n-------------------------\n${extraText}`)

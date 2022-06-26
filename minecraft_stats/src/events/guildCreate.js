@@ -5,7 +5,7 @@ let i = 0;
 module.exports = {
   name: 'guildCreate',
   async execute(client, embed, MessageEmbed, config, embedConfig, databaseBuilder, Permissions, messageEmojisReplacer, errorLogger, logger, guild) {
-    await runQuery(`INSERT OR IGNORE INTO GLOBAL (guild_id, hidden_ports, display_uptime) VALUES ("${guild.id}", "false", "true")`);
+    await runQuery(`INSERT OR IGNORE INTO GLOBAL (guild_id, hidden_ports, display_uptime, fake_players_online) VALUES ("${guild.id}", "false", "true", "false")`);
     //await runQuery(`CREATE TABLE IF NOT EXISTS "${guild.id}" (timestamp TEXT, status TEXT, players INT)`);
 
     let guildsCount = await client.guilds.cache.size || 0;
