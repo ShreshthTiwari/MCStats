@@ -381,8 +381,6 @@ module.exports = {
                         console.log(`${++count}. ` + chalk.green(`Updating Server Status Of- ${guild.name} | ${guild.id}. `) + chalk.magenta(`(${(new Date() - startTime) / 1000} seconds)`));
                       }).catch(async () => {
                         console.log(`${++count}. ` + chalk.red(`Error Updating Server Status Of- ${guild.name} | ${guild.id}. `) + chalk.magenta(`(${(new Date() - startTime) / 1000} seconds)`));
-
-                        await runQuery(`UPDATE GLOBAL SET server_status_channel = null WHERE guild_id LIKE "${guild.id}"`);
                       });
   
                       channel[guild.id] = serverStatusMessageID[guild.id] = null;
@@ -395,8 +393,6 @@ module.exports = {
                       console.log(`${++count}. ` + chalk.green(`Updating Server Status Of- ${guild.name} | ${guild.id}. `) + chalk.magenta(`(${(new Date() - startTime) / 1000} seconds)`));
                     }).catch(async () => {
                       console.log(`${++count}. ` + chalk.red(`Error Updating Server Status Of- ${guild.name} | ${guild.id}. `) + chalk.magenta(`(${(new Date() - startTime) / 1000} seconds)`));
-
-                      await runQuery(`UPDATE GLOBAL SET server_status_channel = null WHERE guild_id LIKE "${guild.id}"`);
                     });
   
                     channel[guild.id] = serverStatusMessageID[guild.id] = null;
