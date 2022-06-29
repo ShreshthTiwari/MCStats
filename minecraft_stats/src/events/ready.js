@@ -347,6 +347,15 @@ module.exports = {
                   }
   
                   if(displayUptime){
+                    while( (total % 2 == 0) && (downtime % 2 == 0)){
+                      total /= 2;
+                      downtime /= 2;
+                    }
+
+                    if(total <= 0){
+                      total = 1;
+                    }
+
                     statusEmbed[guild.id].addField("UPTIME", `\`\`\`fix\n${(((100 - (downtime/total).toFixed(3)) + '').replace(".000", ""))}%\n\`\`\``);
   
                     await runQuery(`UPDATE GLOBAL SET total = ${total}, downtime = ${downtime} WHERE guild_id LIKE "${guild.id}"`);
@@ -414,12 +423,14 @@ module.exports = {
       });
     }
 
-    /*await client.guilds.cache.forEach(async guild => {
+    await client.guilds.cache.forEach(async guild => {
       //await runQuery(`DROP TABLE IF EXISTS "${guild.id}"`);
       //await runQuery(`CREATE TABLE IF NOT EXISTS "${guild.id}" (timestamp INT, status TEXT, players INT)`);
       //await runQuery(`INSERT OR IGNORE INTO GLOBAL (guild_id, hidden_ports) VALUES ("${guild.id}", "false")`);
       //await runQuery(`UPDATE GLOBAL SET display_uptime = "true" WHERE guild_id LIKE "${guild.id}"`);
-    });*/
+      //await runQuery(`UPDATE GLOBAL SET fake_players_online = "false" WHERE guild_id LIKE "${guild.id}"`);
+    });
+    
 
     await updater();
  

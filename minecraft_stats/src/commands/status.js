@@ -39,9 +39,13 @@ module.exports = {
           let queryPort = (row.query_port * 1) <= 0 ? null : (row.query_port * 1);
           let bedrockPort = (row.bedrock_port * 1) <= 0 ? null : (row.bedrock_port * 1);
           let hiddenPorts = (row.hidden_ports === "true") ? true : false;
+          let downtime = (row.downtime < 0 ? 0 : row.downtime) || 0;
+          let total = (row.total < 0 ? 0 : row.total) || 0;
           let display_uptime = (row.display_uptime === "false") ? false : true;
           let onlineSince = ((row.online_since * 1) <= 0 ? null : (row.online_since * 1));
           let fakePlayersOnline = (row.fake_players_online === "true") ? true : false;
+
+          total++;
   
           if(!IP){
             await embed.setDescription(`${cross} Server IP not set.`)
@@ -161,6 +165,8 @@ module.exports = {
                     await embed.addField(`${users} PLAYERS`, `\`\`\`fix\n${sampleList}\n\`\`\``);
                   }
                 }else if(rawData[0] === "OFFLINE"){
+                  downtime++;
+
                   if(bedrockPort){
                     javaPort = `JAVA- ${javaPort}\nBEDROCK- ${bedrockPort}`;
                   }
@@ -203,7 +209,7 @@ module.exports = {
               let rawData = await bedrockFetcher(IP, bedrockPort);
               
               if(rawData){
-                if(rawData[0] === "ONLINE"){  
+                if(rawData[0] === "ONLINE"){
                   if(!onlineSince){
                     onlineSince = new Date().getTime();
                     
@@ -267,6 +273,8 @@ module.exports = {
                     })
                     .setColor(embedConfig.successColor);
                 }else if(rawData[0] === "OFFLINE"){
+                  downtime++;
+
                   await embed.setTitle("OFFLINE")
                     .addFields({
                       name: `${grass} SERVER EDITION`,
@@ -312,10 +320,18 @@ module.exports = {
           }
   
           if(display_uptime){
-            let downtime = (row.downtime < 0 ? 0 : row.downtime) || 0;
-            let total = (row.total < 0 ? 0 : row.total) || 1;
+            while( (total % 2 == 0) && (downtime % 2 == 0)){
+              total /= 2;
+              downtime /= 2;
+            }
+
+            if(total <= 0){
+              total = 1;
+            }
   
             embed.addField("UPTIME", `\`\`\`fix\n${(((100 - (downtime/total).toFixed(3)) + '').replace(".000", ""))}%\n\`\`\``);
+  
+            await runQuery(`UPDATE GLOBAL SET total = ${total}, downtime = ${downtime} WHERE guild_id LIKE "${interaction.guild.id}"`);
           }
   
           if(status === "ONLINE"){

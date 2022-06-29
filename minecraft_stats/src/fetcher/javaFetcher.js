@@ -22,6 +22,19 @@ module.exports = async (client, ID, IP, port) => {
     
     if(rawData[0] === "ONLINE"){
       rawData[1] = await messageCleaner(rawData[1]) || "NULL";
+      
+      while(rawData[1].includes("  ")){
+        rawData[1] = rawData[1].replace("  ", " ");
+      }
+
+      if(rawData[1].startsWith(" ")){
+        rawData[1] = rawData[1].slice(1);
+      }
+
+      if(rawData[1].endsWith(" ")){
+        rawData[1] = rawData[1].slice(0, -1);
+      }
+      
       rawData[2] = await messageCleaner(rawData[2]) || "NULL";
       rawData[3] = (rawData[3] * 1) || 0;
       rawData[4] = (rawData[4] * 1) || 0;

@@ -14,7 +14,7 @@ module.exports = async (IP, port) => {
           return ["OFFLINE"];
         }
       })
-      .catch((error) => {});
+      .catch(() => {});
     
     if(rawData[0] === "ONLINE"){
       let playersList = rawData[1] || [];
