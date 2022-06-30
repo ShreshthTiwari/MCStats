@@ -29,7 +29,7 @@ module.exports = {
 
     const database = await databaseBuilder();
 
-    await runQuery(`CREATE TABLE IF NOT EXISTS GLOBAL (guild_id TEXT PRIMARY KEY, ip TEXT, java_port TEXT, query_port TEXT, bedrock_port TEXT, bot_updates_channel TEXT, server_status_channel TEXT, hidden_ports TEXT, downtime INT, total INT, display_uptime TEXT, status_message_id TEXT, online_since TEXT, fake_players_online TEXT)`);
+    await runQuery(`CREATE TABLE IF NOT EXISTS GLOBAL (guild_id TEXT PRIMARY KEY, ip TEXT, java_port TEXT, query_port TEXT, bedrock_port TEXT, bot_updates_channel TEXT, server_status_channel TEXT, hidden_ports TEXT, downtime INT, total INT, display_uptime TEXT, status_message_id TEXT, online_since TEXT, fake_players_online TEXT, players_growth_percent TEXT)`);
     await runQuery(`DELETE FROM GLOBAL WHERE NOT guild_id`);
 
     const guildsCount = await client.guilds.cache.size || 0;
@@ -87,6 +87,9 @@ module.exports = {
                   let displayUptime = (row.display_uptime === "false") ? false : true;
                   let onlineSince = ((row.online_since * 1) <= 0 ? null : (row.online_since * 1));
                   let fakePlayersOnline = (row.fake_players_online === "true") ? true : false;
+                  let playersGrowthPercent = (row.players_growth_percent === "true") ? true : false;
+                  let players = (isNaN(row.players) || (row.players * 1) < 0) ? 0 : (row.players * 1);
+                  let playersOnline = 0;
                   status[guild.id] = "OFFLINE";
                     
                   total++;
@@ -152,6 +155,8 @@ module.exports = {
                               max = online;
                             }
                           }
+
+                          playersOnline = online;
                     
                           statusEmbed[guild.id] = new MessageEmbed()
                             .addFields({
@@ -272,7 +277,9 @@ module.exports = {
                               max = online;
                             }
                           }
-                    
+
+                          playersOnline = online;
+
                           statusEmbed[guild.id] = new MessageEmbed()
                             .addFields({
                               name: `${grass} SERVER EDITION`,
@@ -346,8 +353,13 @@ module.exports = {
                     total = 1;
                   }
   
-                  if(displayUptime){
+                  if(displayUptime || playersGrowthPercent){
                     while( (total % 2 == 0) && (downtime % 2 == 0)){
+                      if(players){
+                        players = Math.round(players / 2);
+                        playersOnline = Math.round(playersOnline/2);
+                      }
+
                       total /= 2;
                       downtime /= 2;
                     }
@@ -356,9 +368,19 @@ module.exports = {
                       total = 1;
                     }
 
-                    statusEmbed[guild.id].addField("UPTIME", `\`\`\`fix\n${(((100 - (downtime/total).toFixed(3)) + '').replace(".000", ""))}%\n\`\`\``);
+                    let growthPercentage = ((playersOnline - players) / players) * 100;
+
+                    players = playersOnline;
   
-                    await runQuery(`UPDATE GLOBAL SET total = ${total}, downtime = ${downtime} WHERE guild_id LIKE "${guild.id}"`);
+                    await runQuery(`UPDATE GLOBAL SET total = ${total}, downtime = ${downtime}, players = ${players} WHERE guild_id LIKE "${guild.id}"`);
+
+                    if(playersGrowthPercent){
+                      statusEmbed[guild.id].addField("PLAYERS GROWTH", `\`\`\`fix\n${((growthPercentage.toFixed(3) + '').replace(".000", ""))}%\n\`\`\``);
+                    }
+
+                    if(displayUptime){
+                      statusEmbed[guild.id].addField("UPTIME", `\`\`\`fix\n${(((100 - (downtime/total)).toFixed(3) + '').replace(".000", ""))}%\n\`\`\``);
+                    }
                   }
   
                   if(status[guild.id] === "ONLINE"){
@@ -423,14 +445,15 @@ module.exports = {
       });
     }
 
-    await client.guilds.cache.forEach(async guild => {
+    /*await client.guilds.cache.forEach(async guild => {
       //await runQuery(`DROP TABLE IF EXISTS "${guild.id}"`);
       //await runQuery(`CREATE TABLE IF NOT EXISTS "${guild.id}" (timestamp INT, status TEXT, players INT)`);
       //await runQuery(`INSERT OR IGNORE INTO GLOBAL (guild_id, hidden_ports) VALUES ("${guild.id}", "false")`);
       //await runQuery(`UPDATE GLOBAL SET display_uptime = "true" WHERE guild_id LIKE "${guild.id}"`);
       //await runQuery(`UPDATE GLOBAL SET fake_players_online = "false" WHERE guild_id LIKE "${guild.id}"`);
-    });
-    
+      //await runQuery(`UPDATE GLOBAL SET players_growth_percent = "false" WHERE guild_id LIKE "${guild.id}"`);
+      //await runQuery(`UPDATE GLOBAL SET players = 0 WHERE guild_id LIKE "${guild.id}"`);
+    });*/
 
     await updater();
  

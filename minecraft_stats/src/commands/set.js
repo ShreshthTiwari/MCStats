@@ -29,6 +29,10 @@ module.exports = {
         .addBooleanOption(option => option.setName("option").setDescription("Set TRUE or FALSE.").setRequired(true))
     )
     .addSubcommand(subcommand =>
+      subcommand.setName('players_growth_percent').setDescription("Hide or show the server's players growth percentage in server status.")
+        .addBooleanOption(option => option.setName("option").setDescription("Set TRUE or FALSE.").setRequired(true))
+    )
+    .addSubcommand(subcommand =>
       subcommand.setName('fake_players_online').setDescription("Hide or show fake players count in server status.")
         .addBooleanOption(option => option.setName("option").setDescription("Set TRUE or FALSE.").setRequired(true))
     )
@@ -83,7 +87,8 @@ module.exports = {
         > • \`/set bot_updates_channel\`
         > • \`/set hidden_ports\`
         > • \`/set fake_players_online\`
-        > • \`/set display_uptime\``
+        > • \`/set display_uptime\`
+        > • \`/set players_growth_percent\``
       },
       {
         name: "Note-",

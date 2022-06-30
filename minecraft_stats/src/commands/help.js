@@ -61,7 +61,8 @@ module.exports = {
       > ${branch}• \`/set bot_updates_channel\`
       > ${branch}• \`/set hidden_ports\`
       > ${branch}• \`/set fake_players_online\`
-      > ${branchEnd}• \`/set display_uptime\``)
+      > ${branch}• \`/set display_uptime\`
+      > ${branchEnd}• \`/set players_growth_percent\``)
     }
 
     embed.addFields({
