@@ -24,10 +24,10 @@ module.exports = {
 
     if(mojangStatus.report.skins.status === "up"){
       skinsO = "🟢";
-      skinsStatus = `${branchEnd} UPTIME- \`${mojangStatus.report.skins.uptime}%\``;
+      skinsStatus = `${branchEnd}• UPTIME- \`${mojangStatus.report.skins.uptime}%\``;
     }else{
-      skinsStatus = `cUPTIME- \`${mojangStatus.report.skins.uptime}%\`
-      ${branchEnd} DOWN- <t:${new Date(mojangStatus.report.skins.down_since).getTime()/1000}:R>`;
+      skinsStatus = `${branch}• UPTIME- \`${mojangStatus.report.skins.uptime}%\`
+      ${branchEnd}• DOWN- <t:${new Date(mojangStatus.report.skins.down_since).getTime()/1000}:R>`;
     }
 
     let websiteStatus;
@@ -35,10 +35,10 @@ module.exports = {
 
     if(mojangStatus.report.website.status === "up"){
       websiteO = "🟢";
-      websiteStatus = `${branchEnd} UPTIME- \`${mojangStatus.report.website.uptime}%\``;
+      websiteStatus = `${branchEnd}• UPTIME- \`${mojangStatus.report.website.uptime}%\``;
     }else{
-      websiteStatus = `${branch} UPTIME- \`${mojangStatus.report.website.uptime}%\`
-      ${branchEnd} DOWN- <t:${new Date(mojangStatus.report.website.down_since).getTime()}:R>`;
+      websiteStatus = `${branch}• UPTIME- \`${mojangStatus.report.website.uptime}%\`
+      ${branchEnd}• DOWN- <t:${new Date(mojangStatus.report.website.down_since).getTime()}:R>`;
     }
 
     let apiStatus;
@@ -46,10 +46,10 @@ module.exports = {
 
     if(mojangStatus.report.api.status === "up"){
       apiO = "🟢";
-      apiStatus = `${branchEnd} UPTIME- \`${mojangStatus.report.api.uptime}%\``;
+      apiStatus = `${branchEnd}• UPTIME- \`${mojangStatus.report.api.uptime}%\``;
     }else{
-      apiStatus = `${branch} UPTIME- \`${mojangStatus.report.api.uptime}%\`
-      ${branchEnd} DOWN- <t:${new Date(mojangStatus.report.api.down_since).getTime()}:R>`;
+      apiStatus = `${branch}• UPTIME- \`${mojangStatus.report.api.uptime}%\`
+      ${branchEnd}• DOWN- <t:${new Date(mojangStatus.report.api.down_since).getTime()}:R>`;
     }
 
     let sessionStatus;
@@ -57,10 +57,10 @@ module.exports = {
 
     if(mojangStatus.report.session.status === "up"){
       sessionO = "🟢";
-      sessionStatus = `${branchEnd} UPTIME- \`${mojangStatus.report.session.uptime}%\``;
+      sessionStatus = `${branchEnd}• UPTIME- \`${mojangStatus.report.session.uptime}%\``;
     }else{
-      apiStatus = `${branch} UPTIME- \`${mojangStatus.report.session.uptime}%\`
-      ${branchEnd} DOWN- <t:${new Date(mojangStatus.report.session.down_since).getTime()}:R>`;
+      apiStatus = `${branch}• UPTIME- \`${mojangStatus.report.session.uptime}%\`
+      ${branchEnd}• DOWN- <t:${new Date(mojangStatus.report.session.down_since).getTime()}:R>`;
     }
 
     let loginStatus;
@@ -68,10 +68,10 @@ module.exports = {
 
     if(mojangStatus.report.login.status === "up"){
       loginO = "🟢";
-      loginStatus = `${branchEnd} UPTIME- \`${mojangStatus.report.login.uptime}%\``;
+      loginStatus = `${branchEnd}• UPTIME- \`${mojangStatus.report.login.uptime}%\``;
     }else{
-      loginStatus = `${branch} UPTIME- \`${mojangStatus.report.login.uptime}%\`
-      ${branchEnd} DOWN- <t:${new Date(mojangStatus.report.login.down_since).getTime()}:R>`;
+      loginStatus = `${branch}• UPTIME- \`${mojangStatus.report.login.uptime}%\`
+      ${branchEnd}• DOWN- <t:${new Date(mojangStatus.report.login.down_since).getTime()}:R>`;
     }
 
     let realmsStatus;
@@ -79,10 +79,10 @@ module.exports = {
 
     if(mojangStatus.report.realms.status === "up"){
       realmsO = "🟢";
-      realmsStatus = `${branchEnd} UPTIME- \`${mojangStatus.report.realms.uptime}%\``;
+      realmsStatus = `${branchEnd}• UPTIME- \`${mojangStatus.report.realms.uptime}%\``;
     }else{
-      realmsStatus = `${branch} UPTIME- \`${mojangStatus.report.realms.uptime}%\`
-      ${branchEnd} DOWN- <t:${new Date(mojangStatus.report.realms.down_since).getTime()}:R>`;
+      realmsStatus = `${branch}• UPTIME- \`${mojangStatus.report.realms.uptime}%\`
+      ${branchEnd}• DOWN- <t:${new Date(mojangStatus.report.realms.down_since).getTime()}:R>`;
     }
 
     embed.setTitle("Mojang Status")

@@ -106,9 +106,9 @@ module.exports = {
       }
 
       extraText += `\nPlease make sure I have the following permissions in ${channel}-
-      • \`VIEW CHANNEL\`
-      • \`SEND MESSAGES\`
-      ${branchEnd} \`READ MESSAGE HISTORY\``;
+      ${branch}• \`VIEW CHANNEL\`
+      ${branch}• \`SEND MESSAGES\`
+      ${branchEnd}• \`READ MESSAGE HISTORY\``;
   
       embed.setDescription(`${tick} Set ${channel} as \`${subCommand.replace("_", " ").replace("_", " ")}\`\n-------------------------\n${extraText}`)
         .setColor(embedConfig.successColor);

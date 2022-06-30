@@ -52,16 +52,16 @@ module.exports = {
     if(interaction.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR) || interaction.member.id === config.authorID){
       await embed.addField("Admin 🛠️", `
       > • \`/set\`
-      > ${branch} \`/set help\`
-      > ${branch} \`/set ip\`
-      > ${branch} \`/set java_port\`
-      > ${branch} \`/set query_port\`
-      > ${branch} \`/set bedrock_port\`
-      > ${branch} \`/set server_status_channel\`
-      > ${branch} \`/set bot_updates_channel\`
-      > ${branch} \`/set hidden_ports\`
-      > ${branch} \`/set fake_players_online\`
-      > ${branchEnd} \`/set display_uptime\``)
+      > ${branch}• \`/set help\`
+      > ${branch}• \`/set ip\`
+      > ${branch}• \`/set java_port\`
+      > ${branch}• \`/set query_port\`
+      > ${branch}• \`/set bedrock_port\`
+      > ${branch}• \`/set server_status_channel\`
+      > ${branch}• \`/set bot_updates_channel\`
+      > ${branch}• \`/set hidden_ports\`
+      > ${branch}• \`/set fake_players_online\`
+      > ${branchEnd}• \`/set display_uptime\``)
     }
 
     embed.addFields({
@@ -70,12 +70,12 @@ module.exports = {
       > • \`/help\`
       > • \`/ip\`
       > • \`/ping\`
-      > ${branch} \`/ping java\`
-      > ${branchEnd} \`/ping bedrock\`
+      > ${branch}• \`/ping java\`
+      > ${branchEnd}• \`/ping bedrock\`
       > • \`/status\`
       > • \`/player\`
-      > ${branch} \`/player info_by_username\`
-      > ${branchEnd} \`/player info_by_uuid\`
+      > ${branch}• \`/player info_by_username\`
+      > ${branchEnd}• \`/player info_by_uuid\`
       > • \`/mojang status\``
     },
     {
