@@ -92,9 +92,8 @@ module.exports = {
       },
       {
         name: "Note-",
-        value: `
-        > • Provide the values as \`-1\` or \`null\` to clear them from the database.
-        `
+        value: `> • To reset the server uptime, set your server IP again.
+        > • Provide the values as \`-1\` or \`null\` to clear them from the database.`
       })
       .setColor(embedConfig.defaultColor);
 
@@ -161,6 +160,8 @@ module.exports = {
 
         if(subCommand === "ip"){
           await runQuery(`UPDATE GLOBAL SET downtime = 0, total = 0 WHERE guild_id LIKE "${interaction.guild.id}"`);
+        }else if(subCommand === "players_growth_percent"){
+          await runQuery(`UPDATE GLOBAL SET players = 0 WHERE guild_id LIKE "${interaction.guild.id}"`);
         }
   
         await interaction.editReply({embeds: [embed]}).catch(async error => {
