@@ -93,7 +93,7 @@ module.exports = {
     });
 
     await interaction.editReply({embeds: [embed], components: [buttons]}).catch(async error => {
-      await errorLogger(client, interaction, error, "src/commands/help.js : 93");
+      await errorLogger(client, interaction, error, "src/commands/help.js : 96");
     });
   },
 }

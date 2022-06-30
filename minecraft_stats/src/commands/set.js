@@ -94,7 +94,7 @@ module.exports = {
       .setColor(embedConfig.defaultColor);
 
       await interaction.editReply({embeds: [embed]}).catch(async error => {
-        await errorLogger(client, interaction, error, "src/commands/set.js : 90");
+        await errorLogger(client, interaction, error, "src/commands/set.js : 97");
       });
     }else if(subCommand === "server_status_channel" || subCommand === "bot_updates_channel"){
       await runQuery(`UPDATE GLOBAL SET ${subCommand} = "${channel.id}" WHERE guild_id LIKE "${interaction.guild.id}"`);
@@ -114,7 +114,7 @@ module.exports = {
         .setColor(embedConfig.successColor);
   
       await interaction.editReply({embeds: [embed]}).catch(async error => {
-        await errorLogger(client, interaction, error, "src/commands/set.js : 110");
+        await errorLogger(client, interaction, error, "src/commands/set.js : 117");
       });
     }else{
       input = input + "";
@@ -130,7 +130,7 @@ module.exports = {
           .setColor(embedConfig.successColor);
   
         await interaction.editReply({embeds: [embed]}).catch(async error => {
-          await errorLogger(client, interaction, error, "src/commands/set.js : 126");
+          await errorLogger(client, interaction, error, "src/commands/set.js : 133");
         });
       }else{
         if(input.includes(" ")){
@@ -142,7 +142,7 @@ module.exports = {
               .setColor(embedConfig.errorColor);
   
             await interaction.editReply({embeds: [embed]}).catch(async error => {
-              await errorLogger(client, interaction, error, "src/commands/set.js : 138");
+              await errorLogger(client, interaction, error, "src/commands/set.js : 145");
             });
 
             return;
@@ -159,7 +159,7 @@ module.exports = {
         }
   
         await interaction.editReply({embeds: [embed]}).catch(async error => {
-          await errorLogger(client, interaction, error, "src/commands/set.js : 155");
+          await errorLogger(client, interaction, error, "src/commands/set.js : 162");
         });
       }
     }
