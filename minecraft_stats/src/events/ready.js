@@ -165,11 +165,12 @@ module.exports = {
                             },
                             {
                               name: `${wifi} SERVER IP`,
-                              value: `\`\`\`fix\n${IP}\n\`\`\``
+                              value: `\`\`\`fix\n${IP}\n\`\`\``,
+                              inline: true
                             });
                           
                           if(!hiddenPorts){
-                            statusEmbed[guild.id].addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${javaPort}\n\`\`\``);
+                            statusEmbed[guild.id].addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${javaPort}\n\`\`\``, true);
                           }
                           
                           statusEmbed[guild.id].addFields(
@@ -179,15 +180,17 @@ module.exports = {
                             },
                             {
                               name: `${users} PLAYING`,
-                              value: `\`\`\`fix\n${online}/${max}\n\`\`\``
+                              value: `\`\`\`fix\n${online}/${max}\n\`\`\``,
+                              inline: true
+                            },
+                            {
+                              name: `${signal} LATENCY`,
+                              value: `\`\`\`fix\n${roundTripLatency}ms\n\`\`\``,
+                              inline: true
                             },
                             {
                               name: `${pen} MOTD`,
                               value: `\`\`\`fix\n${motd}\n\`\`\``
-                            },
-                            {
-                              name: `${signal} LATENCY`,
-                              value: `\`\`\`fix\n${roundTripLatency}ms\n\`\`\``
                             })
                             .setColor(embedConfig.successColor)
                             .setThumbnail(favicon);
@@ -212,13 +215,14 @@ module.exports = {
                             },
                             {
                               name: `${wifi} SERVER IP`,
-                              value: `\`\`\`fix\n${IP}\n\`\`\``
+                              value: `\`\`\`fix\n${IP}\n\`\`\``,
+                              inline: true
                             })
                             .setColor(embedConfig.errorColor)
                             .setThumbnail(defaultLogo);
                           
                           if(!hiddenPorts){
-                            statusEmbed[guild.id].addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${javaPort}\n\`\`\``);
+                            statusEmbed[guild.id].addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${javaPort}\n\`\`\``, true);
                           }
                         }
                       }
@@ -287,11 +291,12 @@ module.exports = {
                             },
                             {
                               name: `${wifi} SERVER IP`,
-                              value: `\`\`\`fix\n${IP}\n\`\`\``
+                              value: `\`\`\`fix\n${IP}\n\`\`\``,
+                              inline: true
                             });
   
                           if(!hiddenPorts){
-                            statusEmbed[guild.id].addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${bedrockPort}\n\`\`\``);
+                            statusEmbed[guild.id].addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${bedrockPort}\n\`\`\``, true);
                           }
                             
                           statusEmbed[guild.id].addFields(
@@ -319,13 +324,14 @@ module.exports = {
                             },
                             {
                               name: `${wifi} SERVER IP`,
-                              value: `\`\`\`fix\n${IP}\n\`\`\``
+                              value: `\`\`\`fix\n${IP}\n\`\`\``,
+                              inline: true
                             })
                             .setColor(embedConfig.errorColor)
                             .setThumbnail(defaultLogo);
   
                           if(!hiddenPorts){
-                            statusEmbed[guild.id].addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${bedrockPort}\n\`\`\``);
+                            statusEmbed[guild.id].addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${bedrockPort}\n\`\`\``, true);
                           }
                         }
                       }
@@ -370,21 +376,25 @@ module.exports = {
 
                     let growthPercentage = ((playersOnline - players) / players) * 100;
 
+                    if(isNaN(growthPercentage)){
+                      growthPercentage = 100;
+                    }
+
                     players = playersOnline;
   
                     await runQuery(`UPDATE GLOBAL SET total = ${total}, downtime = ${downtime}, players = ${players} WHERE guild_id LIKE "${guild.id}"`);
 
                     if(playersGrowthPercent){
-                      statusEmbed[guild.id].addField("PLAYERS GROWTH", `\`\`\`fix\n${((growthPercentage.toFixed(3) + '').replace(".000", ""))}%\n\`\`\``);
+                      statusEmbed[guild.id].addField("PLAYERS GROWTH", `\`\`\`fix\n${((growthPercentage.toFixed(3) + '').replace(".000", ""))}%\n\`\`\``, true);
                     }
 
                     if(displayUptime){
-                      statusEmbed[guild.id].addField("UPTIME", `\`\`\`fix\n${(((100 - (downtime/total)).toFixed(3) + '').replace(".000", ""))}%\n\`\`\``);
+                      statusEmbed[guild.id].addField("UPTIME", `\`\`\`fix\n${(((100 - (downtime/total)).toFixed(3) + '').replace(".000", ""))}%\n\`\`\``, true);
                     }
                   }
   
                   if(status[guild.id] === "ONLINE"){
-                    statusEmbed[guild.id].addField("ONLINE SINCE", `<t:${Math.round((onlineSince * 1)/1000)}:R>`);
+                    statusEmbed[guild.id].addField("ONLINE SINCE", `<t:${Math.round((onlineSince * 1)/1000)}:R>`, true);
                   }else{
                     if(onlineSince){
                       await runQuery(`UPDATE GLOBAL SET online_since = null WHERE guild_id LIKE "${guild.id}"`);

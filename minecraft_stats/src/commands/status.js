@@ -78,6 +78,8 @@ module.exports = {
               
               if(rawData){
                 if(rawData[0] === "ONLINE"){
+                  status = "ONLINE";
+
                   if(!onlineSince){
                     onlineSince = new Date().getTime();
                     
@@ -137,11 +139,12 @@ module.exports = {
                     },
                     {
                       name: `${wifi} SERVER IP`,
-                      value: `\`\`\`fix\n${IP}\n\`\`\``
+                      value: `\`\`\`fix\n${IP}\n\`\`\``,
+                      inline: true
                     });
   
                     if(!hiddenPorts){
-                      embed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${javaPort}\n\`\`\``);
+                      embed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${javaPort}\n\`\`\``, true);
                     }
   
                     embed.addFields(
@@ -151,15 +154,17 @@ module.exports = {
                     },
                     {
                       name: `${users} PLAYING`,
-                      value: `\`\`\`fix\n${online}/${max}\n\`\`\``
+                      value: `\`\`\`fix\n${online}/${max}\n\`\`\``,
+                      inline: true
+                    },
+                    {
+                      name: `${signal} LATENCY`,
+                      value: `\`\`\`fix\n${roundTripLatency}ms\n\`\`\``,
+                      inline: true
                     },
                     {
                       name: `${pen} MOTD`,
                       value: `\`\`\`fix\n${motd}\n\`\`\``
-                    },
-                    {
-                      name: `${signal} LATENCY`,
-                      value: `\`\`\`fix\n${roundTripLatency}ms\n\`\`\``
                     })
                     .setColor(embedConfig.successColor)
                     .setThumbnail(favicon);
@@ -183,13 +188,14 @@ module.exports = {
                     },
                     {
                       name: `${wifi} SERVER IP`,
-                      value: `\`\`\`fix\n${IP}\n\`\`\``
+                      value: `\`\`\`fix\n${IP}\n\`\`\``,
+                      inline: true
                     })
                     .setColor(embedConfig.errorColor)
                     .setThumbnail(defaultLogo);
   
                   if(!hiddenPorts){
-                    embed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${javaPort}\n\`\`\``);
+                    embed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${javaPort}\n\`\`\``, true);
                   }
                 }else{
                   embed = new MessageEmbed()
@@ -215,6 +221,8 @@ module.exports = {
               
               if(rawData){
                 if(rawData[0] === "ONLINE"){
+                  status = "ONLINE";
+                  
                   if(!onlineSince){
                     onlineSince = new Date().getTime();
                     
@@ -258,11 +266,12 @@ module.exports = {
                     },
                     {
                       name: `${wifi} SERVER IP`,
-                      value: `\`\`\`fix\n${IP}\n\`\`\``
+                      value: `\`\`\`fix\n${IP}\n\`\`\``,
+                      inline: true
                     });
   
                   if(!hiddenPorts){
-                    embed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${bedrockPort}\n\`\`\``);
+                    embed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${bedrockPort}\n\`\`\``, true);
                   }
                 
                   embed.addFields(
@@ -289,13 +298,14 @@ module.exports = {
                     },
                     {
                       name: `${wifi} SERVER IP`,
-                      value: `\`\`\`fix\n${IP}\n\`\`\``
+                      value: `\`\`\`fix\n${IP}\n\`\`\``,
+                      inline: true
                     })
                     .setColor(embedConfig.errorColor)
                     .setThumbnail(defaultLogo);
   
                   if(!hiddenPorts){
-                    embed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${bedrockPort}\n\`\`\``);
+                    embed.addField(`${wifi} SERVER PORT`, `\`\`\`fix\n${bedrockPort}\n\`\`\``, true);
                   }
                 }else{
                   embed = new MessageEmbed()
@@ -343,21 +353,25 @@ module.exports = {
 
             let growthPercentage = ((playersOnline - players) / players) * 100;
 
+            if(isNaN(growthPercentage)){
+              growthPercentage = 100;
+            }
+
             players = playersOnline;
 
             await runQuery(`UPDATE GLOBAL SET total = ${total}, downtime = ${downtime}, players = ${players} WHERE guild_id LIKE "${interaction.guild.id}"`);
 
             if(playersGrowthPercent){
-              embed.addField("PLAYERS GROWTH", `\`\`\`fix\n${((growthPercentage.toFixed(3) + '').replace(".000", ""))}%\n\`\`\``);
+              embed.addField("PLAYERS GROWTH", `\`\`\`fix\n${((growthPercentage.toFixed(3) + '').replace(".000", ""))}%\n\`\`\``, true);
             }
 
             if(displayUptime){
-              embed.addField("UPTIME", `\`\`\`fix\n${(((100 - (downtime/total)).toFixed(3) + '').replace(".000", ""))}%\n\`\`\``);
+              embed.addField("UPTIME", `\`\`\`fix\n${(((100 - (downtime/total)).toFixed(3) + '').replace(".000", ""))}%\n\`\`\``, true);
             }
           }
   
           if(status === "ONLINE"){
-            embed.addField("ONLINE SINCE", `<t:${Math.round((onlineSince * 1)/1000)}:R>`);
+            embed.addField("ONLINE SINCE", `<t:${Math.round((onlineSince * 1)/1000)}:R>`, true);
           }else{
             if(onlineSince){
               await runQuery(`UPDATE GLOBAL SET online_since = null WHERE guild_id LIKE "${interaction.guild.id}"`);
