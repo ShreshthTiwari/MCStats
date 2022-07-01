@@ -359,7 +359,7 @@ module.exports = {
                     total = 1;
                   }
   
-                  if(displayUptime || playersGrowthPercent){
+                  if(status[guild.id] === "ONLINE" && (displayUptime || playersGrowthPercent)){
                     while( (total % 2 == 0) && (downtime % 2 == 0)){
                       if(players){
                         players = Math.round(players / 2);
