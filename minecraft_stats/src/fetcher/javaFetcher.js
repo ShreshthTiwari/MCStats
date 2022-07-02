@@ -41,26 +41,15 @@ module.exports = async (client, ID, IP, port) => {
 
       let sampleList = rawData[5] || [];
       let slen = sampleList.length || 0;
-
-      let index = 0;
   
       if(slen > 0){
-        let tempList = [];
-
         for(let i=0; i<=slen-1; i++){
           if(sampleList[i].name){
-            tempList[index++] = sampleList[i].name;
-
-            if(index > 20){
-              tempList[20] = `+${Math.floor(slen-20)} more`;
-              
-              break;
-            }
+            sampleList[i] = sampleList[i].name;
           }
         }
 
-        sampleList = await messageCleaner(tempList.join(", "));
-        rawData[5] = sampleList;
+        rawData[5] = await messageCleaner(sampleList.join(", "));
       }
 
       let favicon = rawData[6] || null;
@@ -68,9 +57,7 @@ module.exports = async (client, ID, IP, port) => {
       if(favicon){
         favicon = favicon.replace(/^data:image\/png;base64,/, "");
       
-        fs.writeFile(`minecraft_stats/src/commands/${ID}.png`, favicon, 'base64', function(error){
-          console.log(error);
-        });
+        fs.writeFile(`minecraft_stats/src/commands/${ID}.png`, favicon, 'base64', function(){});
 
         let miscChannel = await client.channels.cache.get(config.miscChannel); 
 
@@ -83,9 +70,7 @@ module.exports = async (client, ID, IP, port) => {
             rawData[6] = imageURL;
           }
 
-          fs.unlink(`minecraft_stats/src/commands/${ID}.png`, (error) => {
-            console.log(error);
-          });
+          fs.unlink(`minecraft_stats/src/commands/${ID}.png`, () => {});
         }else{
           rawData[6] = defaultLogo;
         }

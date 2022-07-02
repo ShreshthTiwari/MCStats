@@ -18,14 +18,12 @@ module.exports = async (IP, port) => {
     
     if(rawData[0] === "ONLINE"){
       let playersList = rawData[1] || [];
-               
-      if(playersList.length && playersList.length > 20){
-        playersList.length = 21;
-        playersList[20] = `+${playersList.length-20} more`;
-      }
 
-      playersList = await messageCleaner(playersList.join(", "));
-      rawData[1] = playersList;
+      if(playersList.length > 0){
+        rawData[1] = await messageCleaner(playersList.join(", "));
+      }else{
+        rawData = ["OFFLINE"];
+      }
     }else{
       rawData = ["OFFLINE"];
     }
