@@ -14,7 +14,7 @@ module.exports = async (IP, port) => {
           return ["OFFLINE"];
         }
       })
-      .catch((error) => {});
+      .catch(() => {});
     
     if(rawData[0] === "ONLINE"){
       rawData[1] = await messageCleaner(rawData[1]) || "NULL";
