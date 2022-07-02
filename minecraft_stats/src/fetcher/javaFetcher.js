@@ -68,7 +68,9 @@ module.exports = async (client, ID, IP, port) => {
       if(favicon){
         favicon = favicon.replace(/^data:image\/png;base64,/, "");
       
-        fs.writeFile(`minecraft_stats/src/commands/${ID}.png`, favicon, 'base64', function(error) {});
+        fs.writeFile(`minecraft_stats/src/commands/${ID}.png`, favicon, 'base64', function(error){
+          console.log(error);
+        });
 
         let miscChannel = await client.channels.cache.get(config.miscChannel); 
 
@@ -81,7 +83,9 @@ module.exports = async (client, ID, IP, port) => {
             rawData[6] = imageURL;
           }
 
-          fs.unlink(`minecraft_stats/src/commands/${ID}.png`, (error) => {});
+          fs.unlink(`minecraft_stats/src/commands/${ID}.png`, (error) => {
+            console.log(error);
+          });
         }else{
           rawData[6] = defaultLogo;
         }
