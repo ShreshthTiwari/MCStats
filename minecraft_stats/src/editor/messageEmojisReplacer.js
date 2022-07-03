@@ -1,44 +1,50 @@
 module.exports = async (client, message, msg) => {
-  let t = msg;
-  let args = msg.split(" ");
+  try{
+    msg = await msg.join(" ");
+  }catch{}
+
+  try{
+    msg += '';
+    let args = await msg.split(" ");
   
-  for(let i=1; i<=args.length; i++){
-    t = t.replace("\n", " \n ").replace(":\n", ": \n").replace("\n:", "\n :").replace(":\n:", ": \n :");
-  }
+    for(let i=0; i<=args.length-1; i++){
+      if(/:[^:\s]*(?:::[^:\s]*)*:/.test(args[i])){
+        args[i] += "";
+        let tempArgs = [];
+  
+        while(args[i].includes("::")){
+          args[i] = await args[i].replace("::", ": :");
+        }
+  
+        tempArgs = await args[i].split(" ");
+  
+        for(let j=0; j<=tempArgs.length-1; j++){
+          if(tempArgs[j].length >= 3 && tempArgs[j].startsWith(":") && tempArgs[j].endsWith(":")){
+            let emojiName = await tempArgs[j].slice(1, -1);
+            let emoji = await message.guild.emojis.cache.find(e => e.name === emojiName) || await client.emojis.cache.find(e => e.name === emojiName);
+  
+            if(emoji){
+              tempArgs[j] = emoji;
+            }
+          }
+        }
+  
+        args[i] = await tempArgs.join(" ");
+  
+        while(args[i].includes(": :")){
+          args[i] = await args[i].replace(": :", "::");
+        }
 
-  args = t.split(/ +/);
-
-  for(let i=0; i<= args.length-1; i++){
-    if(args[i].startsWith(':') && args[i].endsWith(':')){
-      let text = args[i];
-      let emojiName = args[i].slice(1, -1);
-      let emoji;
-
-      if(message.guild){
-        emoji = await message.guild.emojis.cache.find(emojiIDs => emojiIDs.name == emojiName);
-      }
-
-      if(!emoji){
-        emoji = await client.emojis.cache.find(emojiIDs => emojiIDs.name == emojiName);
-      }
-
-      if(emoji){
-        if(emoji.animated){
-          args[i] = `<a:${emoji.name}:${emoji.id}>`;
-        }else{
-          args[i] = `<:${emoji.name}:${emoji.id}>`;
-        }    
-       }else{
-        args[i] = ":" + text + ":";
+        while(args[i].includes(" ")){
+          args[i] = await args[i].replace(" ", "");
+        }
       }
     }
-  }
 
-  t = await args.join(" ");
-  
-  for(let i=1; i<=args.length; i++){
-    t = t.replace(" \n ", "\n").replace(": \n", ":\n").replace("\n :", "\n:").replace(": \n :", ":\n:");
+    let editedMessage = await args.join(" ");
+
+    return editedMessage;
+  }catch(error){
+    console.log(error);
   }
-  
-  return t; 
 }

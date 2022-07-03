@@ -12,8 +12,7 @@ module.exports = async (data) => {
       if((rawData[i] === '§' || rawData[i] === '&') && ('0' <= d <= '9' || 'a' <= d <= 'z')){
         i++;
       }else{
-        finalData[index] = rawData[i];
-        index++;
+        finalData[index++] = rawData[i];
       }
     }
 
