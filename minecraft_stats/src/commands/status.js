@@ -45,8 +45,8 @@ module.exports = {
           let onlineSince = ((row.online_since * 1) <= 0 ? null : (row.online_since * 1));
           let fakePlayersOnline = (row.fake_players_online === "true") ? true : false;
           let playersGrowthPercent = (row.players_growth_percent === "true") ? true : false;
-          let players = (isNaN(row.players) || (row.players * 1) < 0) ? 0 : (row.players * 1);
-          let playersOnline = 0;
+          let playersOnline = (isNaN(row.players_online) || (row.players_online * 1) < 0) ? 0 : (row.players_online * 1);
+          let playersTotal = (isNaN(row.players_online) || (row.players_online * 1) < 0) ? 0 : (row.players_online * 1);
 
           total++;
   
@@ -130,7 +130,8 @@ module.exports = {
                     }
                   }
 
-                  playersOnline = online;
+                  playersOnline += online;
+                  playersTotal += max;
         
                   embed = new MessageEmbed()
                     .addFields({
@@ -257,7 +258,8 @@ module.exports = {
                     }
                   }
 
-                  playersOnline = online;
+                  playersOnline += online;
+                  playersTotal += max;
         
                   embed = new MessageEmbed()
                     .addFields({
@@ -336,41 +338,37 @@ module.exports = {
             return;
           }
   
-          if(status === "ONLINE" && (displayUptime || playersGrowthPercent)){
-            while( (total % 2 == 0) && (downtime % 2 == 0)){
-              if(players){
-                players = Math.round(players / 2);
-                playersOnline = Math.round(playersOnline/2);
+          if(status === "ONLINE"){
+            if(playersGrowthPercent){
+              while((playersTotal % 2 == 0) && (playersOnline % 2 == 0)){
+                playersTotal = Math.round(playersTotal / 2);
+                playersOnline = Math.round(playersOnline / 2);
               }
 
-              total /= 2;
-              downtime /= 2;
-            }
+              if(playersTotal <= 0){
+                playersTotal = 1;
+              }
 
-            if(total <= 0){
-              total = 1;
-            }
+              embed.addField("PLAYERS GROWTH", `\`\`\`fix\n${((((playersOnline/playersTotal)*100).toFixed(3) + '').replace(".000", ""))}%\n\`\`\``, true); 
 
-            let growthPercentage = ((playersOnline - players) / players) * 100;
-
-            if(isNaN(growthPercentage)){
-              growthPercentage = 100;
-            }
-
-            players = playersOnline;
-
-            await runQuery(`UPDATE GLOBAL SET total = ${total}, downtime = ${downtime}, players = ${players} WHERE guild_id LIKE "${interaction.guild.id}"`);
-
-            if(playersGrowthPercent){
-              embed.addField("PLAYERS GROWTH", `\`\`\`fix\n${((growthPercentage.toFixed(3) + '').replace(".000", ""))}%\n\`\`\``, true);
+              await runQuery(`UPDATE GLOBAL SET players_total = ${playersTotal}, players_online = ${playersOnline} WHERE guild_id LIKE "${interaction.guild.id}"`);
             }
 
             if(displayUptime){
+              while((total % 2 == 0) && (downtime % 2 == 0)){
+                total = Math.round(total / 2);
+                downtime = Math.round(downtime / 2);
+              }
+
+              if(total <= 0){
+                total = 1;
+              }
+
               embed.addField("UPTIME", `\`\`\`fix\n${(((100 - (downtime/total)).toFixed(3) + '').replace(".000", ""))}%\n\`\`\``, true);
+
+              await runQuery(`UPDATE GLOBAL SET total = ${total}, downtime = ${downtime} WHERE guild_id LIKE "${interaction.guild.id}"`);
             }
-          }
-  
-          if(status === "ONLINE"){
+
             embed.addField("ONLINE SINCE", `<t:${Math.round((onlineSince * 1)/1000)}:R>`, true);
           }else{
             if(onlineSince){

@@ -29,7 +29,7 @@ module.exports = {
 
     const database = await databaseBuilder();
 
-    await runQuery(`CREATE TABLE IF NOT EXISTS GLOBAL (guild_id TEXT PRIMARY KEY, ip TEXT, java_port TEXT, query_port TEXT, bedrock_port TEXT, bot_updates_channel TEXT, server_status_channel TEXT, hidden_ports TEXT, downtime INT, total INT, display_uptime TEXT, status_message_id TEXT, online_since TEXT, fake_players_online TEXT, players_growth_percent TEXT)`);
+    await runQuery(`CREATE TABLE IF NOT EXISTS GLOBAL (guild_id TEXT PRIMARY KEY, ip TEXT, java_port TEXT, query_port TEXT, bedrock_port TEXT, bot_updates_channel TEXT, server_status_channel TEXT, hidden_ports TEXT, downtime INT, total INT, display_uptime TEXT, status_message_id TEXT, online_since TEXT, fake_players_online TEXT, players_growth_percent TEXT, players_online INT, players_total INT)`);
     await runQuery(`DELETE FROM GLOBAL WHERE NOT guild_id`);
 
     const guildsCount = await client.guilds.cache.size || 0;
@@ -88,8 +88,8 @@ module.exports = {
                   let onlineSince = ((row.online_since * 1) <= 0 ? null : (row.online_since * 1));
                   let fakePlayersOnline = (row.fake_players_online === "true") ? true : false;
                   let playersGrowthPercent = (row.players_growth_percent === "true") ? true : false;
-                  let players = (isNaN(row.players) || (row.players * 1) < 0) ? 0 : (row.players * 1);
-                  let playersOnline = 0;
+                  let playersOnline = (isNaN(row.players_online) || (row.players_online * 1) < 0) ? 0 : (row.players_online * 1);
+                  let playersTotal = (isNaN(row.players_online) || (row.players_online * 1) < 0) ? 0 : (row.players_online * 1);
                   status[guild.id] = "OFFLINE";
                     
                   total++;
@@ -156,7 +156,8 @@ module.exports = {
                             }
                           }
 
-                          playersOnline = online;
+                          playersOnline += online;
+                          playersTotal += max;
                     
                           statusEmbed[guild.id] = new MessageEmbed()
                             .addFields({
@@ -282,7 +283,8 @@ module.exports = {
                             }
                           }
 
-                          playersOnline = online;
+                          playersOnline += online;
+                          playersTotal += max;
 
                           statusEmbed[guild.id] = new MessageEmbed()
                             .addFields({
@@ -359,41 +361,37 @@ module.exports = {
                     total = 1;
                   }
   
-                  if(status[guild.id] === "ONLINE" && (displayUptime || playersGrowthPercent)){
-                    while( (total % 2 == 0) && (downtime % 2 == 0)){
-                      if(players){
-                        players = Math.round(players / 2);
-                        playersOnline = Math.round(playersOnline/2);
+                  if(status[guild.id] === "ONLINE"){
+                    if(playersGrowthPercent){
+                      while((playersTotal % 2 == 0) && (playersOnline % 2 == 0)){
+                        playersTotal = Math.round(playersTotal / 2);
+                        playersOnline = Math.round(playersOnline / 2);
                       }
 
-                      total /= 2;
-                      downtime /= 2;
-                    }
+                      if(playersTotal <= 0){
+                        playersTotal = 1;
+                      }
 
-                    if(total <= 0){
-                      total = 1;
-                    }
+                      statusEmbed[guild.id].addField("PLAYERS GROWTH", `\`\`\`fix\n${((((playersOnline/playersTotal)*100).toFixed(3) + '').replace(".000", ""))}%\n\`\`\``, true); 
 
-                    let growthPercentage = ((playersOnline - players) / players) * 100;
-
-                    if(isNaN(growthPercentage)){
-                      growthPercentage = 100;
-                    }
-
-                    players = playersOnline;
-  
-                    await runQuery(`UPDATE GLOBAL SET total = ${total}, downtime = ${downtime}, players = ${players} WHERE guild_id LIKE "${guild.id}"`);
-
-                    if(playersGrowthPercent){
-                      statusEmbed[guild.id].addField("PLAYERS GROWTH", `\`\`\`fix\n${((growthPercentage.toFixed(3) + '').replace(".000", ""))}%\n\`\`\``, true);
+                      await runQuery(`UPDATE GLOBAL SET players_total = ${playersTotal}, players_online = ${playersOnline} WHERE guild_id LIKE "${guild.id}"`);
                     }
 
                     if(displayUptime){
-                      statusEmbed[guild.id].addField("UPTIME", `\`\`\`fix\n${(((100 - (downtime/total)).toFixed(3) + '').replace(".000", ""))}%\n\`\`\``, true);
-                    }
-                  }
+                      while((total % 2 == 0) && (downtime % 2 == 0)){
+                        total = Math.round(total / 2);
+                        downtime = Math.round(downtime / 2);
+                      }
   
-                  if(status[guild.id] === "ONLINE"){
+                      if(total <= 0){
+                        total = 1;
+                      }
+
+                      statusEmbed[guild.id].addField("UPTIME", `\`\`\`fix\n${(((100 - (downtime/total)).toFixed(3) + '').replace(".000", ""))}%\n\`\`\``, true);
+
+                      await runQuery(`UPDATE GLOBAL SET total = ${total}, downtime = ${downtime} WHERE guild_id LIKE "${guild.id}"`);
+                    }
+
                     statusEmbed[guild.id].addField("ONLINE SINCE", `<t:${Math.round((onlineSince * 1)/1000)}:R>`, true);
                   }else{
                     if(onlineSince){
