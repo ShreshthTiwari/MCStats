@@ -9,7 +9,10 @@ module.exports = async (client) => {
     const Pen = await client.emojis.cache.get(emojis.pen);
     const Signal = await client.emojis.cache.get(emojis.signal);
     const Branch = await client.emojis.cache.get(emojis.branch);
+    const BranchLine = await client.emojis.cache.get(emojis.branchLine);
     const BranchEnd = await client.emojis.cache.get(emojis.branchEnd);
+    const FiveM = await client.emojis.cache.get(emojis.fiveM);
+    const SAMP = await client.emojis.cache.get(emojis.samp);
   
     const Emojis = {
       grass: Grass,
@@ -19,7 +22,10 @@ module.exports = async (client) => {
       pen: Pen,
       signal: Signal,
       branch: Branch,
-      branchEnd: BranchEnd 
+      branchLine: BranchLine,
+      branchEnd: BranchEnd,
+      fiveM: FiveM,
+      samp: SAMP
     }
   
     return Emojis;

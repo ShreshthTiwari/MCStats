@@ -7,7 +7,6 @@ const chalk = require("chalk");
 
 const config = require('./config/config.json');
 const embedConfig = require('./config/embedConfig.json');
-const databaseBuilder = require("./sqlite/buildDB.js");
 const messageEmojisReplacer = require("./editor/messageEmojisReplacer.js");
 const errorLogger = require("./logger/errorLogger.js");
 const logger = require("./logger/logger.js");
@@ -43,12 +42,12 @@ for (const file of eventFiles) {
 
   try{
     if (event.once) {
-      client.once(event.name, (...args) => event.execute(client, embed, MessageEmbed, config, embedConfig, databaseBuilder, Permissions, messageEmojisReplacer, errorLogger, logger, ...args));
+      client.once(event.name, (...args) => event.execute(client, embed, MessageEmbed, config, embedConfig, Permissions, messageEmojisReplacer, errorLogger, logger, ...args));
     } else {
-      client.on(event.name, (...args) => event.execute(client, embed, MessageEmbed, config, embedConfig, databaseBuilder, Permissions, messageEmojisReplacer, errorLogger, logger, ...args));
+      client.on(event.name, (...args) => event.execute(client, embed, MessageEmbed, config, embedConfig, Permissions, messageEmojisReplacer, errorLogger, logger, ...args));
     }
   }catch (error){
-    errorLogger(client, null, error, "src/index.js : 51");
+    errorLogger(client, null, error, "src/index.js : 50");
   }
 }
 

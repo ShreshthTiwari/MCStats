@@ -5,6 +5,6 @@ module.exports = () => {
   try{
     return db;
   }catch(error){
-    errorLogger(client, null, error, "src/events/buildDB.js : 8");
+    console.log(error);
   }
 }

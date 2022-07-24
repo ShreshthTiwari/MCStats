@@ -7,8 +7,10 @@ module.exports = async (query) => {
       db.serialize(() => {
         db.run(query);
       });
+    }else{
+      console.log("Empty query provided.");
     }
   }catch(error){
-    await errorLogger(client, null, error, "src/sqlite/runQuery.js : 12");
+    console.log(error);
   }
 }

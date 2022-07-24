@@ -4,17 +4,8 @@ let i = 0;
 
 module.exports = {
   name: 'guildCreate',
-  async execute(client, embed, MessageEmbed, config, embedConfig, databaseBuilder, Permissions, messageEmojisReplacer, errorLogger, logger, guild) {
+  async execute(client, embed, MessageEmbed, config, embedConfig, Permissions, messageEmojisReplacer, errorLogger, logger, guild) {
     await runQuery(`INSERT OR IGNORE INTO GLOBAL (guild_id, hidden_ports, display_uptime, fake_players_online, players_growth_percent) VALUES ("${guild.id}", "false", "true", "false", "false")`);
-    //await runQuery(`CREATE TABLE IF NOT EXISTS "${guild.id}" (timestamp TEXT, status TEXT, players INT)`);
-
-    let guildsCount = await client.guilds.cache.size || 0;
-
-    try{
-      await client.user.setActivity(`For /help in ${guildsCount} ${guildsCount > 1 ? "servers" : "server"}`, {type: "WATCHING"});
-    }catch(error){
-      await errorLogger(client, null, error, "src/commands/guildCreate.js : 16");
-    }
     
     embed = new MessageEmbed()
       .setColor(embedConfig.defaultColor);

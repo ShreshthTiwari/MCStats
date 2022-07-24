@@ -6,7 +6,7 @@ module.exports = {
 	  .setDescription('Send bug report to bot developer.')
 	  .addStringOption(option => option.setName('message').setDescription('Enter message.').setRequired(true)),
   
-  async execute(client, MessageEmbed, embed, config, embedConfig, database, Permissions, interaction, messageEmojisReplacer, tick, cross, errorLogger, logger){
+  async execute(client, MessageEmbed, embed, config, embedConfig, Permissions, interaction, messageEmojisReplacer, tick, cross, errorLogger, logger){
     embed = new MessageEmbed()
       .setColor(embedConfig.defaultColor);
 

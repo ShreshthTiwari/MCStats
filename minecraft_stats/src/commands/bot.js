@@ -33,7 +33,7 @@ module.exports = {
         .addStringOption(option => option.setName("message").setDescription("Provide the message.").setRequired(true))
     )*/,
   
-  async execute(client, MessageEmbed, embed, config, embedConfig, database, Permissions, interaction, messageEmojisReplacer, tick, cross, errorLogger, logger) {
+  async execute(client, MessageEmbed, embed, config, embedConfig, Permissions, interaction, messageEmojisReplacer, tick, cross, errorLogger, logger) {
     embed = new MessageEmbed()
       .setColor(embedConfig.defaultColor);
       

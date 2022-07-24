@@ -4,17 +4,17 @@ const commandUsed = new Set();
 
 module.exports = {
   name: 'interactionCreate',
-  async execute(client, embed, MessageEmbed, config, embedConfig, databaseBuilder, Permissions, messageEmojisReplacer, errorLogger, logger, interaction) {
+  async execute(client, embed, MessageEmbed, config, embedConfig, Permissions, messageEmojisReplacer, errorLogger, logger, interaction) { 
+    if(interaction.user.bot || (!interaction.guild)){
+      return;
+    }
+
     const commandsCooldown = config.commandsCooldown;
     
     await runQuery(`INSERT OR IGNORE INTO GLOBAL (guild_id) VALUES ("${interaction.guild.id}")`);
 
     embed = new MessageEmbed()
       .setColor(embedConfig.defaultColor);
-      
-    if(interaction.user.bot){
-      return;
-    }
       
     if (!interaction.isCommand()) return;
 
@@ -30,9 +30,7 @@ module.exports = {
     const cross = "❌";
   
     try {
-      const database = await databaseBuilder();
-
-      if(!(commandName === "invite" || commandName === "bot" || commandName === "support" || commandName === "status" || commandName === "ping" || commandName === "vote" || commandName === "ip")){
+      if(!(commandName === "invite" || commandName === "bot" || commandName === "support" || commandName === "status" || commandName === "ping" || commandName === "vote" || commandName === "ip" || commandName === "help")){
         try{
           if(interaction.member){
             let owner = await interaction.guild.fetchOwner();
@@ -44,7 +42,7 @@ module.exports = {
                     .setColor(embedConfig.errorColor);
             
                   await interaction.editReply({embeds: [embed]}).catch(async error => {
-                    await errorLogger(client, interaction, error, "src/commands/interactionCreate.js : 47");
+                    await errorLogger(client, interaction, error, "src/commands/interactionCreate.js : 45");
                   });
             
                   return;
@@ -60,12 +58,12 @@ module.exports = {
         .setColor(embedConfig.errorColor);
 
         await interaction.editReply({embeds: [embed]}).catch(async error => {
-          await errorLogger(client, interaction, error, "src/commands/interactionCreate.js : 63");
+          await errorLogger(client, interaction, error, "src/commands/interactionCreate.js : 61");
         });
 
         return;
       }else{
-        await command.execute(client, MessageEmbed, embed, config, embedConfig, database, Permissions, interaction, messageEmojisReplacer, tick, cross, errorLogger, logger);
+        await command.execute(client, MessageEmbed, embed, config, embedConfig, Permissions, interaction, messageEmojisReplacer, tick, cross, errorLogger, logger);
 
         commandUsed.add(interaction.user.id);
         
@@ -78,7 +76,7 @@ module.exports = {
         .setColor(embedConfig.errorColor);
   
       await interaction.editReply({ embeds: [embed]}).catch(async error => {
-        await errorLogger(client, interaction, error, "src/commands/interactionCreate.js : 81");
+        await errorLogger(client, interaction, error, "src/commands/interactionCreate.js : 79");
       });
     }
   },

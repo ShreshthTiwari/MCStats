@@ -2,17 +2,8 @@ const runQuery = require("../sqlite/runQuery.js");
 
 module.exports = {
   name: 'guildDelete',
-  async execute(client, embed, MessageEmbed, config, embedConfig, databaseBuilder, Permissions, messageEmojisReplacer, errorLogger, logger, guild) {
+  async execute(client, embed, MessageEmbed, config, embedConfig, Permissions, messageEmojisReplacer, errorLogger, logger, guild) {
     await runQuery(`DELETE FROM GLOBAL WHERE guild_id LIKE "${guild.id}"`);
-    //await runQuery(`DROP TABLE IF EXISTS "${guild.id}"`);
-
-    let guildsCount = await client.guilds.cache.size || 0;
-
-    try{
-      await client.user.setActivity(`For /help in ${guildsCount} ${guildsCount > 1 ? "servers" : "server"}`, {type: "WATCHING"});
-    }catch(error){
-      await errorLogger(client, null, error, "src/commands/guildDelete.js : 14");
-    }
     
     embed = new MessageEmbed()
       .setColor(embedConfig.defaultColor);

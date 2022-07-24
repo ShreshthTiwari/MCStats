@@ -10,7 +10,7 @@ module.exports = {
     .setName('set')
 	  .setDescription('Set variables for the bot.')
     .addSubcommand(subcommand =>
-      subcommand.setName('bedrock_port').setDescription("Set port of the minecraft bedrock server.")
+      subcommand.setName('bedrock_port').setDescription("Set port of the Minecraft Bedrock server.")
         .addIntegerOption(option => option.setName("port").setDescription("Provide the server port.").setRequired(true))
     )
     .addSubcommand(subcommand =>
@@ -41,11 +41,19 @@ module.exports = {
         .addStringOption(option => option.setName("ip").setDescription("Provide the server IP.").setRequired(true))
     )
     .addSubcommand(subcommand =>
-      subcommand.setName('java_port').setDescription("Set port of the minecraft java server.")
+      subcommand.setName('java_port').setDescription("Set port of the Minecraft Java server.")
         .addIntegerOption(option => option.setName("port").setDescription("Provide the server port.").setRequired(true))
     )
     .addSubcommand(subcommand =>
-      subcommand.setName('query_port').setDescription("Set query port of the minecraft java server.")
+      subcommand.setName('query_port').setDescription("Set query port of the Minecraft Java server.")
+        .addIntegerOption(option => option.setName("port").setDescription("Provide the server port.").setRequired(true))
+    )
+    .addSubcommand(subcommand =>
+      subcommand.setName('fivem_port').setDescription("Set port of the FiveM server.")
+        .addIntegerOption(option => option.setName("port").setDescription("Provide the server port.").setRequired(true))
+    )
+    .addSubcommand(subcommand =>
+      subcommand.setName('samp_port').setDescription("Set port of the SA-MP server.")
         .addIntegerOption(option => option.setName("port").setDescription("Provide the server port.").setRequired(true))
     )
     .addSubcommand(subcommand =>
@@ -53,11 +61,12 @@ module.exports = {
         .addChannelOption(option => option.setName("channel").setDescription("Select a channel.").addChannelTypes([ChannelType.GuildText, ChannelType.GuildNews]))
     ),
   
-  async execute(client, MessageEmbed, embed, config, embedConfig, database, Permissions, interaction, messageEmojisReplacer, tick, cross, errorLogger, logger) {
+  async execute(client, MessageEmbed, embed, config, embedConfig, Permissions, interaction, messageEmojisReplacer, tick, cross, errorLogger, logger) {
     const interval = config.interval;
 
     const emojis = await emojisFetcher(client);
     const branch = await emojis.branch;
+    const branchLine = await emojis.branchLine;
     const branchEnd = await emojis.branchEnd;
 
     embed = new MessageEmbed()
@@ -75,30 +84,39 @@ module.exports = {
         
     if(subCommand === "help"){
       embed.setTitle("Set Help 🔁")
-      .addFields({
-        name: "Variables",
-        value: `
+      .setDescription(`
+      **Variables**
         > • \`/set help\`
         > • \`/set ip\`
-        > • \`/set query_port\`
-        > • \`/set java_port\`
-        > • \`/set bedrock_port\`
-        > • \`/set server_status_channel\`
-        > • \`/set bot_updates_channel\`
-        > • \`/set hidden_ports\`
-        > • \`/set fake_players_online\`
-        > • \`/set display_uptime\`
-        > • \`/set players_growth_percent\``
-      },
-      {
-        name: "Note-",
-        value: `> • To reset the server uptime, set your server IP again.
-        > • Provide the values as \`-1\` or \`null\` to clear them from the database.`
-      })
+        > • **MINECRAFT**
+        > ${branch}• **JAVA**
+        > ${branchLine}${branch}• \`/set java_port\`
+        > ${branchLine}${branch}• \`/set query_port\`
+        > ${branchLine}${branchEnd}• \`/set bedrock_port\`
+        > ${branchEnd}• **BEDROCK**
+        > ㅤ ${branchEnd}• \`/set bedrock_port\`
+        > • **GTA**
+        > ${branch}• **FIVEM**
+        > ${branchLine}${branchEnd}• \`/set fivem_port\`
+        > ${branchEnd}• **SA-MP**
+        > ㅤ ${branchEnd}• \`/set samp_port\`
+        > • **CHANNELS**
+        > ${branch}• \`/set server_status_channel\`
+        > ${branchEnd}• \`/set bot_updates_channel\`
+        > • **OPTIONS**
+        > ㅤ ${branch}• \`/set hidden_ports\`
+        > ㅤ ${branch}• \`/set fake_players_online\`
+        > ㅤ ${branch}• \`/set display_uptime\`
+        > ㅤ ${branchEnd}• \`/set players_growth_percent\`
+
+        **Note**-
+        > • To reset the server uptime and players growth percentage, set your server IP again.
+        > • To clear value of a variable, set it as \`-1\` or \`null\``
+      )
       .setColor(embedConfig.defaultColor);
 
       await interaction.editReply({embeds: [embed]}).catch(async error => {
-        await errorLogger(client, interaction, error, "src/commands/set.js : 97");
+        await errorLogger(client, interaction, error, "src/commands/set.js : 119");
       });
     }else if(subCommand === "server_status_channel" || subCommand === "bot_updates_channel"){
       await runQuery(`UPDATE GLOBAL SET ${subCommand} = "${channel.id}" WHERE guild_id LIKE "${interaction.guild.id}"`);
@@ -118,7 +136,7 @@ module.exports = {
         .setColor(embedConfig.successColor);
   
       await interaction.editReply({embeds: [embed]}).catch(async error => {
-        await errorLogger(client, interaction, error, "src/commands/set.js : 117");
+        await errorLogger(client, interaction, error, "src/commands/set.js : 139");
       });
     }else{
       input = input + "";
@@ -134,7 +152,7 @@ module.exports = {
           .setColor(embedConfig.successColor);
   
         await interaction.editReply({embeds: [embed]}).catch(async error => {
-          await errorLogger(client, interaction, error, "src/commands/set.js : 133");
+          await errorLogger(client, interaction, error, "src/commands/set.js : 155");
         });
       }else{
         if(input.includes(" ")){
@@ -146,7 +164,7 @@ module.exports = {
               .setColor(embedConfig.errorColor);
   
             await interaction.editReply({embeds: [embed]}).catch(async error => {
-              await errorLogger(client, interaction, error, "src/commands/set.js : 145");
+              await errorLogger(client, interaction, error, "src/commands/set.js : 167");
             });
 
             return;
@@ -159,13 +177,11 @@ module.exports = {
           .setColor(embedConfig.successColor);
 
         if(subCommand === "ip"){
-          await runQuery(`UPDATE GLOBAL SET downtime = 0, total = 0 WHERE guild_id LIKE "${interaction.guild.id}"`);
-        }else if(subCommand === "players_growth_percent"){
-          await runQuery(`UPDATE GLOBAL SET players_online = 0, players_total = 0 WHERE guild_id LIKE "${interaction.guild.id}"`);
+          await runQuery(`UPDATE GLOBAL SET downtime = 0, total = 0, players_online = 0, players_total = 0 WHERE guild_id LIKE "${interaction.guild.id}"`);
         }
   
         await interaction.editReply({embeds: [embed]}).catch(async error => {
-          await errorLogger(client, interaction, error, "src/commands/set.js : 162");
+          await errorLogger(client, interaction, error, "src/commands/set.js : 184");
         });
       }
     }

@@ -8,9 +8,10 @@ module.exports = {
     .setName('help')
 	  .setDescription('Show help message.'),
   
-  async execute(client, MessageEmbed, embed, config, embedConfig, database, Permissions, interaction, messageEmojisReplacer, tick, cross, errorLogger, logger){
+  async execute(client, MessageEmbed, embed, config, embedConfig, Permissions, interaction, messageEmojisReplacer, tick, cross, errorLogger, logger){
     const emojis = await emojisFetcher(client);
     const branch = await emojis.branch;
+    const branchLine = await emojis.branchLine;
     const branchEnd = await emojis.branchEnd;
     
     embed = new MessageEmbed()
@@ -47,54 +48,73 @@ module.exports = {
     });
 
     await embed.setTitle(`${client.user.username} Help`)
-    .setThumbnail(client.user.displayAvatarURL({dynamic: true}));
+      .setThumbnail(client.user.displayAvatarURL({dynamic: true}));
+
+    let helpText = "";
     
     if(interaction.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR) || interaction.member.id === config.authorID){
-      await embed.addField("Admin 🛠️", `
+      helpText += `
+      **Admin** 🛠️
       > • \`/set\`
       > ${branch}• \`/set help\`
       > ${branch}• \`/set ip\`
-      > ${branch}• \`/set java_port\`
-      > ${branch}• \`/set query_port\`
-      > ${branch}• \`/set bedrock_port\`
-      > ${branch}• \`/set server_status_channel\`
-      > ${branch}• \`/set bot_updates_channel\`
-      > ${branch}• \`/set hidden_ports\`
-      > ${branch}• \`/set fake_players_online\`
-      > ${branch}• \`/set display_uptime\`
-      > ${branchEnd}• \`/set players_growth_percent\``)
+      > ${branch}• **MINECRAFT**
+      > ${branchLine}${branch}• **JAVA**
+      > ${branchLine}${branchLine}${branch}• \`/set java_port\`
+      > ${branchLine}${branchLine}${branch}• \`/set query_port\`
+      > ${branchLine}${branchLine}${branchEnd}• \`/set bedrock_port\`
+      > ${branchLine}${branchEnd}• **BEDROCK**
+      > ${branchLine}ㅤ ${branchEnd}• \`/set bedrock_port\`
+      > ${branch}• **GTA**
+      > ${branchLine}${branch}• **FIVEM**
+      > ${branchLine}${branchLine}${branchEnd}• \`/set fivem_port\`
+      > ${branchLine}${branchEnd}• **SA-MP**
+      > ${branchLine}ㅤ ${branchEnd}• \`/set samp_port\`
+      > ${branch}• **CHANNELS**
+      > ${branchLine}${branch}• \`/set server_status_channel\`
+      > ${branchLine}${branchEnd}• \`/set bot_updates_channel\`
+      > ${branchEnd}• **OPTIONS**
+      > ㅤ ${branch}• \`/set hidden_ports\`
+      > ㅤ ${branch}• \`/set fake_players_online\`
+      > ㅤ ${branch}• \`/set display_uptime\`
+      > ㅤ ${branchEnd}• \`/set players_growth_percent\`
+      \n`;
     }
 
-    embed.addFields({
-      name: "Member 👥",
-      value: `
-      > • \`/help\`
-      > • \`/ip\`
-      > • \`/ping\`
-      > ${branch}• \`/ping java\`
-      > ${branchEnd}• \`/ping bedrock\`
-      > • \`/status\`
-      > • \`/player\`
-      > ${branch}• \`/player info_by_username\`
-      > ${branchEnd}• \`/player info_by_uuid\`
-      > • \`/mojang status\``
-    },
-    {
-      name: "Miscellaneous 💠",
-      value: `
-      > • \`/bot ping\`
-      > • \`/bug\`
-      > • \`/invite\` 
-      > • \`/support\``
-    },
-    {
-      name: "Note-",
-      value: `> • To reset the server uptime, set your server IP again.
-      > • To clear value of a variable, set it as \`-1\` or \`null\``
-    });
+    helpText += `
+    **Member** 👥
+    > • \`/help\`
+    > • \`/ip\`
+    > • \`/ping\`
+    > ${branch}• **MINECRAFT**
+    > ${branchLine}${branch}• **JAVA**
+    > ${branchLine}${branchLine}${branchEnd}• \`/ping java\`
+    > ${branchLine}${branchEnd}• **BEDROCK**
+    > ${branchLine}ㅤ ${branchEnd}• \`/ping bedrock\`
+    > ${branchEnd}• **GTA**
+    > ㅤ ${branch}• **FIVEM**
+    > ㅤ ${branchLine}${branchEnd}• \`/ping fivem\`
+    > ㅤ ${branchEnd}• **SA-MP**
+    > ㅤ ㅤ ${branchEnd}• \`/ping samp\`
+    > • \`/status\`
+    \n
+    **Miscellaneous** 💠
+    > • \`/bot ping\`
+    > • \`/bug\`
+    > • \`/invite\` 
+    > • \`/support\`
+    \n
+    **Note**-
+    > • To reset the server uptime and players growth percentage, set your server IP again.
+    > • To clear value of a variable, set it as \`-1\` or \`null\`
+    `;
+
+    console.log(helpText.length);
+
+    embed.setDescription(helpText);
 
     await interaction.editReply({embeds: [embed], components: [buttons]}).catch(async error => {
-      await errorLogger(client, interaction, error, "src/commands/help.js : 96");
+      await errorLogger(client, interaction, error, "src/commands/help.js : 117");
     });
   },
 }

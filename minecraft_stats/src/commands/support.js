@@ -6,7 +6,7 @@ module.exports = {
     .setName('support')
   	.setDescription('Support server invite link.'),
   
-  async execute(client, MessageEmbed, embed, config, embedConfig, database, Permissions, interaction, messageEmojisReplacer, tick, cross, errorLogger, logger){
+  async execute(client, MessageEmbed, embed, config, embedConfig, Permissions, interaction, messageEmojisReplacer, tick, cross, errorLogger, logger){
     embed = new MessageEmbed()
       .setColor(embedConfig.defaultColor);
 
