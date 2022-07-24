@@ -1,11 +1,11 @@
 const mcdata = require("mcdata");
 
 module.exports = async (uuid) => {
-  try{
+  try {
     let history = await mcdata.player.getNameHistory(uuid);
-  
+
     return history;
-  }catch(error){
+  } catch (error) {
     console.log(error);
   }
-}
+};

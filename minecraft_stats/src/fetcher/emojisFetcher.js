@@ -1,7 +1,7 @@
 const emojis = require("../config/emojis.json");
 
 module.exports = async (client) => {
-  try{
+  try {
     const Grass = await client.emojis.cache.get(emojis.grass);
     const Wifi = await client.emojis.cache.get(emojis.wifi);
     const Settings = await client.emojis.cache.get(emojis.settings);
@@ -13,7 +13,7 @@ module.exports = async (client) => {
     const BranchEnd = await client.emojis.cache.get(emojis.branchEnd);
     const FiveM = await client.emojis.cache.get(emojis.fiveM);
     const SAMP = await client.emojis.cache.get(emojis.samp);
-  
+
     const Emojis = {
       grass: Grass,
       wifi: Wifi,
@@ -25,11 +25,11 @@ module.exports = async (client) => {
       branchLine: BranchLine,
       branchEnd: BranchEnd,
       fiveM: FiveM,
-      samp: SAMP
-    }
-  
+      samp: SAMP,
+    };
+
     return Emojis;
-  }catch(error){
+  } catch (error) {
     console.log(error);
   }
-}
+};

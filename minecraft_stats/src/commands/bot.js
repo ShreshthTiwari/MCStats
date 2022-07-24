@@ -1,5 +1,5 @@
-const { SlashCommandBuilder } = require('@discordjs/builders');
-const { MessageActionRow, MessageButton } = require('discord.js');
+const { SlashCommandBuilder } = require("@discordjs/builders");
+const { MessageActionRow, MessageButton } = require("discord.js");
 
 const pageBuilder = require("../builder/pageBuilder.js");
 
@@ -7,8 +7,8 @@ const runQuery = require("../sqlite/runQuery.js");
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName('bot')
-	  .setDescription('Bot commands help.')
+    .setName("bot")
+    .setDescription("Bot commands help.")
     /*.addSubcommand(subcommand =>
       subcommand.setName('avatar').setDescription("Change avatar of the bot.")
         .addStringOption(option => option.setName("avatar_url").setDescription("avatar URL.").setRequired(true))
@@ -27,16 +27,28 @@ module.exports = {
       subcommand.setName('rename').setDescription("Rename the bot.")
         .addStringOption(option => option.setName("name").setDescription("Name.").setRequired(true))
     )*/
-    .addSubcommand(subcommand => subcommand.setName('ping').setDescription("Check the bot's ping."))
-    /*.addSubcommand(subcommand =>
+    .addSubcommand((subcommand) =>
+      subcommand.setName("ping").setDescription("Check the bot's ping.")
+    ),
+  /*.addSubcommand(subcommand =>
       subcommand.setName('updates').setDescription("Send bot updates.")
         .addStringOption(option => option.setName("message").setDescription("Provide the message.").setRequired(true))
-    )*/,
-  
-  async execute(client, MessageEmbed, embed, config, embedConfig, Permissions, interaction, messageEmojisReplacer, tick, cross, errorLogger, logger) {
-    embed = new MessageEmbed()
-      .setColor(embedConfig.defaultColor);
-      
+    )*/ async execute(
+    client,
+    MessageEmbed,
+    embed,
+    config,
+    embedConfig,
+    Permissions,
+    interaction,
+    messageEmojisReplacer,
+    tick,
+    cross,
+    errorLogger,
+    logger
+  ) {
+    embed = new MessageEmbed().setColor(embedConfig.defaultColor);
+
     let authorID = await config.authorID;
 
     const subCommand = await interaction.options.getSubcommand();
@@ -55,25 +67,25 @@ module.exports = {
 
       return;
     }*/
-   
-    const buttons = new MessageActionRow()
-      .addComponents(
-        new MessageButton()
-          .setCustomId("vote")
-          .setLabel("Vote me")
-          .setStyle("PRIMARY"),
-        new MessageButton()
-          .setLabel("Support")
-          .setStyle("LINK")
-          .setURL(config.supportLink),
-        new MessageButton()
-          .setLabel("Invite me")
-          .setStyle("LINK")
-          .setURL(config.inviteLink)
-      );
 
-    const collector = await interaction.channel.createMessageComponentCollector();
-    
+    const buttons = new MessageActionRow().addComponents(
+      new MessageButton()
+        .setCustomId("vote")
+        .setLabel("Vote me")
+        .setStyle("PRIMARY"),
+      new MessageButton()
+        .setLabel("Support")
+        .setStyle("LINK")
+        .setURL(config.supportLink),
+      new MessageButton()
+        .setLabel("Invite me")
+        .setStyle("LINK")
+        .setURL(config.inviteLink)
+    );
+
+    const collector =
+      await interaction.channel.createMessageComponentCollector();
+
     /*let guildsMap;
     
     const fbButtons = new MessageActionRow()
@@ -146,31 +158,35 @@ module.exports = {
       });
     }
     */
-    collector.on('collect', async button => {
-      if(button.customId === "vote"){
+    collector.on("collect", async (button) => {
+      if (button.customId === "vote") {
         const voteEmbed = new MessageEmbed()
-        .setTitle("VOTE ME")
-        .setDescription(config.votingLink)
-        .setColor(embedConfig.defaultColor);
-      
-        await button.reply({embeds: [voteEmbed], ephemeral: true});
-      }else{
-        if (button.customId === 'previous') {
+          .setTitle("VOTE ME")
+          .setDescription(config.votingLink)
+          .setColor(embedConfig.defaultColor);
+
+        await button.reply({ embeds: [voteEmbed], ephemeral: true });
+      } else {
+        if (button.customId === "previous") {
           pno--;
-        }else if(button.customId === 'next'){
+        } else if (button.customId === "next") {
           pno++;
         }
-      
-        await button.reply({content: '*'}).then(async () => {
+
+        await button.reply({ content: "*" }).then(async () => {
           await button.deleteReply();
         });
-    
+
         await sendGuildsList(pno);
       }
     });
 
-    await embed.setAuthor({name: interaction.guild.name, iconURL: interaction.guild.iconURL({dynamic: true})})
-      .setThumbnail(client.user.displayAvatarURL({dynamic: true}))
+    await embed
+      .setAuthor({
+        name: interaction.guild.name,
+        iconURL: interaction.guild.iconURL({ dynamic: true }),
+      })
+      .setThumbnail(client.user.displayAvatarURL({ dynamic: true }))
       .setColor(embedConfig.defaultColor);
 
     /*if(subCommand === "help"){
@@ -220,27 +236,33 @@ module.exports = {
       await interaction.editReply({embeds: [embed]}).catch(async error => {
         await errorLogger(client, interaction, error, "src/commands/bot.js : 221");
       });
-    }else*/ if(subCommand === "ping"){
+    }else*/ if (subCommand === "ping") {
       const yourPing = new Date().getTime() - interaction.createdTimestamp;
       const botPing = Math.round(client.ws.ping);
       const time = new Date().getTime();
       await runQuery(`SELECT * FROM GLOBAL`);
       const dbPing = new Date().getTime() - time;
 
-      await embed.setDescription
-       (`
+      await embed.setDescription(`
         > **Your Latency**-
         \`\`\`fix\n${yourPing}ms.\n\`\`\`\n
         > **Bot Latency**-
         \`\`\`fix\n${botPing}ms.\n\`\`\`\n
         > **Database Latency**-
         \`\`\`fix\n${dbPing}ms.\n\`\`\`\n
-       `); 
+       `);
 
-      await interaction.editReply({embeds: [embed], components: [buttons]}).catch(async error => {
-        await errorLogger(client, interaction, error, "src/commands/bot.js : 241");
-      });
-    }/*else if(subCommand === 'guildslist'){
+      await interaction
+        .editReply({ embeds: [embed], components: [buttons] })
+        .catch(async (error) => {
+          await errorLogger(
+            client,
+            interaction,
+            error,
+            "src/commands/bot.js : 241"
+          );
+        });
+    } /*else if(subCommand === 'guildslist'){
       guildsMap = await client.guilds.cache
         .sort((a, b) => b.memberCount - a.memberCount)
         .map(g => g);
@@ -359,4 +381,4 @@ module.exports = {
       await interaction.editReply({embeds: [embed]});
     }*/
   },
-}
+};

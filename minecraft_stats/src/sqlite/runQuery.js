@@ -2,15 +2,15 @@ const buildDB = require("../sqlite/buildDB.js");
 const db = buildDB();
 
 module.exports = async (query) => {
-  try{
-    if(query){
+  try {
+    if (query) {
       db.serialize(() => {
         db.run(query);
       });
-    }else{
+    } else {
       console.log("Empty query provided.");
     }
-  }catch(error){
+  } catch (error) {
     console.log(error);
   }
-}
+};

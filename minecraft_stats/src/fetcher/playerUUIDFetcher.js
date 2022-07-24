@@ -1,11 +1,11 @@
 const mcdata = require("mcdata");
 
 module.exports = async (name) => {
-  try{
+  try {
     let uuid = await mcdata.player.getUUID(name);
-  
+
     return uuid;
-  }catch(error){
+  } catch (error) {
     console.log(error);
   }
-}
+};
